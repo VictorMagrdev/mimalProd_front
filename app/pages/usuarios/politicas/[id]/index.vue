@@ -29,10 +29,19 @@ interface Policy {
 const route = useRoute();
 const policyId = route.params.id;
 
-const { data: policy, pending, error } = useAsyncData<Policy>(`policy-${policyId}`, () =>
-  $fetch(`http://localhost:8080/api/policies/${policyId}`)
-);
+const auth = useAuthStore();
 
+const {
+  data: policy,
+  pending,
+  error,
+} = useAsyncData<Policy>(`policy-${policyId}`, () =>
+  $fetch(`http://localhost:8080/api/policies/${policyId}`, {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  }),
+);
 </script>
 
 <template>
@@ -47,23 +56,35 @@ const { data: policy, pending, error } = useAsyncData<Policy>(`policy-${policyId
           <h2 class="text-sm font-medium text-gray-500">ID de la Política</h2>
           <p class="text-lg">{{ policy.id }}</p>
         </div>
-        
+
         <div class="p-4 border rounded-md">
           <h3 class="text-md font-semibold mb-2">Rol Asignado</h3>
           <p><span class="font-medium">Nombre:</span> {{ policy.role.name }}</p>
-          <p><span class="font-medium">Descripción:</span> {{ policy.role.description || '-' }}</p>
+          <p>
+            <span class="font-medium">Descripción:</span>
+            {{ policy.role.description || "-" }}
+          </p>
         </div>
 
         <div class="p-4 border rounded-md">
           <h3 class="text-md font-semibold mb-2">Tag Aplicado</h3>
           <p><span class="font-medium">Nombre:</span> {{ policy.tag.name }}</p>
-          <p><span class="font-medium">Descripción:</span> {{ policy.tag.description || '-' }}</p>
+          <p>
+            <span class="font-medium">Descripción:</span>
+            {{ policy.tag.description || "-" }}
+          </p>
         </div>
 
         <div class="p-4 border rounded-md">
           <h3 class="text-md font-semibold mb-2">Permiso Concedido</h3>
-          <p><span class="font-medium">Acción:</span> {{ policy.permission.name }}</p>
-          <p><span class="font-medium">Descripción:</span> {{ policy.permission.description || '-' }}</p>
+          <p>
+            <span class="font-medium">Acción:</span>
+            {{ policy.permission.name }}
+          </p>
+          <p>
+            <span class="font-medium">Descripción:</span>
+            {{ policy.permission.description || "-" }}
+          </p>
         </div>
       </div>
 

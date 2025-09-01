@@ -9,16 +9,25 @@ const router = useRouter();
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-const { data: users, pending, error } = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
+const auth = useAuthStore();
+
+const {
+  data: users,
+  pending,
+  error,
+} = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
   method: "GET",
+  headers: {
+    Authorization: `Bearer ${auth.token}`,
+  },
   default: () => [],
 });
 
 export interface UserUI {
-  id: number
-  username: string
-  email: string
-  active: boolean
+  id: number;
+  username: string;
+  email: string;
+  active: boolean;
 }
 
 const columns: TableColumn<UserUI>[] = [

@@ -10,11 +10,19 @@ interface User {
 
 const route = useRoute();
 const userId = route.params.id;
+const auth = useAuthStore();
 
-const { data: user, pending, error } = useAsyncData<User>(`user-${userId}`, () =>
-  $fetch(`http://localhost:8080/api/users/${userId}`)
+const {
+  data: user,
+  pending,
+  error,
+} = useAsyncData<User>(`user-${userId}`, () =>
+  $fetch(`http://localhost:8080/api/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  }),
 );
-
 </script>
 
 <template>
@@ -39,11 +47,19 @@ const { data: user, pending, error } = useAsyncData<User>(`user-${userId}`, () =
         </div>
         <div>
           <h2 class="text-sm font-medium text-gray-500">Roles</h2>
-          <div v-if="user.roles && user.roles.length" class="flex flex-wrap gap-2 mt-1">
-            <UBadge v-for="role in user.roles" :key="role" color="primary" variant="subtle">{{ role }}</UBadge>
+          <div
+            v-if="user.roles && user.roles.length"
+            class="flex flex-wrap gap-2 mt-1"
+          >
+            <UBadge
+              v-for="role in user.roles"
+              :key="role"
+              color="primary"
+              variant="subtle"
+              >{{ role }}</UBadge
+            >
           </div>
-          <p v-else class="text-lg text-gray-500">-
-          </p>
+          <p v-else class="text-lg text-gray-500">-</p>
         </div>
       </div>
 

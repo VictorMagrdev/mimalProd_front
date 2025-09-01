@@ -1,6 +1,5 @@
 /// <reference types="Cypress" />
 describe("Autenticación y sesión (JWT) - Frontend", () => {
-
   it("Login exitoso y obtención de JWT", () => {
     cy.visit("/login");
 
@@ -60,5 +59,4 @@ describe("Autenticación y sesión (JWT) - Frontend", () => {
     cy.visit("/dashboard");
     cy.url().should("include", "/login");
   });
-
 });

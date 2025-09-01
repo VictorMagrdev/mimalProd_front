@@ -4,28 +4,27 @@ import { reactive, ref } from "vue";
 
 const open = ref(false);
 
-const UserSchemaInitialState = {
-  username: "",
-  email: "",
-  password: "",
-  active: true,
+const RoleSchemaInitialState = {
+  name: "",
+  description: "",
 };
 
-const state = reactive({ ...UserSchemaInitialState });
+const state = reactive({ ...RoleSchemaInitialState });
 const error = ref<string | null>(null);
 
 function resetForm() {
-  Object.assign(state, UserSchemaInitialState);
+  Object.assign(state, RoleSchemaInitialState);
 }
 
 const toast = useToast();
 
-async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
+async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
+
   const auth = useAuthStore();
 
   const { data, error: fetchError } = await useFetch(
-    "http://localhost:8080/api/users",
+    "http://localhost:8080/api/roles",
     {
       method: "POST",
       body: event.data,
@@ -46,8 +45,8 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
   }
 
   toast.add({
-    title: "Usuario creado",
-    description: `El usuario ${data.value} fue registrado correctamente`,
+    title: "Rol creado",
+    description: `El rol ${data} fue registrado correctamente`,
     color: "success",
   });
 
@@ -57,50 +56,37 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear usuario">
+  <UModal v-model:open="open" title="Crear rol">
     <template #description>
-      Completa el formulario para registrar un nuevo usuario.
+      Completa el formulario para registrar un nuevo rol.
     </template>
 
+    <!-- Botón que abre el modal -->
     <UButton
       class="right-0"
-      label="Nuevo usuario"
+      label="Nuevo rol"
       color="neutral"
       variant="subtle"
     />
 
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
+    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
 
     <template #body>
-      <UForm id="formId" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Usuario" name="username">
+      <UForm id="roleForm" :state="state" class="space-y-4" @submit="onSubmit">
+        <UFormField label="Nombre" name="name">
           <UInput
-            v-model="state.username"
+            v-model="state.name"
             class="w-full"
-            placeholder="Nombre de usuario"
+            placeholder="Nombre del rol"
           />
         </UFormField>
 
-        <UFormField label="Correo" name="email">
+        <UFormField label="Descripción" name="description">
           <UInput
-            v-model="state.email"
+            v-model="state.description"
             class="w-full"
-            type="email"
-            placeholder="correo@ejemplo.com"
+            placeholder="Descripción del rol"
           />
-        </UFormField>
-
-        <UFormField label="Contraseña" name="password">
-          <UInput
-            v-model="state.password"
-            class="w-full"
-            type="password"
-            placeholder="********"
-          />
-        </UFormField>
-
-        <UFormField label="Activo" name="active">
-          <UCheckbox v-model="state.active" class="w-full" />
         </UFormField>
       </UForm>
     </template>
@@ -118,10 +104,10 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
         "
       />
       <UButton
-        label="Crear usuario"
+        label="Crear rol"
         type="submit"
         color="neutral"
-        form="formId"
+        form="roleForm"
       />
     </template>
   </UModal>

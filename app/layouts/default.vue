@@ -1,9 +1,18 @@
 <template>
   <div>
     <aside
-      class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto"
+      class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
-      <nav class="space-y-4">
+      <!-- Avatar con dropdown -->
+      <div class="flex flex-col items-center mb-6">
+        <UDropdownMenu :items="dropdownItems">
+          <UButton circle>
+            <UAvatar :src="avatarUrl" />
+          </UButton>
+        </UDropdownMenu>
+      </div>
+
+      <nav class="space-y-4 flex-1">
         <ULink
           v-for="link in mainLinks"
           :key="link.to"
@@ -26,9 +35,14 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { ref } from "vue";
 
 const router = useRouter();
 const route = useRoute();
+const auth = useAuthStore();
+
+const avatarUrl = ref("/avatar.png");
 
 const mainLinks = [{ label: "Inicio", to: "/", icon: "i-heroicons-home" }];
 
@@ -50,13 +64,25 @@ const treeItems = [
         onSelect: () => router.push("/usuarios/roles"),
       },
       {
-        label: "Politicas",
+        label: "Políticas",
         icon: "i-heroicons-plus-circle",
         value: "/usuarios/politicas",
         onSelect: () => router.push("/usuarios/politicas"),
       },
     ],
-  }
+  },
 ];
-</script>
 
+const dropdownItems = ref([
+  [
+    {
+      label: "Cerrar sesión",
+      icon: "i-heroicons-logout",
+      onSelect: () => {
+        auth.logout();
+        router.push("/");
+      },
+    },
+  ],
+]);
+</script>
