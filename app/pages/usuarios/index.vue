@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, useTemplateRef } from "vue";
+import { ref, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import { upperFirst } from "scule";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -53,17 +55,13 @@ const columns: TableColumn<UserUI>[] = [
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
             items: getRowItems(row),
-            "aria-label": "Actions dropdown",
           },
           () =>
             h(UButton, {
               icon: "i-lucide-ellipsis-vertical",
               color: "neutral",
               variant: "ghost",
-              class: "ml-auto",
-              "aria-label": "Actions dropdown",
             }),
         ),
       );
@@ -73,41 +71,32 @@ const columns: TableColumn<UserUI>[] = [
 
 function getRowItems(row: Row<UserUI>) {
   return [
-    {
-      type: "label",
-      label: "Acciones",
-    },
-    {
-      label: "detalles",
-      onSelect() {
-        console.log("Detalles usuario", row.original.id);
+    [
+      {
+        label: "Detalles",
+        icon: "i-heroicons-eye-20-solid",
+        click: () => router.push(`/usuarios/${row.original.id}`),
       },
-    },
-    {
-      label: "actualizar",
-      onSelect() {
-        console.log("Actualizar usuario", row.original.id);
+      {
+        label: "Actualizar",
+        icon: "i-heroicons-pencil-square-20-solid",
+        click: () => console.log("Actualizar usuario", row.original.id),
       },
-    },
-    {
-      label: "borrar",
-      onSelect() {
-        console.log("Borrar usuario", row.original.id);
+      {
+        label: "Borrar",
+        icon: "i-heroicons-trash-20-solid",
+        click: () => console.log("Borrar usuario", row.original.id),
       },
-    },
+    ],
   ];
 }
 
 const pagination = ref({
-  pageIndex: 0,
-  pageSize: 5,
+  pageIndex: 1,
+  pageSize: 10,
 });
 
 const globalFilter = ref();
-const table = useTemplateRef("table");
-const columnVisibility = ref({
-  id: false,
-});
 </script>
 
 <template>
@@ -124,55 +113,23 @@ const columnVisibility = ref({
       />
 
       <div class="flex items-center space-x-2">
-        <UDropdownMenu
-          :items="
-            table?.tableApi
-              ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
-                label: upperFirst(column.id),
-                type: 'checkbox' as const,
-                checked: column.getIsVisible(),
-                onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(!!checked);
-                },
-                onSelect(e?: Event) {
-                  e?.preventDefault();
-                },
-              }))
-          "
-          :content="{ align: 'end' }"
-        >
-          <UButton
-            label="columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
-
         <NewUser />
       </div>
     </div>
 
     <div class="relative z-0 w-full">
       <UTable
-        ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        v-model:column-visibility="columnVisibility"
         :data="users || []"
         :columns="columns"
         :loading="pending"
       />
-      <div class="sticky bottom-8 w-full bg-white z-10">
+      <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
-          :default-page="pagination.pageIndex + 1"
-          :items-per-page="pagination.pageSize"
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
           :total="users?.length || 0"
-          @update:page="(p: number) => (pagination.pageIndex = p - 1)"
         />
       </div>
     </div>

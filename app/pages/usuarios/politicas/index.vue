@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, useTemplateRef } from "vue";
+import { ref, h } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import { upperFirst } from "scule";
+import PolicyForm from "~/components/PolicyForm.vue";
+import { useRouter } from "vue-router";
 
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+const router = useRouter();
 
-const { data: policies, pending, error } = useAsyncData<PolicyUI[]>("roles", () =>
+// Data Fetching
+const { data: policies, pending, error, refresh } = useAsyncData<PolicyUI[]>("policies", () =>
   $fetch("http://localhost:8080/api/policies")
 );
 
@@ -18,21 +18,78 @@ export interface PolicyUI {
   permission: { id: number; name: string };
 }
 
+// Modal and Form State
+const isModalOpen = ref(false);
+const toast = useToast();
+
+// This is the type that can be emitted by the form
+type PolicyFormData = { roleId: number | null; tagId: number | null; permissionId: number | null };
+
+async function savePolicy(policyData: PolicyFormData) {
+  // The form has its own validation, but we add a safeguard here to satisfy TS and prevent edge cases.
+  if (!policyData.roleId || !policyData.tagId || !policyData.permissionId) {
+    toast.add({
+      title: "Error de validación",
+      description: "Todos los campos son obligatorios.",
+      color: "error",
+    });
+    return;
+  }
+
+  try {
+    // At this point, TS knows the values are not null.
+    await $fetch("http://localhost:8080/api/policies", {
+      method: "POST",
+      body: policyData,
+    });
+
+    toast.add({ title: "Política creada", color: "success" });
+    isModalOpen.value = false;
+    await refresh();
+  } catch (err) {
+    toast.add({
+      title: "Error",
+      description: (err instanceof Error ? err.message : String(err)) || "No se pudo guardar la política.",
+      color: "error",
+    });
+  }
+}
+
+async function deletePolicy(policy: PolicyUI) {
+  if (!confirm(`¿Estás seguro de que quieres eliminar la política con ID ${policy.id}?`)) {
+    return;
+  }
+
+  try {
+    await $fetch(`http://localhost:8080/api/policies/${policy.id}`, {
+      method: "DELETE",
+    });
+    toast.add({ title: "Política eliminada", color: "success" });
+    await refresh();
+  } catch (err) {
+    toast.add({
+      title: "Error",
+      description: (err instanceof Error ? err.message : String(err)) || "No se pudo guardar la política.",
+      color: "error",
+    });
+  }
+}
+
 const columns: TableColumn<PolicyUI>[] = [
   {
     accessorKey: "role.name",
     header: "Rol",
-    cell: ({ row }) => row.getValue("role.name"),
+    cell: (info) => info.row.original.role.name,
   },
   {
     accessorKey: "tag.name",
     header: "Tag",
-    cell: ({ row }) => row.getValue("tag.name"),
+    cell: (info) => info.row.original.tag.name,
   },
   {
     accessorKey: "permission.name",
     header: "Permiso",
-    cell: ({ row }) => row.getValue("permission.name"),
+    cell: (info) => info.row.original.permission.name,
   },
   {
     id: "actions",
@@ -40,129 +97,91 @@ const columns: TableColumn<PolicyUI>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(
-          UDropdownMenu,
-          {
-            content: { align: "end" },
-            items: getRowItems(row),
-            "aria-label": "Actions dropdown",
-          },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
-              "aria-label": "Actions dropdown",
-            })
-        )
+        h(resolveComponent("UDropdown"), {
+          items: getRowItems(row.original),
+        })
       ),
   },
 ];
 
-function getRowItems(row: Row<PolicyUI>) {
+function getRowItems(policy: PolicyUI) {
   return [
-    { type: "label", label: "Acciones" },
-    {
-      label: "detalles",
-      onSelect() {
-        console.log("Detalles política", row.original.id);
+    [
+      {
+        label: "Detalles",
+        icon: "i-heroicons-eye-20-solid",
+        click: () => router.push(`/usuarios/politicas/${policy.id}`),
       },
-    },
-    {
-      label: "actualizar",
-      onSelect() {
-        console.log("Actualizar política", row.original.id);
+      {
+        label: "Eliminar",
+        icon: "i-heroicons-trash-20-solid",
+        click: () => deletePolicy(policy),
       },
-    },
-    {
-      label: "borrar",
-      onSelect() {
-        console.log("Borrar política", row.original.id);
-      },
-    },
+    ],
   ];
 }
 
+// Pagination and Filtering
 const pagination = ref({
-  pageIndex: 0,
-  pageSize: 5,
+  pageIndex: 1,
+  pageSize: 10,
 });
-
 const globalFilter = ref<string | undefined>();
-const table = useTemplateRef("table");
-const columnVisibility = ref({
-  id: false,
-});
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Vista de políticas</h1>
+    <div class="flex justify-between items-center">
+      <h1>Vista de Políticas</h1>
+      <UButton label="Nueva Política" @click="isModalOpen = true" />
+    </div>
 
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
       <UInput
         v-model="globalFilter"
         class="max-w-sm"
         placeholder="Filtrar..."
       />
-
-      <div class="flex items-center space-x-2">
-        <UDropdownMenu
-          :items="
-            table?.tableApi
-              ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
-                label: upperFirst(column.id),
-                type: 'checkbox' as const,
-                checked: column.getIsVisible(),
-                onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(!!checked);
-                },
-                onSelect(e?: Event) {
-                  e?.preventDefault();
-                },
-              }))
-          "
-          :content="{ align: 'end' }"
-        >
-          <UButton
-            label="columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
-
-        <NewPolicy />
-      </div>
     </div>
 
     <div class="relative z-0 w-full">
       <UTable
-        ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        v-model:column-visibility="columnVisibility"
         :data="policies || []"
         :columns="columns"
         :loading="pending"
       />
-      <div class="sticky bottom-8 w-full bg-white z-10">
+      <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
-          :default-page="pagination.pageIndex + 1"
-          :items-per-page="pagination.pageSize"
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
           :total="policies?.length || 0"
-          @update:page="(p: number) => (pagination.pageIndex = p - 1)"
         />
       </div>
     </div>
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
+
+    <UModal v-model="isModalOpen">
+      <UCard>
+        <template #header>
+          <h2 class="text-lg font-bold">Crear Política</h2>
+        </template>
+
+        <PolicyForm @save="savePolicy" />
+
+        <template #footer>
+          <div class="flex justify-end space-x-2">
+            <UButton variant="ghost" @click="isModalOpen = false">
+              Cancelar
+            </UButton>
+            <UButton type="submit" form="policy-form">
+              Guardar
+            </UButton>
+          </div>
+        </template>
+      </UCard>
+    </UModal>
   </div>
 </template>
