@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
 
     async login(email: string, password: string) {
       try {
-        const response = await $fetch<LoginResponse>('/api/auth/login', {
+        const response = await $fetch<LoginResponse>('http://localhost:8080/api/auth/login', {
           method: 'POST',
           body: { email, password }
         })
@@ -62,19 +62,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) return
-        await $fetch<LoginResponse>('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-      } finally {
         this.clearAuth()
         await navigateTo('/')
-      }
     },
 
     async checkAuth() {
