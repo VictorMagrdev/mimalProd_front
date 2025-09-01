@@ -1,0 +1,84 @@
+Autenticación
+
+   * Endpoint: POST /api/auth/login
+   * Descripción: Autentica a un usuario y devuelve un token JWT junto con información de sus permisos.
+   * JSON de respuesta:
+
+    1 {
+    2   "token": "ey...",
+    3   "username": "nombre_de_usuario",
+    4   "roles": ["ROL_ADMIN", "OTRO_ROL"],
+    5   "policies": [
+    6     {
+    7       "tag": "TAG_USUARIOS",
+    8       "permission": "READ"
+    9     },
+   10     {
+   11       "tag": "TAG_USUARIOS",
+   12       "permission": "CREATE"
+   13     }
+   14   ]
+   15 }
+
+  ---
+
+  2. Roles
+
+   * Endpoint: GET /api/roles
+   * Descripción: Devuelve una lista de todos los roles del sistema.
+   * JSON de respuesta:
+
+    1 [
+    2   {
+    3     "id": 1,
+    4     "name": "ROL_ADMIN",
+    5     "description": "Administrador del sistema"
+    6   },
+    7   {
+    8     "id": 2,
+    9     "name": "ROL_USUARIO",
+   10     "description": "Usuario estándar"
+   11   }
+   12 ]
+
+  ---
+
+  3. Tags
+
+   * Endpoint: GET /api/tags
+   * Descripción: Devuelve una lista de todos los tags (etiquetas) del sistema.
+   * JSON de respuesta:
+
+    1 [
+    2   {
+    3     "id": 1,
+    4     "name": "TAG_USUARIOS",
+    5     "description": "Relacionado con la gestión de usuarios"
+    6   },
+    7   {
+    8     "id": 2,
+    9     "name": "TAG_ROLES",
+   10     "description": "Relacionado con la gestión de roles"
+   11   }
+   12 ]
+
+  ---
+
+  4. Permisos
+
+   * Endpoint: GET /api/permissions
+   * Descripción: Devuelve una lista de todos los permisos de acciones (ej. CREATE, READ).
+   * JSON de respuesta:
+
+    1 [
+    2   {
+    3     "id": 1,
+    4     "name": "CREATE",
+    5     "description": "Permite crear un recurso"
+    6   },
+    7   {
+    8     "id": 2,
+    9     "name": "READ",
+   10     "description": "Permite leer un recurso"
+   11   }
+   12 ]

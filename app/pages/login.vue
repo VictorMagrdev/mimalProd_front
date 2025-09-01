@@ -1,19 +1,23 @@
-<script setup  lang="ts">
+<script setup lang="ts">
     import * as z from 'zod'
     import type { FormSubmitEvent } from '@nuxt/ui'
+
+definePageMeta({
+  layout: false,
+});
 
 const authStore = useAuthStore()
 const router = useRouter()
 
 const schema = z.object({
-  email: z.email('Invalid email'),
+  username: z.string('Invalid username'),
   password: z.string().min(8, 'Must be at least 8 characters')
 })
 
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
-  email: undefined,
+  username: undefined,
   password: undefined
 })
 const error = ref('')
@@ -22,7 +26,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     error.value = ''
     try {
     const result = await authStore.login(
-      event.data.email,
+      event.data.username,
       event.data.password
     )
 
@@ -45,29 +49,33 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UCard>
-    <template #header>
-        <h1>Login Page</h1>
-    </template>
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <UCard class="w-72 max-w-md">
+      <template #header>
+          <h1 class="text-2xl font-bold text-center">Login Page</h1>
+      </template>
 
-   <UForm id="loginForm" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormField label="Email" name="email">
-      <UInput v-model="state.email" />
-    </UFormField>
+      <UForm id="loginForm" :schema="schema" :state="state" class="space-y-6" @submit="onSubmit">
+        <UFormField label="Username" name="username">
+          <UInput v-model="state.username" class="w-full" size="lg" />
+        </UFormField>
 
-    <UFormField label="Password" name="password">
-      <UInput v-model="state.password" type="password" />
-    </UFormField>
+        <UFormField label="Password" name="password">
+          <UInput v-model="state.password" type="password" class="w-full" size="lg" />
+        </UFormField>
 
-    
-  </UForm>
+        <div v-if="error" class="p-3 rounded-lg">
+          {{ error }}
+        </div>
+      </UForm>
 
-    <template #footer>
-        <UButton form="loginForm" type="submit">
-      Submit
-    </UButton>
-
-    </template>
-  </UCard>
+      <template #footer>
+        <div class="flex justify-center mt-2">
+          <UButton form="loginForm" type="submit" size="lg" class="px-8">
+            Submit
+          </UButton>
+        </div>
+      </template>
+    </UCard>
+  </div>
 </template>
-

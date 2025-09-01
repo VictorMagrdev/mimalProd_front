@@ -1,22 +1,27 @@
 <template>
-  <aside
-    class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto"
-  >
-    <nav class="space-y-4">
-      <ULink
-        v-for="link in mainLinks"
-        :key="link.to"
-        :to="link.to"
-        class="flex items-center gap-2 px-3 py-2 rounded text-default hover:bg-accented transition"
-        active-class="bg-accented font-semibold"
-      >
-        <UIcon :name="link.icon" class="w-5 h-5" />
-        <span>{{ link.label }}</span>
-      </ULink>
+  <div>
+    <aside
+      class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto"
+    >
+      <nav class="space-y-4">
+        <ULink
+          v-for="link in mainLinks"
+          :key="link.to"
+          :to="link.to"
+          class="flex items-center gap-2 px-3 py-2 rounded text-default hover:bg-accented transition"
+          active-class="bg-accented font-semibold"
+        >
+          <UIcon :name="link.icon" class="w-5 h-5" />
+          <span>{{ link.label }}</span>
+        </ULink>
 
-      <UTree :items="treeItems" />
-    </nav>
-  </aside>
+        <UTree :items="treeItems" />
+      </nav>
+    </aside>
+    <main class="ml-64 p-4">
+      <slot />
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
