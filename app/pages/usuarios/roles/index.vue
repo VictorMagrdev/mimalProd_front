@@ -2,9 +2,6 @@
 import { ref, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -62,11 +59,6 @@ const columns: TableColumn<RoleUI>[] = [
 function getRowItems(row: Row<RoleUI>) {
   return [
     [
-      {
-        label: "Detalles",
-        icon: "i-heroicons-eye-20-solid",
-        click: () => router.push(`/usuarios/roles/${row.original.id}`),
-      },
       {
         label: "Actualizar",
         icon: "i-heroicons-pencil-square-20-solid",

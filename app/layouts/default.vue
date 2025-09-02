@@ -3,7 +3,6 @@
     <aside
       class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
-      <!-- Avatar con dropdown -->
       <div class="flex flex-col items-center mb-6">
         <UDropdownMenu :items="dropdownItems">
           <UButton circle>
@@ -42,7 +41,7 @@ const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 
-const avatarUrl = ref("/avatar.png");
+const avatarUrl = ref("app/assets/user_527489.png");
 
 const mainLinks = [{ label: "Inicio", to: "/", icon: "i-heroicons-home" }];
 
