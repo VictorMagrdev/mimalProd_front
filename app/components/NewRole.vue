@@ -61,7 +61,6 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
       Completa el formulario para registrar un nuevo rol.
     </template>
 
-    <!-- Botón que abre el modal -->
     <UButton
       class="right-0"
       label="Nuevo rol"

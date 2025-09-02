@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, ref, computed, onMounted } from "vue";
+import { reactive, ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
 interface Role {
@@ -22,15 +22,15 @@ const open = ref(false);
 const error = ref<string | null>(null);
 
 const state = reactive({
-  roleId: 0,
-  tagId: 0,
-  permissionId: 0,
+  roleId: undefined as number | undefined,
+  tagId: undefined as number | undefined,
+  permissionId: undefined as number | undefined,
 });
 
 function resetForm() {
-  state.roleId = 0;
-  state.tagId = 0;
-  state.permissionId = 0;
+  state.roleId = undefined;
+  state.tagId = undefined;
+  state.permissionId = undefined;
 }
 
 const toast = useToast();
@@ -49,27 +49,37 @@ const permissionOptions = computed(() =>
   permissions.value.map((p) => ({ label: p.action, id: p.id })),
 );
 
-onMounted(async () => {
-  const [rolesRes, tagsRes, permsRes] = await Promise.all([
-    $fetch<Role[]>("http://localhost:8080/api/roles", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    }),
-    $fetch<Tag[]>("http://localhost:8080/api/tags", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    }),
-    $fetch<Permission[]>("http://localhost:8080/api/permissions", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    }),
-  ]);
+watch(open, async (val) => {
+  if (val && (roles.value.length === 0 || tags.value.length === 0 || permissions.value.length === 0)) {
+    try {
+      const [rolesRes, tagsRes, permsRes] = await Promise.all([
+        $fetch<Role[]>("http://localhost:8080/api/roles", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+        $fetch<Tag[]>("http://localhost:8080/api/tags", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+        $fetch<Permission[]>("http://localhost:8080/api/permissions", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+      ]);
 
-  roles.value = rolesRes || [];
-  tags.value = tagsRes || [];
-  permissions.value = permsRes || [];
+      roles.value = rolesRes || [];
+      tags.value = tagsRes || [];
+      permissions.value = permsRes || [];
+    } catch (err) {
+      toast.add({
+        title: "Error",
+        description: String(err),
+        color: "error",
+      });
+    }
+  }
 });
 
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
   error.value = null;
-
+  console.log(event.data);
   const { error: fetchError } = await useFetch(
     "http://localhost:8080/api/policies",
     {

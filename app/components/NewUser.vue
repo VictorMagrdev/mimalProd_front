@@ -2,13 +2,36 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 
+interface Role {
+  id: number;
+  name: string;
+}
+const auth = useAuthStore();
 const open = ref(false);
+const roles = ref<Role[]>([]);
+const roleOptions = computed(() =>
+  roles.value.map((r) => ({ label: r.name, id: r.id.toString() }))
+);
+
+watch(open, async (isOpen) => {
+  if (isOpen && roles.value.length === 0) {
+    try {
+      const rolesRes = await $fetch<Role[]>("http://localhost:8080/api/roles", {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      roles.value = rolesRes || [];
+    } catch (err) {
+      console.error("Error cargando roles:", err);
+    }
+  }
+});
 
 const UserSchemaInitialState = {
   username: "",
   email: "",
   password: "",
   active: true,
+  roleIds: [] as string[],
 };
 
 const state = reactive({ ...UserSchemaInitialState });
@@ -24,36 +47,37 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
   error.value = null;
   const auth = useAuthStore();
 
-  const { data, error: fetchError } = await useFetch(
-    "http://localhost:8080/api/users",
-    {
+  const payload = {
+    ...event.data,
+    roleIds: event.data.roleIds.map(id => Number(id)) // Convert back to numbers
+  };
+
+  try {
+    await $fetch("http://localhost:8080/api/users", {
       method: "POST",
-      body: event.data,
+      body: payload,
       headers: {
         Authorization: `Bearer ${auth.token}`,
       },
-    },
-  );
+    });
 
-  if (fetchError.value) {
-    error.value = fetchError.value.message;
+    toast.add({
+      title: "Usuario creado",
+      description: `El usuario fue registrado correctamente`,
+      color: "success",
+    });
+
+    resetForm();
+    open.value = false;
+  } catch (err) {
     toast.add({
       title: "Error",
-      description: fetchError.value.message,
+      description: String(err),
       color: "error",
     });
-    return;
   }
-
-  toast.add({
-    title: "Usuario creado",
-    description: `El usuario ${data.value} fue registrado correctamente`,
-    color: "success",
-  });
-
-  resetForm();
-  open.value = false;
 }
+
 </script>
 
 <template>
@@ -90,7 +114,14 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
           />
         </UFormField>
 
-        <UFormField label="Contraseña" name="password">
+        <UFormField
+          label="Contraseña"
+          name="password"
+          :rules="[
+            (v: any) => !!v || 'La contraseña es obligatoria',
+            (v: string | any[]) => v.length >= 8 || 'La contraseña debe tener al menos 8 caracteres'
+          ]"
+        >
           <UInput
             v-model="state.password"
             class="w-full"
@@ -99,9 +130,21 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
           />
         </UFormField>
 
+
         <UFormField label="Activo" name="active">
           <UCheckbox v-model="state.active" class="w-full" />
         </UFormField>
+        <UFormField label="Roles" name="roleIds">
+        <UInputMenu
+          v-model="state.roleIds"
+          :items="roleOptions"
+          value-key="id"
+          multiple
+          class="w-full"
+          placeholder="Selecciona uno o varios roles"
+        />
+      </UFormField>
+
       </UForm>
     </template>
 
