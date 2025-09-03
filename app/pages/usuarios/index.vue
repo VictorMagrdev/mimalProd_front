@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent } from "vue";
+import { ref, h, resolveComponent, onMounted } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { useRouter } from "vue-router";
 
 const selectedUserId = ref<number | null>(null);
-const showUpdateUserModal = ref(false);
+const selectedUserForRole = ref<number | null>(null);
+const selectedUserForDeleteRole = ref<number | null>(null);
 const router = useRouter();
 
 const UButton = resolveComponent("UButton");
@@ -13,16 +14,37 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 const toast = useToast();
 const auth = useAuthStore();
 
-const {
-  data: users,
-  pending,
-  error,
-} = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${auth.token}`,
-  },
-  default: () => [],
+// Cambiar a reactive fetch
+const users = ref<UserUI[]>([]);
+const pending = ref(false);
+const error = ref(null);
+
+const fetchUsers = async () => {
+  pending.value = true;
+  error.value = null;
+  try {
+    const { data, error: fetchError } = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    });
+    
+    if (fetchError.value) throw fetchError.value;
+    users.value = data.value || [];
+  } catch (err) {
+    toast.add({
+      title: "Error",
+      description: String(err),
+      color: "error",
+    });
+  } finally {
+    pending.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchUsers();
 });
 
 const desactivar = async (id: number) => {
@@ -34,12 +56,18 @@ const desactivar = async (id: number) => {
         headers: { Authorization: `Bearer ${auth.token}` },
       },
     );
+    
     if (fetchError.value) throw fetchError.value;
+    
     toast.add({
       title: "Usuario desactivado",
-      description: `El usuario  fue desactivado`,
+      description: `El usuario fue desactivado`,
       color: "success",
     });
+    
+    // Actualizar la lista después de desactivar
+    fetchUsers();
+    
   } catch (err) {
     toast.add({
       title: "Error",
@@ -90,7 +118,7 @@ const columns: TableColumn<UserUI>[] = [
       return h("span", { class: "text-gray-700" }, roles.join(", "));
     },
   },
-  {
+   {
     id: "actions",
     cell: ({ row }) => {
       return h(
@@ -99,45 +127,64 @@ const columns: TableColumn<UserUI>[] = [
         h(
           UDropdownMenu,
           {
+            content: {
+              align: "end",
+            },
             items: getRowItems(row),
+            "aria-label": "Actions dropdown",
           },
           () =>
             h(UButton, {
               icon: "i-lucide-ellipsis-vertical",
               color: "neutral",
               variant: "ghost",
+              class: "ml-auto",
+              "aria-label": "Actions dropdown",
             }),
         ),
       );
     },
   },
 ];
-
 function getRowItems(row: Row<UserUI>) {
+  const userId = row.original.id; 
   return [
-    [
-      {
+    {
+      type: "label",
+      label: "Acciones",
+    },{
         label: "Detalles",
         icon: "i-heroicons-eye-20-solid",
-        click: () => router.push(`/usuarios/${row.original.id}`),
+        onSelect: () => router.push(`/usuarios/${userId}`),
       },
       {
         label: "Actualizar",
         icon: "i-heroicons-pencil-square-20-solid",
-        click: () => {
-          selectedUserId.value = row.original.id;
-          showUpdateUserModal.value = true;
+        onSelect: () => {
+          selectedUserId.value = Number(userId)
         },
       },
       {
-        label: "Borrar",
-        icon: "i-heroicons-trash-20-solid",
-        click: () => desactivar(row.original.id),
+        label: "Asignar Rol",
+        icon: "i-heroicons-user-plus-20-solid",
+        onSelect: () => {
+          selectedUserForRole.value = Number(userId)
+        },
       },
-    ],
+      {
+        label: "Quitar Rol",
+        icon: "i-heroicons-user-minus-20-solid",
+        onSelect: () => {
+          selectedUserForDeleteRole.value = Number(userId)
+        },
+      },
+      {
+        label: "Desactivar",
+        icon: "i-heroicons-trash-20-solid",
+        onSelect: () => desactivar(Number(userId)),
+      }
   ];
 }
-
 const pagination = ref({
   pageIndex: 1,
   pageSize: 10,
@@ -161,13 +208,31 @@ const globalFilter = ref();
 
       <div class="flex items-center space-x-2">
         <UpdateUser
-          v-if="showUpdateUserModal"
-          :key="selectedUserId ?? 0"
-          :user-id="selectedUserId"
-          @close="showUpdateUserModal = false"
-        />
+  v-if="selectedUserId !== null"
+  :user-id="selectedUserId"
+  :open="true"
+  @close="selectedUserId = null"
+  @user-updated="fetchUsers"
+/>
 
-        <NewUser />
+<PutRoleUser
+  v-if="selectedUserForRole !== null"
+  :user-id="selectedUserForRole"
+  :open="true"
+  @close="selectedUserForRole = null"
+  @role-updated="fetchUsers"
+/>
+
+<DeleteRoleUser
+  v-if="selectedUserForDeleteRole !== null"
+  :user-id="selectedUserForDeleteRole"
+  :open="true"
+  @close="selectedUserForDeleteRole = null"
+  @role-removed="fetchUsers"
+/>
+
+
+        <NewUser @user-created="fetchUsers" />
       </div>
     </div>
 
@@ -175,7 +240,7 @@ const globalFilter = ref();
       <UTable
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        :data="users || []"
+        :data="users"
         :columns="columns"
         :loading="pending"
       />
@@ -183,11 +248,11 @@ const globalFilter = ref();
         <UPagination
           v-model="pagination.pageIndex"
           :page-count="pagination.pageSize"
-          :total="users?.length || 0"
+          :total="users.length"
         />
       </div>
     </div>
 
-    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
+    <div v-if="error" class="text-red-600">Error: {{ error }}</div>
   </div>
 </template>

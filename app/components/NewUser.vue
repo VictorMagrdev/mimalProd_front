@@ -115,7 +115,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
         </UFormField>
 
         <UFormField
-          label="Contraseña"
+          label="password"
           name="password"
           :rules="[
             (v: any) => !!v || 'La contraseña es obligatoria',

@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineEmits, defineProps, watch } from "vue"; 
+import { reactive, ref, computed, defineEmits, defineProps, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
 interface Role {
   id: number;
   name: string;
 }
+
+const auth = useAuthStore();
+const error = ref<string | null>(null);
 
 const props = defineProps<{
   userId: number | null;
@@ -17,14 +20,10 @@ const emit = defineEmits<{
 }>();
 
 
-const auth = useAuthStore();
-const error = ref<string | null>(null);
-
-
-
 const state = reactive({
   roleId: undefined as number | undefined,
 });
+
 
 function resetForm() {
   state.roleId = undefined;
@@ -32,26 +31,29 @@ function resetForm() {
 
 const toast = useToast();
 const roles = ref<Role[]>([]);
-
 const roleOptions = computed(() =>
   roles.value.map((r) => ({ label: r.name, id: r.id }))
 );
 
-async function fetchRoles() {
-  try {
-    roles.value = await $fetch<Role[]>("http://localhost:8080/api/roles", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    });
-  } catch (err) {
-    toast.add({ title: "Error", description: String(err), color: "error" });
-  }
-}
-
 watch(
   () => props.open,
-  (isOpen) => {
-    if (isOpen) fetchRoles();
-    else resetForm();
+  async (isOpen) => {
+    if (isOpen && props.userId) {
+      try {
+        const rolesRes = await $fetch<Role[]>(
+          `http://localhost:8080/api/users/${props.userId}/roles`,
+          {
+            headers: { Authorization: `Bearer ${auth.token}` },
+          }
+        );
+
+        roles.value = rolesRes || [];
+        console.log(roles.value);
+
+      } catch (err) {
+        toast.add({ title: "Error", description: String(err), color: "error" });
+      }
+    } 
   },
   { immediate: true }
 );
@@ -59,18 +61,20 @@ watch(
 async function onSubmit() {
   error.value = null;
 
-  if (!props.userId) return;
+  if (!props.userId || !state.roleId) return;
 
   try {
-    await $fetch(`http://localhost:8080/api/users/${props.userId}/roles`, {
-      method: "POST",
-      body: { roleId: state.roleId },
-      headers: { Authorization: `Bearer ${auth.token}` },
-    });
+    await $fetch(
+      `http://localhost:8080/api/users/${props.userId}/roles/${state.roleId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${auth.token}` },
+      }
+    );
 
     toast.add({
-      title: "Rol asignado",
-      description: "El rol fue asignado correctamente al usuario",
+      title: "Rol quitado",
+      description: "El rol fue quitado correctamente al usuario",
       color: "success",
     });
 
@@ -82,17 +86,18 @@ async function onSubmit() {
 </script>
 
 <template>
-  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')" >
+  <UModal :open="props.open" title="quitar rol" @close="emit('close')" >
 
     <template #description>
-      Selecciona un rol para asignar al usuario.
+      Selecciona un rol para quitar al usuario.
+
     </template>
 
     <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
     <template #body>
       <UForm
-        id="assignRoleForm"
+        id="removeRoleForm"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
@@ -122,10 +127,10 @@ async function onSubmit() {
         "
       />
       <UButton
-        label="Asignar rol"
+        label="Quitar rol"
         type="submit"
         color="neutral"
-        form="assignRoleForm"
+        form="removeRoleForm"
       />
     </template>
   </UModal>

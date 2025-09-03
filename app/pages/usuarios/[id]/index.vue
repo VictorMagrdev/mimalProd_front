@@ -23,6 +23,7 @@ const {
     },
   }),
 );
+console.log(user);
 </script>
 
 <template>

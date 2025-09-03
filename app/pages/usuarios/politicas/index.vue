@@ -2,9 +2,7 @@
 import { ref, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
@@ -96,14 +94,9 @@ function getRowItems(policy: PolicyUI) {
   return [
     [
       {
-        label: "Detalles",
-        icon: "i-heroicons-eye-20-solid",
-        click: () => router.push(`/policies/${policy.id}`),
-      },
-      {
         label: "Eliminar",
         icon: "i-heroicons-trash-20-solid",
-        click: () => deletePolicy(policy),
+        onSelect: () => deletePolicy(policy),
       },
     ],
   ];

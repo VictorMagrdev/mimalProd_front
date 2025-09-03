@@ -79,7 +79,6 @@ watch(open, async (val) => {
 
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
   error.value = null;
-  console.log(event.data);
   const { error: fetchError } = await useFetch(
     "http://localhost:8080/api/policies",
     {

@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, reactive, defineProps, defineEmits } from "vue";
+import { useRouter } from "vue-router";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { useAuthStore } from "@/stores/auth";
 
-const route = useRoute();
+
+const props = defineProps<{
+  userId: number | null;
+  open: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "close"): void;
+}>();
+
+
 const router = useRouter();
 const auth = useAuthStore();
 
-const open = ref(true);
 const error = ref<string | null>(null);
 
 interface UserUpdateState {
@@ -27,23 +36,30 @@ const state = reactive<UserUpdateState>({
 
 const toast = useToast();
 
-const userId = Number(route.params.id);
+watch(
+  () => props.userId,
+  async (newUserId) => {
+    if (newUserId) {
+      const { data, error: fetchError } = await useFetch<UserUpdateState>(
+        `http://localhost:8080/api/users/${newUserId}`,
+        {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        },
+      );
 
-onMounted(async () => {
-  const { data, error: fetchError } = await useFetch<UserUpdateState>(
-    `http://localhost:8080/api/users/${userId}`,
-    {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    },
-  );
+      if (fetchError.value) {
+        error.value = fetchError.value.message;
+        return;
+      }
 
-  if (fetchError.value) {
-    error.value = fetchError.value.message;
-    return;
-  }
+      if (data.value) {
+        Object.assign(state, data.value);
+      }
+    }
+  },
+  { immediate: true }
+);
 
-  Object.assign(state, data.value);
-});
 
 function resetForm() {
   state.username = "";
@@ -52,12 +68,13 @@ function resetForm() {
   state.active = true;
 }
 
-// Actualizar usuario
 async function onSubmit(event: FormSubmitEvent<UserUpdateState>) {
   error.value = null;
 
+  if (!props.userId) return;
+
   const { error: fetchError } = await useFetch(
-    `http://localhost:8080/api/users/${userId}`,
+    `http://localhost:8080/api/users/${props.userId}`,
     {
       method: "PUT",
       body: event.data,
@@ -81,12 +98,15 @@ async function onSubmit(event: FormSubmitEvent<UserUpdateState>) {
     color: "success",
   });
 
-  router.push("/usuarios");
+  emit('close');
+  router.go(0);
 }
 
 async function deactivateUser() {
+  if (!props.userId) return;
+
   const { error: fetchError } = await useFetch(
-    `http://localhost:8080/api/users/${userId}/deactivate`,
+    `http://localhost:8080/api/users/${props.userId}/deactivate`,
     {
       method: "POST",
       headers: { Authorization: `Bearer ${auth.token}` },
@@ -108,12 +128,13 @@ async function deactivateUser() {
     color: "success",
   });
 
-  router.push("/usuarios");
+  emit('close');
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Actualizar usuario">
+  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')" >
+
     <template #description>
       Modifica los campos para actualizar la información del usuario.
     </template>
@@ -159,15 +180,15 @@ async function deactivateUser() {
       </UForm>
     </template>
 
-    <template #footer="{ close }">
+    <template #footer>
       <UButton
         label="Cancelar"
         color="neutral"
         variant="outline"
         @click="
           () => {
-            close();
             resetForm();
+            emit('close');
           }
         "
       />
