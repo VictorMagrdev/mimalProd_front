@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from "vue";
-import { useRouter } from "vue-router";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { useAuthStore } from "@/stores/auth";
 
@@ -15,7 +14,6 @@ const emit = defineEmits<{
 }>();
 
 
-const router = useRouter();
 const auth = useAuthStore();
 
 const error = ref<string | null>(null);
@@ -99,7 +97,6 @@ async function onSubmit(event: FormSubmitEvent<UserUpdateState>) {
   });
 
   emit('close');
-  router.go(0);
 }
 
 async function deactivateUser() {

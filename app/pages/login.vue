@@ -21,7 +21,6 @@ const state = reactive<Partial<Schema>>({
   password: undefined,
 });
 const error = ref("");
-const toast = useToast();
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   error.value = "";
   try {
@@ -39,11 +38,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     error.value =
       err instanceof Error && err.message ? err.message : "An error occurred";
   }
-  toast.add({
-    title: "Success",
-    description: "The form has been submitted.",
-    color: "success",
-  });
+  
 }
 </script>
 

@@ -12,7 +12,14 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
-//
+Cypress.Commands.add('login', (username = 'admin', password = 'admin123') => {
+  cy.visit('http://192.168.0.104:3000/login');
+  cy.get('input[name=username]', { timeout: 10000 }).should('be.visible').type('admin');
+    cy.get('input[name=password]').should('be.visible').type('admin123');
+  cy.get("button[type=submit]").click();
+  cy.get('nav', { timeout: 10000 }).should('be.visible');
+  cy.url().should("include", "http://192.168.0.104:3000/");
+});
 //
 // -- This is a child command --
 // Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })

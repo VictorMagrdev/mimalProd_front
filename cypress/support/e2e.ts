@@ -14,4 +14,25 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import "./commands";
+import './commands';
+
+// Augment the Cypress namespace to include our custom command
+// cypress/support/commands.d.ts
+// cypress/support/commands.d.ts
+/// <reference types="cypress" />
+
+declare global {
+  interface Cypress {
+    // You can extend Cypress if needed
+  }
+
+  interface Chainable {
+    /**
+     * Custom command to login
+     * @example cy.login('email@example.com', 'password123')
+     */
+          login(username?: string, password?: string): Chainable<void>;
+  }
+}
+
+export {}; // This file is now an ES module
