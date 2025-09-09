@@ -31,7 +31,9 @@ watch(result, (newVal) => {
   }
 });
 
-const { mutate, loading: mutationLoading } = useMutation(UpdateUnidadMedidaTipo);
+const { mutate, loading: mutationLoading } = useMutation(
+  UpdateUnidadMedidaTipo,
+);
 
 const toast = useToast();
 

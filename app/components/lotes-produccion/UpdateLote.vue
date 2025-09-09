@@ -32,7 +32,8 @@ const { result, loading: queryLoading } = useQuery(
 
 watch(result, (newVal) => {
   if (newVal?.loteProduccion) {
-    const { numeroLote, fabricadoEn, venceEn, producto } = newVal.loteProduccion;
+    const { numeroLote, fabricadoEn, venceEn, producto } =
+      newVal.loteProduccion;
     Object.assign(state, {
       numeroLote,
       fabricadoEn,
@@ -42,16 +43,25 @@ watch(result, (newVal) => {
   }
 });
 
-// Productos para el select
+// Interfaces de entidades
+interface Producto {
+  id: string;
+  nombre: string;
+}
+
+interface ProductosResult {
+  productos: Producto[];
+}
+
 const { data: productosResult, pending: productosLoading } =
-  await useAsyncQuery(GetProductos);
+  await useAsyncQuery<ProductosResult>(GetProductos);
 
 const productosOptions = computed(
   () =>
-    productosResult.value?.productos.map((p: any) => ({
+    productosResult.value?.productos.map((p) => ({
       label: p.nombre,
       value: p.id,
-    })) || [],
+    })) ?? [],
 );
 
 const { mutate, loading: mutationLoading } = useMutation(UpdateLoteProduccion);

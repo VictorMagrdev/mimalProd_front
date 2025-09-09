@@ -27,20 +27,39 @@ const UnidadSchemaInitialState: UnidadMedidaFormState = {
 const state = reactive({ ...UnidadSchemaInitialState });
 const error = ref<string | null>(null);
 
+// Interfaces de entidades
+interface UnidadMedidaTipo {
+  id: string;
+  nombre: string;
+}
+
+// Estado del formulario
+interface UnidadMedidaFormState {
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  idTipo?: string;
+  esActiva: boolean;
+  esBase: boolean;
+}
+
+interface UnidadesMedidaTipoResult {
+  unidadesMedidaTipo: UnidadMedidaTipo[];
+}
+
 const {
   result: tiposResult,
   loading: tiposLoading,
   refetch: refetchTipos,
-} = useQuery(GetUnidadesMedidaTipo);
+} = useQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
 
-const tiposOptions = computed(() => {
-  return (tiposResult.value?.unidadesMedidaTipo ?? []).map(
-    (t: UnidadMedidaTipo) => ({
+const tiposOptions = computed(
+  () =>
+    tiposResult.value?.unidadesMedidaTipo.map((t: UnidadMedidaTipo) => ({
       label: t.nombre,
       value: t.id,
-    }),
-  );
-});
+    })) ?? [],
+);
 
 watch(open, (isOpen) => {
   if (isOpen) {
@@ -69,13 +88,9 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaFormState>) {
 
     resetForm();
     open.value = false;
-  } catch (e: any) {
-    error.value = e.message;
-    toast.add({
-      title: "Error",
-      description: e.message,
-      color: "error",
-    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    toast.add({ title: "Error", description: message });
   }
 }
 </script>

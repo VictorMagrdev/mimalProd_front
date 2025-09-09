@@ -25,12 +25,47 @@ const state = reactive<UnidadMedidaUpdateState>({
   esBase: false,
 });
 
-const { result, loading: queryLoading } = useQuery(
+// Interfaces de entidades
+interface UnidadMedidaTipo {
+  id: string;
+  nombre: string;
+}
+
+interface UnidadMedida {
+  id: string;
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  esActiva: boolean;
+  esBase: boolean;
+  tipo?: UnidadMedidaTipo | null;
+}
+
+// Estado del formulario
+interface UnidadMedidaUpdateState {
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  idTipo?: string;
+  esActiva: boolean;
+  esBase: boolean;
+}
+
+// Resultados de queries
+interface UnidadMedidaResult {
+  unidadMedida: UnidadMedida;
+}
+
+interface UnidadesMedidaTipoResult {
+  unidadesMedidaTipo: UnidadMedidaTipo[];
+}
+
+// Query tipada para buscar una unidad por id
+const { result, loading: queryLoading } = useQuery<UnidadMedidaResult>(
   GetUnidadMedidaById,
   { id: computed(() => props.unidadId) },
   { enabled: computed(() => !!props.unidadId) },
 );
-
 watch(result, (newVal) => {
   if (newVal?.unidadMedida) {
     const { codigo, nombre, abreviatura, esActiva, esBase, tipo } =
@@ -45,16 +80,16 @@ watch(result, (newVal) => {
     });
   }
 });
-
+// Query tipada para opciones de tipo de unidad
 const { data: tiposResult, pending: tiposLoading } =
-  await useAsyncQuery(GetUnidadesMedidaTipo);
+  await useAsyncQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
 
 const tiposOptions = computed(
   () =>
-    tiposResult.value?.unidadesMedidaTipo.map((t: any) => ({
+    tiposResult.value?.unidadesMedidaTipo.map((t) => ({
       label: t.nombre,
       value: t.id,
-    })) || [],
+    })) ?? [],
 );
 
 const { mutate, loading: mutationLoading } = useMutation(UpdateUnidadMedida);

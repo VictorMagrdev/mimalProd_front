@@ -12,7 +12,7 @@ export interface LoteProduccionUI {
   numeroLote: string;
   producto: { nombre: string };
   fabricadoEn: string; // ISO date
-  venceEn: string;     // ISO date
+  venceEn: string; // ISO date
 }
 
 const {
@@ -22,7 +22,9 @@ const {
   refresh: refetch,
 } = await useAsyncQuery(GetLotesProduccion);
 
-const rows = computed<LoteProduccionUI[]>(() => data.value?.lotesProduccion || []);
+const rows = computed<LoteProduccionUI[]>(
+  () => data.value?.lotesProduccion || [],
+);
 
 const columns: TableColumn<LoteProduccionUI>[] = [
   {

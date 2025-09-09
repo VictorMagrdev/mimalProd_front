@@ -47,25 +47,37 @@ watch(result, (newVal) => {
   }
 });
 
-interface OrdenProduccion { id: string; numeroOrden: string }
-interface TipoCosto { id: string; nombre: string }
+interface OrdenProduccion {
+  id: string;
+  numeroOrden: string;
+}
+interface TipoCosto {
+  id: string;
+  nombre: string;
+}
+interface OrdenesProduccionResult {
+  ordenesProduccion: OrdenProduccion[];
+}
+interface TiposCostoResult {
+  tiposCosto: TipoCosto[];
+}
 
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery(GetOrdenesProduccion);
 const { data: tiposResult, pending: tiposLoading } =
-  await useAsyncQuery(GetTiposCosto);
+  await useAsyncQuery<TiposCostoResult>(GetTiposCosto);
+const { data: ordenesResult, pending: ordenesLoading } =
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
 const ordenesOptions = computed(() =>
-  ordenesResult.value?.map((o: OrdenProduccion) => ({
-    label: o.numeroOrden,
+  ordenesResult.value?.ordenesProduccion.map((o) => ({
     id: o.id,
+    label: o.numeroOrden,
   })),
 );
 
 const tiposOptions = computed(() =>
-  (tiposResult.value?).map((t: TipoCosto) => ({
-    label: t.nombre,
+  tiposResult.value?.tiposCosto.map((t) => ({
     id: t.id,
+    label: t.nombre,
   })),
 );
 

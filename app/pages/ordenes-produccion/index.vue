@@ -14,7 +14,7 @@ export interface OrdenProduccionUI {
   unidad: { abreviatura: string };
   estado: { nombre: string };
   inicioPlanificado: string; // ISO date
-  finPlanificado: string;    // ISO date
+  finPlanificado: string; // ISO date
 }
 
 const {
@@ -24,23 +24,47 @@ const {
   refresh: refetch,
 } = await useAsyncQuery(GetOrdenesProduccion);
 
-const rows = computed<OrdenProduccionUI[]>(() => data.value?.ordenesProduccion || []);
+const rows = computed<OrdenProduccionUI[]>(
+  () => data.value?.ordenesProduccion || [],
+);
 
 const columns: TableColumn<OrdenProduccionUI>[] = [
-  { accessorKey: "numeroOrden", header: "N° Orden", cell: ({ row }) => row.original.numeroOrden },
-  { accessorKey: "producto.nombre", header: "Producto", cell: ({ row }) => row.original.producto.nombre },
-  { accessorKey: "cantidad", header: "Cantidad", cell: ({ row }) => row.original.cantidad },
-  { accessorKey: "unidad.abreviatura", header: "Unidad", cell: ({ row }) => row.original.unidad.abreviatura },
-  { accessorKey: "estado.nombre", header: "Estado", cell: ({ row }) => row.original.estado.nombre },
+  {
+    accessorKey: "numeroOrden",
+    header: "N° Orden",
+    cell: ({ row }) => row.original.numeroOrden,
+  },
+  {
+    accessorKey: "producto.nombre",
+    header: "Producto",
+    cell: ({ row }) => row.original.producto.nombre,
+  },
+  {
+    accessorKey: "cantidad",
+    header: "Cantidad",
+    cell: ({ row }) => row.original.cantidad,
+  },
+  {
+    accessorKey: "unidad.abreviatura",
+    header: "Unidad",
+    cell: ({ row }) => row.original.unidad.abreviatura,
+  },
+  {
+    accessorKey: "estado.nombre",
+    header: "Estado",
+    cell: ({ row }) => row.original.estado.nombre,
+  },
   {
     accessorKey: "inicioPlanificado",
     header: "Inicio Plan.",
-    cell: ({ row }) => new Date(row.original.inicioPlanificado).toLocaleDateString(),
+    cell: ({ row }) =>
+      new Date(row.original.inicioPlanificado).toLocaleDateString(),
   },
   {
     accessorKey: "finPlanificado",
     header: "Fin Plan.",
-    cell: ({ row }) => new Date(row.original.finPlanificado).toLocaleDateString(),
+    cell: ({ row }) =>
+      new Date(row.original.finPlanificado).toLocaleDateString(),
   },
   {
     id: "actions",
@@ -87,8 +111,14 @@ function openUpdateModal(id: string) {
 <template>
   <div class="w-full space-y-4 pb-4">
     <h1>Órdenes de Producción</h1>
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -112,7 +142,12 @@ function openUpdateModal(id: string) {
           "
           :content="{ align: 'end' }"
         >
-          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
         </UDropdownMenu>
 
         <UButton @click="isNewModalOpen = true">Nueva Orden</UButton>

@@ -43,11 +43,15 @@ async function onSubmit(event: FormSubmitEvent<TipoCostoFormState>) {
 
     resetForm();
     open.value = false;
-  } catch (e: any) {
-    error.value = e.message;
+  } catch (e: unknown) {
+    const message =
+      typeof e === "object" && e !== null && "message" in e
+        ? (e as { message: string }).message
+        : String(e);
+    error.value = message;
     toast.add({
       title: "Error",
-      description: e.message,
+      description: message,
       color: "error",
     });
   }

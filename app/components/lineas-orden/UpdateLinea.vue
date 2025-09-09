@@ -57,36 +57,64 @@ watch(result, (newVal) => {
   }
 });
 
-// Queries for select menus
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery(GetOrdenesProduccion);
-const { data: productosResult, pending: productosLoading } =
-  await useAsyncQuery(GetProductos);
-const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery(GetUnidadesMedida);
+// Interfaces de entidades
+interface OrdenProduccion {
+  id: string;
+  numeroOrden: string;
+}
+interface Producto {
+  id: string;
+  nombre: string;
+}
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
 
+// Interfaces de resultados de queries
+interface OrdenesProduccionResult {
+  ordenesProduccion: OrdenProduccion[];
+}
+interface ProductosResult {
+  productos: Producto[];
+}
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
+// Queries tipadas
+const { data: ordenesResult, pending: ordenesLoading } =
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
+
+const { data: productosResult, pending: productosLoading } =
+  await useAsyncQuery<ProductosResult>(GetProductos);
+
+const { data: unidadesResult, pending: unidadesLoading } =
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
+
+// Options
 const ordenesOptions = computed(
   () =>
-    ordenesResult.value?.ordenesProduccion.map((o: any) => ({
+    ordenesResult.value?.ordenesProduccion.map((o) => ({
       label: o.numeroOrden,
       value: o.id,
-    })) || [],
+    })) ?? [],
 );
 
 const productosOptions = computed(
   () =>
-    productosResult.value?.productos.map((p: any) => ({
+    productosResult.value?.productos.map((p) => ({
       label: p.nombre,
       value: p.id,
-    })) || [],
+    })) ?? [],
 );
 
 const unidadesOptions = computed(
   () =>
-    unidadesResult.value?.unidadesMedida.map((u: any) => ({
+    unidadesResult.value?.unidadesMedida.map((u) => ({
       label: u.nombre,
       value: u.id,
-    })) || [],
+    })) ?? [],
 );
 
 const { mutate, loading: mutationLoading } = useMutation(UpdateLineaOrden);

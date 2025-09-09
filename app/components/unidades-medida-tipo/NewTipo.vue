@@ -57,7 +57,12 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
       <h2 class="text-lg font-semibold">Crear Tipo de Unidad de Medida</h2>
     </template>
 
-    <UForm id="unidadMedidaTipoForm" :state="state" class="space-y-4" @submit="onSubmit">
+    <UForm
+      id="unidadMedidaTipoForm"
+      :state="state"
+      class="space-y-4"
+      @submit="onSubmit"
+    >
       <UFormField label="Código" name="codigo">
         <UInput v-model="state.codigo" placeholder="Ej. KG" />
       </UFormField>
@@ -67,7 +72,10 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
       </UFormField>
 
       <UFormField label="Descripción" name="descripcion">
-        <UInput v-model="state.descripcion" placeholder="Descripción opcional" />
+        <UInput
+          v-model="state.descripcion"
+          placeholder="Descripción opcional"
+        />
       </UFormField>
     </UForm>
 

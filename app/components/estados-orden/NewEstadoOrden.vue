@@ -34,7 +34,7 @@ async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
 
   try {
     await mutate({ input: event.data });
-    
+
     toast.add({
       title: "Estado de orden creado",
       description: "El estado de orden fue registrado correctamente",
@@ -44,9 +44,10 @@ async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
     resetForm();
     open.value = false;
   } catch (e: unknown) {
-    const message = typeof e === "object" && e !== null && "message" in e
-      ? (e as { message: string }).message
-      : String(e);
+    const message =
+      typeof e === "object" && e !== null && "message" in e
+        ? (e as { message: string }).message
+        : String(e);
     error.value = message;
     toast.add({
       title: "Error",
@@ -73,7 +74,12 @@ async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
     <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
 
     <template #body>
-      <UForm id="estadoOrdenForm" :state="state" class="space-y-4" @submit="onSubmit">
+      <UForm
+        id="estadoOrdenForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
         <UFormField label="Código" name="codigo">
           <UInput
             v-model="state.codigo"

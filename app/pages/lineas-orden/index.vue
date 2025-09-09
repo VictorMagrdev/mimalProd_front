@@ -30,7 +30,8 @@ const columns: TableColumn<LineaOrdenUI>[] = [
   {
     accessorKey: "orden.numeroOrden",
     header: "N° Orden",
-    cell: ({ row }: { row: Row<LineaOrdenUI> }) => row.original.orden.numeroOrden,
+    cell: ({ row }: { row: Row<LineaOrdenUI> }) =>
+      row.original.orden.numeroOrden,
   },
   {
     accessorKey: "numeroLinea",

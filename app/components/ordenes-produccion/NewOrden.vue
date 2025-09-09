@@ -55,8 +55,11 @@ const state = reactive({ ...OrdenSchemaInitialState });
 const error = ref<string | null>(null);
 
 // Queries
-const { result: lotesResult, loading: lotesLoading, refetch: refetchLotes } =
-  useQuery(GetLotesProduccion);
+const {
+  result: lotesResult,
+  loading: lotesLoading,
+  refetch: refetchLotes,
+} = useQuery(GetLotesProduccion);
 const {
   result: productosResult,
   loading: productosLoading,

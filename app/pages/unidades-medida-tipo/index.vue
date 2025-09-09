@@ -158,7 +158,7 @@ function handleUpdated() {
       </div>
     </div>
 
-     <UnidadesMedidaTipoNewTipo
+    <UnidadesMedidaTipoNewTipo
       :is-open="isNewModalOpen"
       @close="isNewModalOpen = false"
       @created="handleCreated"

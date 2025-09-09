@@ -32,34 +32,63 @@ const initialState = {
 };
 const state = reactive({ ...initialState });
 
-// Queries
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery(GetOrdenesProduccion);
-const { data: productosResult, pending: productosLoading } =
-  await useAsyncQuery(GetProductos);
-const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery(GetUnidadesMedida);
+// Interfaces de entidades
+interface OrdenProduccion {
+  id: string;
+  numeroOrden: string;
+}
+interface Producto {
+  id: string;
+  nombre: string;
+}
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
 
-// Options tipados
-const ordenesOptions = computed(() =>
-  (ordenesResult.value?.ordenesProduccion || []).map(
-    (o: OrdenProduccion) => ({
+// Interfaces de resultados de queries
+interface OrdenesProduccionResult {
+  ordenesProduccion: OrdenProduccion[];
+}
+interface ProductosResult {
+  productos: Producto[];
+}
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
+// Queries tipadas
+const { data: ordenesResult, pending: ordenesLoading } =
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
+
+const { data: productosResult, pending: productosLoading } =
+  await useAsyncQuery<ProductosResult>(GetProductos);
+
+const { data: unidadesResult, pending: unidadesLoading } =
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
+
+const ordenesOptions = computed(
+  () =>
+    ordenesResult.value?.ordenesProduccion.map((o) => ({
+      id: o.id,
       label: o.numeroOrden,
-      id: o.id.toString(),
-    }),
-  ),
+    })) ?? [],
 );
-const productosOptions = computed(() =>
-  (productosResult.value?.productos || []).map((p: Producto) => ({
-    label: p.nombre,
-    id: p.id.toString(),
-  })),
+
+const productosOptions = computed(
+  () =>
+    productosResult.value?.productos.map((p) => ({
+      id: p.id,
+      label: p.nombre,
+    })) ?? [],
 );
-const unidadesOptions = computed(() =>
-  (unidadesResult.value?.unidadesMedida || []).map((u: UnidadMedida) => ({
-    label: u.nombre,
-    id: u.id.toString(),
-  })),
+
+const unidadesOptions = computed(
+  () =>
+    unidadesResult.value?.unidadesMedida.map((u) => ({
+      id: u.id,
+      label: u.nombre,
+    })) ?? [],
 );
 
 const { mutate, loading } = useMutation(CreateLineaOrden);

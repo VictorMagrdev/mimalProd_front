@@ -4,7 +4,6 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import getProductoById from "~/graphql/productos/get-producto-by-id.graphql";
 import updateProducto from "~/graphql/productos/update-producto.graphql";
 import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
-import type { UnidadMedida, Producto } from "~/graphql/types";
 
 const props = defineProps<{
   open: boolean;
@@ -28,12 +27,33 @@ const state = reactive<ProductoUpdateState>({
   costoBase: 0,
 });
 
-const { result: productoResult, loading: productoLoading } = useQuery(
-  getProductoById,
-  { id: computed(() => props.productoId) },
-  { enabled: computed(() => !!props.productoId) },
-);
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
 
+interface Producto {
+  id: string;
+  codigo: string;
+  nombre: string;
+  costoBase?: number;
+  unidadBase?: UnidadMedida;
+}
+
+interface ProductoResult {
+  producto: Producto;
+}
+
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
+const { result: productoResult, loading: productoLoading } =
+  useQuery<ProductoResult>(
+    getProductoById,
+    { id: computed(() => props.productoId) },
+    { enabled: computed(() => !!props.productoId) },
+  );
 watch(productoResult, (newVal) => {
   if (newVal?.producto) {
     const p = newVal.producto as Producto;
@@ -48,16 +68,16 @@ const {
   result: unidadesResult,
   loading: unidadesLoading,
   refetch: refetchUnidades,
-} = useQuery(getUnidadesMedida, null, { immediate: false });
+} = useQuery<UnidadesMedidaResult>(getUnidadesMedida);
 
-const unidadesOptions = computed(() => {
-  return (unidadesResult.value?.unidadesMedida ?? []).map(
-    (u: UnidadMedida) => ({
+// Options tipados
+const unidadesOptions = computed(
+  () =>
+    unidadesResult.value?.unidadesMedida.map((u) => ({
       label: u.nombre,
       value: u.id,
-    }),
-  );
-});
+    })) ?? [],
+);
 
 watch(
   () => props.open,
@@ -101,11 +121,15 @@ async function onSubmit(event: FormSubmitEvent<ProductoUpdateState>) {
     });
 
     emit("close");
-  } catch (e: any) {
-    error.value = e.message;
+  } catch (e: unknown) {
+    const message =
+      typeof e === "object" && e !== null && "message" in e
+        ? (e as { message: string }).message
+        : String(e);
+    error.value = message;
     toast.add({
       title: "Error",
-      description: e.message,
+      description: message,
       color: "error",
     });
   }

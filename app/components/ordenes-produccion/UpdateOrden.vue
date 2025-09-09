@@ -61,55 +61,95 @@ watch(ordenResult, (newVal) => {
   }
 });
 
-// Queries for select menus
+// Interfaces de entidades
+interface LoteProduccion {
+  id: string;
+  numeroLote: string;
+}
+interface Producto {
+  id: string;
+  nombre: string;
+}
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
+interface EstadoOrden {
+  id: string;
+  nombre: string;
+}
+
+// Interfaces de resultados de queries
+interface LotesProduccionResult {
+  lotesProduccion: LoteProduccion[];
+}
+interface ProductosResult {
+  productos: Producto[];
+}
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+interface EstadosOrdenResult {
+  estadosOrden: EstadoOrden[];
+}
+
+// Queries tipadas
 const {
   result: lotesResult,
   loading: lotesLoading,
   refetch: refetchLotes,
-} = useQuery(GetLotesProduccion);
+} = useQuery<LotesProduccionResult>(GetLotesProduccion);
+
 const {
   result: productosResult,
   loading: productosLoading,
   refetch: refetchProductos,
-} = useQuery(GetProductos);
+} = useQuery<ProductosResult>(GetProductos);
+
 const {
   result: unidadesResult,
   loading: unidadesLoading,
   refetch: refetchUnidades,
-} = useQuery(GetUnidadesMedida);
+} = useQuery<UnidadesMedidaResult>(GetUnidadesMedida);
+
 const {
   result: estadosResult,
   loading: estadosLoading,
   refetch: refetchEstados,
-} = useQuery(GetEstadosOrden);
+} = useQuery<EstadosOrdenResult>(GetEstadosOrden);
 
-const lotesOptions = computed(() => {
-  return (lotesResult.value?.lotesProduccion ?? []).map((l: any) => ({
-    label: l.numeroLote,
-    value: l.id,
-  }));
-});
+// Options tipados
+const lotesOptions = computed(
+  () =>
+    lotesResult.value?.lotesProduccion.map((l) => ({
+      label: l.numeroLote,
+      value: l.id,
+    })) ?? [],
+);
 
-const productosOptions = computed(() => {
-  return (productosResult.value?.productos ?? []).map((p: any) => ({
-    label: p.nombre,
-    value: p.id,
-  }));
-});
+const productosOptions = computed(
+  () =>
+    productosResult.value?.productos.map((p) => ({
+      label: p.nombre,
+      value: p.id,
+    })) ?? [],
+);
 
-const unidadesOptions = computed(() => {
-  return (unidadesResult.value?.unidadesMedida ?? []).map((u: any) => ({
-    label: u.nombre,
-    value: u.id,
-  }));
-});
+const unidadesOptions = computed(
+  () =>
+    unidadesResult.value?.unidadesMedida.map((u) => ({
+      label: u.nombre,
+      value: u.id,
+    })) ?? [],
+);
 
-const estadosOptions = computed(() => {
-  return (estadosResult.value?.estadosOrden ?? []).map((e: any) => ({
-    label: e.nombre,
-    value: e.id,
-  }));
-});
+const estadosOptions = computed(
+  () =>
+    estadosResult.value?.estadosOrden.map((e) => ({
+      label: e.nombre,
+      value: e.id,
+    })) ?? [],
+);
 
 watch(
   () => props.open,
@@ -153,11 +193,15 @@ async function onSubmit(event: FormSubmitEvent<OrdenUpdateState>) {
     });
 
     emit("close");
-  } catch (e: any) {
-    error.value = e.message;
+  } catch (e: unknown) {
+    const message =
+      typeof e === "object" && e !== null && "message" in e
+        ? (e as { message: string }).message
+        : String(e);
+    error.value = message;
     toast.add({
       title: "Error",
-      description: e.message,
+      description: message,
       color: "error",
     });
   }

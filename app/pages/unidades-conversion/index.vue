@@ -28,7 +28,8 @@ const columns: TableColumn<UnidadConversion>[] = [
   {
     accessorKey: "origen.nombre",
     header: "Origen",
-    cell: ({ row }: { row: Row<UnidadConversion> }) => row.original.origen.nombre,
+    cell: ({ row }: { row: Row<UnidadConversion> }) =>
+      row.original.origen.nombre,
   },
   {
     accessorKey: "destino.nombre",

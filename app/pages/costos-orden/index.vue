@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
-import GetCostosOrden from "~/graphql/costos-orden/get-costos-orden.graphql"
+import { ref, computed, h } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
+import GetCostosOrden from "~/graphql/costos-orden/get-costos-orden.graphql";
 
 interface Orden {
-  id: string
-  numeroOrden: string
+  id: string;
+  numeroOrden: string;
 }
 
 interface TipoCosto {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 export interface CostoOrden {
-  id: string
-  orden: Orden
-  tipoCosto: TipoCosto
-  descripcion: string
-  monto: number
-  moneda: string
-  registradoEn: string
+  id: string;
+  orden: Orden;
+  tipoCosto: TipoCosto;
+  descripcion: string;
+  monto: number;
+  moneda: string;
+  registradoEn: string;
 }
 
 const {
@@ -29,9 +29,9 @@ const {
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery<{ costosOrden: CostoOrden[] }>(GetCostosOrden)
+} = await useAsyncQuery<{ costosOrden: CostoOrden[] }>(GetCostosOrden);
 
-const rows = computed<CostoOrden[]>(() => data.value?.costosOrden ?? [])
+const rows = computed<CostoOrden[]>(() => data.value?.costosOrden ?? []);
 
 // columnas tipadas
 const columns: TableColumn<CostoOrden>[] = [
@@ -82,13 +82,13 @@ const columns: TableColumn<CostoOrden>[] = [
         ),
       ),
   },
-]
+];
 
-const selectedId = ref<string | null>(null)
-const isNewModalOpen = ref(false)
+const selectedId = ref<string | null>(null);
+const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -96,17 +96,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1>Costos de Orden</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput placeholder="Filtrar..." class="max-w-sm" />
       <UButton @click="isNewModalOpen = true">Nuevo Costo</UButton>
     </div>
 
-    <UTable
-      :columns="columns"
-      :data="rows"
-      :loading="pending"
-      class="mt-4"
-    />
+    <UTable :columns="columns" :data="rows" :loading="pending" class="mt-4" />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
 

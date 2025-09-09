@@ -6,21 +6,45 @@ import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.gra
 const props = defineProps<{ isOpen: boolean }>();
 const emit = defineEmits(["close", "created"]);
 
-const initialState = { idOrigen: undefined, idDestino: undefined, factor: 1 };
-const state = reactive({ ...initialState });
+// Interfaces de entidades
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
 
-// Fetch unidades for select menus
+// Interfaces de resultados de queries
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
+// Estado del formulario
+interface UnidadConversionFormState {
+  idOrigen?: string;
+  idDestino?: string;
+  factor: number;
+}
+
+const initialState: UnidadConversionFormState = {
+  idOrigen: undefined,
+  idDestino: undefined,
+  factor: 1,
+};
+
+// Query tipada
 const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery(GetUnidadesMedida);
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
+
+// Options tipados
 const unidadesOptions = computed(
   () =>
-    unidadesResult.value?.unidadesMedida.map((u: any) => ({
+    unidadesResult.value?.unidadesMedida.map((u) => ({
       label: u.nombre,
       value: u.id,
-    })) || [],
+    })) ?? [],
 );
 
 const { mutate, loading } = useMutation(CreateUnidadConversion);
+const state = reactive({ ...initialState });
 
 const toast = useToast();
 

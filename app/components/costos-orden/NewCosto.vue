@@ -45,11 +45,13 @@ function resetForm() {
   error.value = null;
 }
 
-const { data: ordenesResult } =
-  useAsyncQuery<{ ordenesProduccion: OrdenProduccion[] }>(GetOrdenesProduccion);
+const { data: ordenesResult } = useAsyncQuery<{
+  ordenesProduccion: OrdenProduccion[];
+}>(GetOrdenesProduccion);
 
-const { data: tiposResult } =
-  useAsyncQuery<{ tiposCosto: TipoCosto[] }>(GetTiposCosto);
+const { data: tiposResult } = useAsyncQuery<{ tiposCosto: TipoCosto[] }>(
+  GetTiposCosto,
+);
 
 const ordenesOptions = computed<SelectItem[]>(() =>
   (ordenesResult.value?.ordenesProduccion ?? []).map((o) => ({
@@ -105,7 +107,11 @@ async function onSubmit() {
 </script>
 
 <template>
-  <UModal :open="props.isOpen" title="Crear Costo de Orden" @close="emit('close')">
+  <UModal
+    :open="props.isOpen"
+    title="Crear Costo de Orden"
+    @close="emit('close')"
+  >
     <template #description>
       Completa la información para registrar un costo en la orden de producción.
     </template>
@@ -113,7 +119,12 @@ async function onSubmit() {
     <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
     <template #body>
-      <UForm id="createCostoForm" :state="state" class="space-y-4" @submit="onSubmit">
+      <UForm
+        id="createCostoForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
         <UFormField label="Orden de Producción" name="idOrden">
           <USelectMenu
             v-model="state.idOrden"

@@ -20,12 +20,40 @@ const state = reactive<UnidadConversionUpdateState>({
   factor: 1,
 });
 
-const { result, loading: queryLoading } = useQuery(
+// Interfaces de entidades
+interface UnidadMedida {
+  id: string;
+  nombre: string;
+}
+
+interface UnidadConversion {
+  id: string;
+  factor: number;
+  origen?: UnidadMedida | null;
+  destino?: UnidadMedida | null;
+}
+
+// Estado del formulario
+interface UnidadConversionUpdateState {
+  idOrigen?: string;
+  idDestino?: string;
+  factor: number;
+}
+
+// Resultados de queries
+interface UnidadConversionResult {
+  unidadConversion: UnidadConversion;
+}
+
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
+const { result, loading: queryLoading } = useQuery<UnidadConversionResult>(
   GetUnidadConversionById,
   { id: computed(() => props.conversionId) },
   { enabled: computed(() => !!props.conversionId) },
 );
-
 watch(result, (newVal) => {
   if (newVal?.unidadConversion) {
     const { factor, origen, destino } = newVal.unidadConversion;
@@ -36,20 +64,20 @@ watch(result, (newVal) => {
     });
   }
 });
-
-// Fetch unidades for select menus
 const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery(GetUnidadesMedida);
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
 
 const unidadesOptions = computed(
   () =>
-    unidadesResult.value?.unidadesMedida.map((u: any) => ({
+    unidadesResult.value?.unidadesMedida.map((u) => ({
       label: u.nombre,
       value: u.id,
-    })) || [],
+    })) ?? [],
 );
 
-const { mutate, loading: mutationLoading } = useMutation(UpdateUnidadConversion);
+const { mutate, loading: mutationLoading } = useMutation(
+  UpdateUnidadConversion,
+);
 
 const toast = useToast();
 
