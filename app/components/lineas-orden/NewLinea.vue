@@ -6,7 +6,6 @@ import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produ
 import GetProductos from "~/graphql/productos/get-productos.graphql";
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 
-// Tipados
 interface OrdenProduccion {
   id: string;
   numeroOrden: string;
@@ -20,11 +19,9 @@ interface UnidadMedida {
   nombre: string;
 }
 
-// Props y emits
 const props = defineProps<{ isOpen: boolean }>();
 const emit = defineEmits(["close", "created"]);
 
-// Estado inicial
 const initialState = {
   idOrden: "" as string | undefined,
   numeroLinea: 1,
@@ -65,14 +62,11 @@ const unidadesOptions = computed(() =>
   })),
 );
 
-// Mutación
 const { mutate, loading } = useMutation(CreateLineaOrden);
 
-// Otros refs
 const toast = useToast();
 const error = ref<string | null>(null);
 
-// Funciones
 function closeModal() {
   Object.assign(state, initialState);
   emit("close");

@@ -1,7 +1,21 @@
 <script setup lang="ts">
-import { ref, h, computed } from "vue";
+import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
+
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+
+export interface UnidadMedida {
+  id: string;
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  tipo: { id: string; nombre: string };
+  esActiva: boolean;
+  esBase: boolean;
+}
 
 const {
   data,
@@ -9,17 +23,73 @@ const {
   error,
   refresh: refetch,
 } = await useAsyncQuery(GetUnidadesMedida);
-const rows = computed(() => data.value?.unidadesMedida || []);
 
-const columns: TableColumn[] = [
-  { key: "codigo", label: "Código" },
-  { key: "nombre", label: "Nombre" },
-  { key: "abreviatura", label: "Abreviatura" },
-  { key: "tipo.nombre", label: "Tipo" },
-  { key: "esActiva", label: "Activa" },
-  { key: "esBase", label: "Es Base" },
-  { key: "actions", label: "Acciones" },
+const unidades = computed(() => data.value?.unidadesMedida || []);
+const toast = useToast();
+
+const columns: TableColumn<UnidadMedida>[] = [
+  {
+    accessorKey: "codigo",
+    header: "Código",
+    cell: ({ row }: { row: Row<UnidadMedida> }) => row.original.codigo,
+  },
+  {
+    accessorKey: "nombre",
+    header: "Nombre",
+    cell: ({ row }) => row.original.nombre,
+  },
+  {
+    accessorKey: "abreviatura",
+    header: "Abreviatura",
+    cell: ({ row }) => row.original.abreviatura,
+  },
+  {
+    accessorKey: "tipo.nombre",
+    header: "Tipo",
+    cell: ({ row }) => row.original.tipo.nombre,
+  },
+  {
+    accessorKey: "esActiva",
+    header: "Activa",
+    cell: ({ row }) => (row.original.esActiva ? "Sí" : "No"),
+  },
+  {
+    accessorKey: "esBase",
+    header: "Es Base",
+    cell: ({ row }) => (row.original.esBase ? "Sí" : "No"),
+  },
+  {
+    id: "actions",
+    cell: ({ row }) =>
+      h(
+        "div",
+        { class: "text-right" },
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
+        ),
+      ),
+  },
 ];
+
+function getRowItems(unidad: UnidadMedida) {
+  return [
+    [
+      {
+        label: "Actualizar",
+        icon: "i-heroicons-pencil-20-solid",
+        onSelect: () => openUpdateModal(unidad.id),
+      },
+    ],
+  ];
+}
+
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
 const isNewModalOpen = ref(false);
@@ -27,36 +97,97 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
+
+function handleCreated() {
+  isNewModalOpen.value = false;
+  refetch();
+  toast.add({ title: "Unidad creada", color: "success" });
+}
+
+function handleUpdated() {
+  selectedId.value = null;
+  refetch();
+  toast.add({ title: "Unidad actualizada", color: "success" });
+}
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Unidades de Medida</h1>
-    <div class="flex justify-between">
-      <UInput placeholder="Filtrar..." />
-      <UButton @click="isNewModalOpen = true">Nueva Unidad</UButton>
+    <h1 class="text-2xl font-bold">Unidades de Medida</h1>
+
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
+
+      <div class="flex items-center space-x-2">
+        <UDropdownMenu
+          :items="
+            table?.tableApi
+              ?.getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => ({
+                label: column.id,
+                type: 'checkbox' as const,
+                checked: column.getIsVisible(),
+                onUpdateChecked(checked: boolean) {
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(!!checked);
+                },
+                onSelect(e?: Event) {
+                  e?.preventDefault();
+                },
+              }))
+          "
+          :content="{ align: 'end' }"
+        >
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
+        </UDropdownMenu>
+
+        <UButton label="Nueva Unidad" @click="isNewModalOpen = true" />
+      </div>
     </div>
 
-    <UTable :columns="columns" :rows="rows" :loading="pending">
-      <template #actions-data="{ row }">
-        <UButton variant="ghost" @click="openUpdateModal(row.id)"
-          >Actualizar</UButton
-        >
-      </template>
-    </UTable>
-
-    <div v-if="error">Error: {{ error.message }}</div>
+    <div class="relative z-0 w-full">
+      <UTable
+        ref="table"
+        v-model:pagination="pagination"
+        v-model:global-filter="globalFilter"
+        :data="unidades || []"
+        :columns="columns"
+        :loading="pending"
+      />
+      <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
+        <UPagination
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
+          :total="unidades?.length || 0"
+        />
+      </div>
+    </div>
 
     <UnidadesMedidaNewUnidad
       :is-open="isNewModalOpen"
       @close="isNewModalOpen = false"
-      @created="refetch"
+      @created="handleCreated"
     />
     <UnidadesMedidaUpdateUnidad
       :is-open="!!selectedId"
       :unidad-id="selectedId"
       @close="selectedId = null"
-      @updated="refetch"
+      @updated="handleUpdated"
     />
+
+    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>
 </template>

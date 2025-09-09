@@ -7,7 +7,14 @@ import UpdateTipoCosto from "~/graphql/tipos-costo/update-tipo-costo.graphql";
 const props = defineProps<{ isOpen: boolean; tipoCostoId: string | null }>();
 const emit = defineEmits(["close", "updated"]);
 
-const state = reactive({
+interface TipoCostoUpdateState {
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  activo: boolean;
+}
+
+const state = reactive<TipoCostoUpdateState>({
   codigo: "",
   nombre: "",
   descripcion: "",
@@ -52,21 +59,29 @@ async function onSubmit() {
 <template>
   <UModal :model-value="props.isOpen" @update:model-value="closeModal">
     <UCard>
-      <template #header><h2>Actualizar Tipo de Costo</h2></template>
+      <template #header>
+        <h2>Actualizar Tipo de Costo</h2>
+      </template>
+
       <div v-if="queryLoading">Cargando...</div>
+
       <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo"
-          ><UInput v-model="state.codigo"
-        /></UFormGroup>
-        <UFormGroup label="Nombre" name="nombre"
-          ><UInput v-model="state.nombre"
-        /></UFormGroup>
-        <UFormGroup label="Descripción" name="descripcion"
-          ><UInput v-model="state.descripcion"
-        /></UFormGroup>
-        <UFormGroup label="Activo" name="activo"
-          ><UCheckbox v-model="state.activo"
-        /></UFormGroup>
+        <UFormField label="Código" name="codigo">
+          <UInput v-model="state.codigo" />
+        </UFormField>
+
+        <UFormField label="Nombre" name="nombre">
+          <UInput v-model="state.nombre" />
+        </UFormField>
+
+        <UFormField label="Descripción" name="descripcion">
+          <UInput v-model="state.descripcion" />
+        </UFormField>
+
+        <UFormField label="Activo" name="activo">
+          <UCheckbox v-model="state.activo" />
+        </UFormField>
+
         <div class="flex justify-end space-x-2">
           <UButton variant="ghost" @click="closeModal">Cancelar</UButton>
           <UButton type="submit" :loading="mutationLoading">Actualizar</UButton>

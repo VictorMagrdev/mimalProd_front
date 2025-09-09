@@ -49,7 +49,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
 
   const payload = {
     ...event.data,
-    roleIds: event.data.roleIds.map((id) => Number(id)), // Convert back to numbers
+    roleIds: event.data.roleIds.map((id) => Number(id)),
   };
 
   try {

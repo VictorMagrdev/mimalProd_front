@@ -66,22 +66,22 @@ const {
   result: lotesResult,
   loading: lotesLoading,
   refetch: refetchLotes,
-} = useQuery(GetLotesProduccion, null, { immediate: false });
+} = useQuery(GetLotesProduccion);
 const {
   result: productosResult,
   loading: productosLoading,
   refetch: refetchProductos,
-} = useQuery(GetProductos, null, { immediate: false });
+} = useQuery(GetProductos);
 const {
   result: unidadesResult,
   loading: unidadesLoading,
   refetch: refetchUnidades,
-} = useQuery(GetUnidadesMedida, null, { immediate: false });
+} = useQuery(GetUnidadesMedida);
 const {
   result: estadosResult,
   loading: estadosLoading,
   refetch: refetchEstados,
-} = useQuery(GetEstadosOrden, null, { immediate: false });
+} = useQuery(GetEstadosOrden);
 
 const lotesOptions = computed(() => {
   return (lotesResult.value?.lotesProduccion ?? []).map((l: any) => ({

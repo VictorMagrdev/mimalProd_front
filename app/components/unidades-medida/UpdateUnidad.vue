@@ -3,10 +3,20 @@ import { reactive, watch, computed } from "vue";
 import GetUnidadMedidaById from "~/graphql/unidades-medida/get-unidad-medida-by-id.graphql";
 import UpdateUnidadMedida from "~/graphql/unidades-medida/update-unidad-medida.graphql";
 import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
+
 const props = defineProps<{ isOpen: boolean; unidadId: string | null }>();
 const emit = defineEmits(["close", "updated"]);
 
-const state = reactive({
+interface UnidadMedidaUpdateState {
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  idTipo?: string;
+  esActiva: boolean;
+  esBase: boolean;
+}
+
+const state = reactive<UnidadMedidaUpdateState>({
   codigo: "",
   nombre: "",
   abreviatura: "",
@@ -36,9 +46,9 @@ watch(result, (newVal) => {
   }
 });
 
-const { data: tiposResult, pending: tiposLoading } = await useAsyncQuery(
-  GetUnidadesMedidaTipo,
-);
+const { data: tiposResult, pending: tiposLoading } =
+  await useAsyncQuery(GetUnidadesMedidaTipo);
+
 const tiposOptions = computed(
   () =>
     tiposResult.value?.unidadesMedidaTipo.map((t: any) => ({
@@ -72,19 +82,26 @@ async function onSubmit() {
 <template>
   <UModal :model-value="props.isOpen" @update:model-value="closeModal">
     <UCard>
-      <template #header><h2>Actualizar Unidad de Medida</h2></template>
+      <template #header>
+        <h2>Actualizar Unidad de Medida</h2>
+      </template>
+
       <div v-if="queryLoading">Cargando...</div>
+
       <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo"
-          ><UInput v-model="state.codigo"
-        /></UFormGroup>
-        <UFormGroup label="Nombre" name="nombre"
-          ><UInput v-model="state.nombre"
-        /></UFormGroup>
-        <UFormGroup label="Abreviatura" name="abreviatura"
-          ><UInput v-model="state.abreviatura"
-        /></UFormGroup>
-        <UFormGroup label="Tipo" name="idTipo">
+        <UFormField label="Código" name="codigo">
+          <UInput v-model="state.codigo" />
+        </UFormField>
+
+        <UFormField label="Nombre" name="nombre">
+          <UInput v-model="state.nombre" />
+        </UFormField>
+
+        <UFormField label="Abreviatura" name="abreviatura">
+          <UInput v-model="state.abreviatura" />
+        </UFormField>
+
+        <UFormField label="Tipo" name="idTipo">
           <USelectMenu
             v-model="state.idTipo"
             :options="tiposOptions"
@@ -92,13 +109,16 @@ async function onSubmit() {
             option-attribute="label"
             :loading="tiposLoading"
           />
-        </UFormGroup>
-        <UFormGroup label="Activa" name="esActiva"
-          ><UCheckbox v-model="state.esActiva"
-        /></UFormGroup>
-        <UFormGroup label="Es Base" name="esBase"
-          ><UCheckbox v-model="state.esBase"
-        /></UFormGroup>
+        </UFormField>
+
+        <UFormField label="Activa" name="esActiva">
+          <UCheckbox v-model="state.esActiva" />
+        </UFormField>
+
+        <UFormField label="Es Base" name="esBase">
+          <UCheckbox v-model="state.esBase" />
+        </UFormField>
+
         <div class="flex justify-end space-x-2">
           <UButton variant="ghost" @click="closeModal">Cancelar</UButton>
           <UButton type="submit" :loading="mutationLoading">Actualizar</UButton>

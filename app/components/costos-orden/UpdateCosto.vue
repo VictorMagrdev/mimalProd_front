@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, watch, computed } from "vue";
-import { useQuery } from "#imports";
 import GetCostoOrdenById from "~/graphql/costos-orden/get-costo-orden-by-id.graphql";
 import UpdateCostoOrden from "~/graphql/costos-orden/update-costo-orden.graphql";
 import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
@@ -9,14 +9,25 @@ import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
 const props = defineProps<{ isOpen: boolean; costoId: string | null }>();
 const emit = defineEmits(["close", "updated"]);
 
-const state = reactive({
+interface CostoOrdenFormState {
+  idOrden?: string;
+  idTipoCosto?: string;
+  descripcion: string;
+  monto: number;
+  moneda: string;
+}
+
+const initialState: CostoOrdenFormState = {
   idOrden: undefined,
   idTipoCosto: undefined,
   descripcion: "",
   monto: 0,
-  moneda: "USD",
-});
+  moneda: "COP",
+};
 
+const state = reactive({ ...initialState });
+
+// Query del costo a editar
 const { result, loading: queryLoading } = useQuery(
   GetCostoOrdenById,
   { id: computed(() => props.costoId) },
@@ -36,39 +47,44 @@ watch(result, (newVal) => {
   }
 });
 
-// Queries for select menus
+interface OrdenProduccion { id: string; numeroOrden: string }
+interface TipoCosto { id: string; nombre: string }
+
 const { data: ordenesResult, pending: ordenesLoading } =
   await useAsyncQuery(GetOrdenesProduccion);
 const { data: tiposResult, pending: tiposLoading } =
   await useAsyncQuery(GetTiposCosto);
 
-const ordenesOptions = computed(
-  () =>
-    ordenesResult.value?.ordenesProduccion.map((o: any) => ({
-      label: o.numeroOrden,
-      value: o.id,
-    })) || [],
+const ordenesOptions = computed(() =>
+  ordenesResult.value?.map((o: OrdenProduccion) => ({
+    label: o.numeroOrden,
+    id: o.id,
+  })),
 );
-const tiposOptions = computed(
-  () =>
-    tiposResult.value?.tiposCosto.map((t: any) => ({
-      label: t.nombre,
-      value: t.id,
-    })) || [],
+
+const tiposOptions = computed(() =>
+  (tiposResult.value?).map((t: TipoCosto) => ({
+    label: t.nombre,
+    id: t.id,
+  })),
 );
 
 const { mutate, loading: mutationLoading } = useMutation(UpdateCostoOrden);
-
 const toast = useToast();
 
+function resetForm() {
+  Object.assign(state, initialState);
+}
+
 function closeModal() {
+  resetForm();
   emit("close");
 }
 
-async function onSubmit() {
+async function onSubmit(event: FormSubmitEvent<CostoOrdenFormState>) {
   if (!props.costoId) return;
   try {
-    await mutate({ id: props.costoId, input: state });
+    await mutate({ id: props.costoId, input: event.data });
     toast.add({ title: "Éxito", description: "Costo de orden actualizado." });
     emit("updated");
     closeModal();
@@ -83,33 +99,42 @@ async function onSubmit() {
   <UModal :model-value="props.isOpen" @update:model-value="closeModal">
     <UCard>
       <template #header><h2>Actualizar Costo de Orden</h2></template>
+
       <div v-if="queryLoading">Cargando...</div>
+
       <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Orden de Producción" name="idOrden"
-          ><USelectMenu
+        <UFormField label="Orden de Producción" name="idOrden">
+          <USelectMenu
             v-model="state.idOrden"
             :options="ordenesOptions"
-            value-attribute="value"
+            value-attribute="id"
             option-attribute="label"
             :loading="ordenesLoading"
-        /></UFormGroup>
-        <UFormGroup label="Tipo de Costo" name="idTipoCosto"
-          ><USelectMenu
+          />
+        </UFormField>
+
+        <UFormField label="Tipo de Costo" name="idTipoCosto">
+          <USelectMenu
             v-model="state.idTipoCosto"
             :options="tiposOptions"
-            value-attribute="value"
+            value-attribute="id"
             option-attribute="label"
             :loading="tiposLoading"
-        /></UFormGroup>
-        <UFormGroup label="Descripción" name="descripcion"
-          ><UInput v-model="state.descripcion"
-        /></UFormGroup>
-        <UFormGroup label="Monto" name="monto"
-          ><UInput v-model.number="state.monto" type="number"
-        /></UFormGroup>
-        <UFormGroup label="Moneda" name="moneda"
-          ><UInput v-model="state.moneda"
-        /></UFormGroup>
+          />
+        </UFormField>
+
+        <UFormField label="Descripción" name="descripcion">
+          <UInput v-model="state.descripcion" />
+        </UFormField>
+
+        <UFormField label="Monto" name="monto">
+          <UInput v-model.number="state.monto" type="number" />
+        </UFormField>
+
+        <UFormField label="Moneda" name="moneda">
+          <UInput v-model="state.moneda" />
+        </UFormField>
+
         <div class="flex justify-end space-x-2">
           <UButton variant="ghost" @click="closeModal">Cancelar</UButton>
           <UButton type="submit" :loading="mutationLoading">Actualizar</UButton>

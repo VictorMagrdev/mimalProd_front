@@ -8,7 +8,13 @@ import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.gra
 const props = defineProps<{ isOpen: boolean; conversionId: string | null }>();
 const emit = defineEmits(["close", "updated"]);
 
-const state = reactive({
+interface UnidadConversionUpdateState {
+  idOrigen?: string;
+  idDestino?: string;
+  factor: number;
+}
+
+const state = reactive<UnidadConversionUpdateState>({
   idOrigen: undefined,
   idDestino: undefined,
   factor: 1,
@@ -34,6 +40,7 @@ watch(result, (newVal) => {
 // Fetch unidades for select menus
 const { data: unidadesResult, pending: unidadesLoading } =
   await useAsyncQuery(GetUnidadesMedida);
+
 const unidadesOptions = computed(
   () =>
     unidadesResult.value?.unidadesMedida.map((u: any) => ({
@@ -42,9 +49,7 @@ const unidadesOptions = computed(
     })) || [],
 );
 
-const { mutate, loading: mutationLoading } = useMutation(
-  UpdateUnidadConversion,
-);
+const { mutate, loading: mutationLoading } = useMutation(UpdateUnidadConversion);
 
 const toast = useToast();
 
@@ -69,10 +74,14 @@ async function onSubmit() {
 <template>
   <UModal :model-value="props.isOpen" @update:model-value="closeModal">
     <UCard>
-      <template #header><h2>Actualizar Conversión de Unidad</h2></template>
+      <template #header>
+        <h2>Actualizar Conversión de Unidad</h2>
+      </template>
+
       <div v-if="queryLoading">Cargando...</div>
+
       <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Unidad Origen" name="idOrigen">
+        <UFormField label="Unidad Origen" name="idOrigen">
           <USelectMenu
             v-model="state.idOrigen"
             :options="unidadesOptions"
@@ -80,8 +89,9 @@ async function onSubmit() {
             option-attribute="label"
             :loading="unidadesLoading"
           />
-        </UFormGroup>
-        <UFormGroup label="Unidad Destino" name="idDestino">
+        </UFormField>
+
+        <UFormField label="Unidad Destino" name="idDestino">
           <USelectMenu
             v-model="state.idDestino"
             :options="unidadesOptions"
@@ -89,10 +99,12 @@ async function onSubmit() {
             option-attribute="label"
             :loading="unidadesLoading"
           />
-        </UFormGroup>
-        <UFormGroup label="Factor" name="factor"
-          ><UInput v-model.number="state.factor" type="number"
-        /></UFormGroup>
+        </UFormField>
+
+        <UFormField label="Factor" name="factor">
+          <UInput v-model.number="state.factor" type="number" />
+        </UFormField>
+
         <div class="flex justify-end space-x-2">
           <UButton variant="ghost" @click="closeModal">Cancelar</UButton>
           <UButton type="submit" :loading="mutationLoading">Actualizar</UButton>

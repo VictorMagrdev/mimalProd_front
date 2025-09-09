@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, watch, computed } from "vue";
-import { useQuery } from "#imports";
 import GetLoteProduccionById from "~/graphql/lotes-produccion/get-lote-produccion-by-id.graphql";
 import UpdateLoteProduccion from "~/graphql/lotes-produccion/update-lote-produccion.graphql";
 import GetProductos from "~/graphql/productos/get-productos.graphql";
@@ -8,12 +8,21 @@ import GetProductos from "~/graphql/productos/get-productos.graphql";
 const props = defineProps<{ isOpen: boolean; loteId: string | null }>();
 const emit = defineEmits(["close", "updated"]);
 
-const state = reactive({
+interface LoteProduccionFormState {
+  numeroLote: string;
+  idProducto?: string;
+  fabricadoEn: string;
+  venceEn: string;
+}
+
+const initialState: LoteProduccionFormState = {
   numeroLote: "",
   idProducto: undefined,
   fabricadoEn: "",
   venceEn: "",
-});
+};
+
+const state = reactive({ ...initialState });
 
 const { result, loading: queryLoading } = useQuery(
   GetLoteProduccionById,
@@ -23,8 +32,7 @@ const { result, loading: queryLoading } = useQuery(
 
 watch(result, (newVal) => {
   if (newVal?.loteProduccion) {
-    const { numeroLote, fabricadoEn, venceEn, producto } =
-      newVal.loteProduccion;
+    const { numeroLote, fabricadoEn, venceEn, producto } = newVal.loteProduccion;
     Object.assign(state, {
       numeroLote,
       fabricadoEn,
@@ -34,8 +42,10 @@ watch(result, (newVal) => {
   }
 });
 
+// Productos para el select
 const { data: productosResult, pending: productosLoading } =
   await useAsyncQuery(GetProductos);
+
 const productosOptions = computed(
   () =>
     productosResult.value?.productos.map((p: any) => ({
@@ -45,17 +55,21 @@ const productosOptions = computed(
 );
 
 const { mutate, loading: mutationLoading } = useMutation(UpdateLoteProduccion);
-
 const toast = useToast();
 
+function resetForm() {
+  Object.assign(state, initialState);
+}
+
 function closeModal() {
+  resetForm();
   emit("close");
 }
 
-async function onSubmit() {
+async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
   if (!props.loteId) return;
   try {
-    await mutate({ id: props.loteId, input: state });
+    await mutate({ id: props.loteId, input: event.data });
     toast.add({ title: "Éxito", description: "Lote actualizado." });
     emit("updated");
     closeModal();
@@ -70,12 +84,15 @@ async function onSubmit() {
   <UModal :model-value="props.isOpen" @update:model-value="closeModal">
     <UCard>
       <template #header><h2>Actualizar Lote de Producción</h2></template>
+
       <div v-if="queryLoading">Cargando...</div>
+
       <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Número de Lote" name="numeroLote"
-          ><UInput v-model="state.numeroLote"
-        /></UFormGroup>
-        <UFormGroup label="Producto" name="idProducto">
+        <UFormField label="Número de Lote" name="numeroLote">
+          <UInput v-model="state.numeroLote" />
+        </UFormField>
+
+        <UFormField label="Producto" name="idProducto">
           <USelectMenu
             v-model="state.idProducto"
             :options="productosOptions"
@@ -83,13 +100,16 @@ async function onSubmit() {
             option-attribute="label"
             :loading="productosLoading"
           />
-        </UFormGroup>
-        <UFormGroup label="Fabricado En" name="fabricadoEn"
-          ><UInput v-model="state.fabricadoEn" type="date"
-        /></UFormGroup>
-        <UFormGroup label="Vence En" name="venceEn"
-          ><UInput v-model="state.venceEn" type="date"
-        /></UFormGroup>
+        </UFormField>
+
+        <UFormField label="Fabricado En" name="fabricadoEn">
+          <UInput v-model="state.fabricadoEn" type="date" />
+        </UFormField>
+
+        <UFormField label="Vence En" name="venceEn">
+          <UInput v-model="state.venceEn" type="date" />
+        </UFormField>
+
         <div class="flex justify-end space-x-2">
           <UButton variant="ghost" @click="closeModal">Cancelar</UButton>
           <UButton type="submit" :loading="mutationLoading">Actualizar</UButton>
