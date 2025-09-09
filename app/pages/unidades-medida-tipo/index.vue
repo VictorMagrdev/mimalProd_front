@@ -14,14 +14,21 @@ export interface UnidadMedidaTipo {
   descripcion: string;
 }
 
+// Tipo del resultado del query
+interface UnidadesMedidaTipoResult {
+  unidadesMedidaTipo: UnidadMedidaTipo[];
+}
+
+// Query tipada
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetUnidadesMedidaTipo);
+} = await useAsyncQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
 
 const tipos = computed(() => data.value?.unidadesMedidaTipo || []);
+
 const toast = useToast();
 
 const columns: TableColumn<UnidadMedidaTipo>[] = [

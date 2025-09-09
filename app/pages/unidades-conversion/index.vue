@@ -14,14 +14,22 @@ export interface UnidadConversion {
   factor: number;
 }
 
+// Tipo del resultado del query
+interface UnidadesConversionResult {
+  unidadesConversion: UnidadConversion[];
+}
+
+// Query tipada
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetUnidadesConversion);
+} = await useAsyncQuery<UnidadesConversionResult>(GetUnidadesConversion);
 
+// Ahora TS reconoce `unidadesConversion`
 const conversiones = computed(() => data.value?.unidadesConversion || []);
+
 const toast = useToast();
 
 const columns: TableColumn<UnidadConversion>[] = [

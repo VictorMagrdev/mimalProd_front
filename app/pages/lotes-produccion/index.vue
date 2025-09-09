@@ -7,12 +7,17 @@ import GetLotesProduccion from "~/graphql/lotes-produccion/get-lotes-produccion.
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
+// Tipo de cada lote (ya lo definiste)
 export interface LoteProduccionUI {
   id: string;
   numeroLote: string;
   producto: { nombre: string };
-  fabricadoEn: string; // ISO date
-  venceEn: string; // ISO date
+  fabricadoEn: string;
+  venceEn: string;
+}
+
+interface LotesProduccionResult {
+  lotesProduccion: LoteProduccionUI[];
 }
 
 const {
@@ -20,7 +25,7 @@ const {
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetLotesProduccion);
+} = await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
 
 const rows = computed<LoteProduccionUI[]>(
   () => data.value?.lotesProduccion || [],

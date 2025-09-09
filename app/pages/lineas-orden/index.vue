@@ -17,12 +17,16 @@ export interface LineaOrdenUI {
   cantidadUsada: number;
 }
 
+interface LineasOrdenResult {
+  lineasOrden: LineaOrdenUI[];
+}
+
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetLineasOrden);
+} = await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
 
 const rows = computed<LineaOrdenUI[]>(() => data.value?.lineasOrden || []);
 

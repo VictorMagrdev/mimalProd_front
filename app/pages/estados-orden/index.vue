@@ -15,13 +15,29 @@ export interface EstadoOrdenUI {
   activo: boolean;
 }
 
+// Tipo de entidad
+interface EstadoOrden {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  activo: boolean;
+}
+
+// Tipo del resultado del query
+interface EstadosOrdenResult {
+  estadosOrden: EstadoOrden[];
+}
+
+// Query tipada
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetEstadosOrden);
+} = await useAsyncQuery<EstadosOrdenResult>(GetEstadosOrden);
 
+// Ahora TS sabe que data.value?.estadosOrden existe
 const rows = computed<EstadoOrdenUI[]>(() => data.value?.estadosOrden || []);
 
 const columns: TableColumn<EstadoOrdenUI>[] = [

@@ -17,14 +17,20 @@ export interface UnidadMedida {
   esBase: boolean;
 }
 
+interface UnidadesMedidaResult {
+  unidadesMedida: UnidadMedida[];
+}
+
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetUnidadesMedida);
+} = await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
 
+// Ahora TS sabe que `data.value?.unidadesMedida` existe
 const unidades = computed(() => data.value?.unidadesMedida || []);
+
 const toast = useToast();
 
 const columns: TableColumn<UnidadMedida>[] = [

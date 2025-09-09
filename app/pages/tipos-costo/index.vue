@@ -15,13 +15,19 @@ export interface TipoCosto {
   activo: boolean;
 }
 
+interface TiposCostoResult {
+  tiposCosto: TipoCosto[];
+}
+
+// Query tipada
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetTiposCosto);
+} = await useAsyncQuery<TiposCostoResult>(GetTiposCosto);
 
+// Ahora TS reconoce `tiposCosto`
 const tiposCosto = computed(() => data.value?.tiposCosto || []);
 
 const toast = useToast();

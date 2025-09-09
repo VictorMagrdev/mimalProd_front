@@ -17,13 +17,20 @@ export interface OrdenProduccionUI {
   finPlanificado: string; // ISO date
 }
 
+// Tipo del resultado del query
+interface OrdenesProduccionResult {
+  ordenesProduccion: OrdenProduccionUI[];
+}
+
+// Query tipada
 const {
   data,
   pending,
   error,
   refresh: refetch,
-} = await useAsyncQuery(GetOrdenesProduccion);
+} = await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
+// Ahora TS sabe que existe "ordenesProduccion"
 const rows = computed<OrdenProduccionUI[]>(
   () => data.value?.ordenesProduccion || [],
 );
@@ -180,7 +187,7 @@ function openUpdateModal(id: string) {
       @created="refetch"
     />
     <OrdenesProduccionUpdateOrden
-      :is-open="!!selectedId"
+      :open="!!selectedId"
       :orden-id="selectedId"
       @close="selectedId = null"
       @updated="refetch"
