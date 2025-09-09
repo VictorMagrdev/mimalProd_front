@@ -1,0 +1,9 @@
+query GetEstadosOrden {
+  estadosOrden {
+    id
+    codigo
+    nombre
+    descripcion
+    activo
+  }
+}

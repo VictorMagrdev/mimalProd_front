@@ -1,0 +1,9 @@
+query GetTiposCosto {
+  tiposCosto {
+    id
+    codigo
+    nombre
+    descripcion
+    activo
+  }
+}

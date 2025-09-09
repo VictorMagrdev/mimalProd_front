@@ -1,0 +1,14 @@
+query GetUnidadesMedida {
+  unidadesMedida {
+    id
+    codigo
+    nombre
+    abreviatura
+    esActiva
+    esBase
+    tipo {
+      id
+      nombre
+    }
+  }
+}

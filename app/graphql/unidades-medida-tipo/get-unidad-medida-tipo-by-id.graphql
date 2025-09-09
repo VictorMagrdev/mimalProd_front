@@ -1,0 +1,8 @@
+query GetUnidadMedidaTipoById($id: ID!) {
+  unidadMedidaTipo(id: $id) {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}

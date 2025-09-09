@@ -1,0 +1,15 @@
+query GetOrdenProduccionById($id: ID!) {
+  ordenProduccion(id: $id) {
+    id
+    numeroOrden
+    cantidad
+    cantidadProducida
+    inicioPlanificado
+    finPlanificado
+    observaciones
+    idLote: lote { id }
+    idProducto: producto { id }
+    idUnidad: unidad { id }
+    idEstado: estado { id }
+  }
+}

@@ -1,0 +1,5 @@
+mutation CreateUnidadMedida($input: UnidadMedidaInput!) {
+  createUnidadMedida(input: $input) {
+    id
+  }
+}

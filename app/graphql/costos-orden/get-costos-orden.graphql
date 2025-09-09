@@ -1,0 +1,15 @@
+query GetCostosOrden {
+  costosOrden {
+    id
+    descripcion
+    monto
+    moneda
+    registradoEn
+    orden {
+      numeroOrden
+    }
+    tipoCosto {
+      nombre
+    }
+  }
+}

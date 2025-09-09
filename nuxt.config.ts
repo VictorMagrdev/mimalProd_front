@@ -10,6 +10,14 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
+    '@nuxtjs/apollo',
   ],
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: 'http://localhost:8080/graphql',
+      },
+    },
+  },
   css: ["~/assets/css/main.css"],
 });

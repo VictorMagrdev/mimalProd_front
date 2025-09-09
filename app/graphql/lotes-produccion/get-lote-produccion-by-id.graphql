@@ -1,0 +1,11 @@
+query GetLoteProduccionById($id: ID!) {
+  loteProduccion(id: $id) {
+    id
+    numeroLote
+    fabricadoEn
+    venceEn
+    idProducto: producto {
+      id
+    }
+  }
+}

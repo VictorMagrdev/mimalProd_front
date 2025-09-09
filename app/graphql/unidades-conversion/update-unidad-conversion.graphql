@@ -1,0 +1,5 @@
+mutation UpdateUnidadConversion($id: ID!, $input: UnidadConversionInput!) {
+  updateUnidadConversion(id: $id, input: $input) {
+    id
+  }
+}

@@ -4,11 +4,9 @@
       class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
       <div class="flex flex-col items-center mb-6">
-        <UDropdownMenu :items="dropdownItems">
-          <UButton circle>
-            <UAvatar :src="avatarUrl" />
-          </UButton>
-        </UDropdownMenu>
+        <UDropdown :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
+          <UAvatar :src="avatarUrl" size="lg" />
+        </UDropdown>
       </div>
 
       <nav class="space-y-4 flex-1">
@@ -53,21 +51,46 @@ const treeItems = [
       {
         label: "Listado",
         icon: "i-heroicons-list-bullet",
-        value: "/usuarios",
-        onSelect: () => router.push("/usuarios"),
+        to: "/usuarios",
       },
       {
         label: "Roles",
-        icon: "i-heroicons-plus-circle",
-        value: "/usuarios/roles",
-        onSelect: () => router.push("/usuarios/roles"),
+        icon: "i-heroicons-user-group",
+        to: "/usuarios/roles",
       },
       {
         label: "Políticas",
-        icon: "i-heroicons-plus-circle",
-        value: "/usuarios/politicas",
-        onSelect: () => router.push("/usuarios/politicas"),
+        icon: "i-heroicons-shield-check",
+        to: "/usuarios/politicas",
       },
+    ],
+  },
+  {
+    label: "Producción",
+    defaultExpanded: route.path.startsWith('/ordenes-produccion') || route.path.startsWith('/lineas-orden') || route.path.startsWith('/lotes-produccion') || route.path.startsWith('/costos-orden'),
+    children: [
+      { label: "Órdenes", icon: "i-heroicons-clipboard-document-list", to: "/ordenes-produccion" },
+      { label: "Líneas de Orden", icon: "i-heroicons-bars-3", to: "/lineas-orden" },
+      { label: "Lotes", icon: "i-heroicons-archive-box", to: "/lotes-produccion" },
+      { label: "Costos", icon: "i-heroicons-currency-dollar", to: "/costos-orden" },
+    ],
+  },
+  {
+    label: "Catálogos",
+    defaultExpanded: route.path.startsWith('/productos') || route.path.startsWith('/estados-orden') || route.path.startsWith('/tipos-costo'),
+    children: [
+      { label: "Productos", icon: "i-heroicons-cube", to: "/productos" },
+      { label: "Estados de Orden", icon: "i-heroicons-tag", to: "/estados-orden" },
+      { label: "Tipos de Costo", icon: "i-heroicons-tag", to: "/tipos-costo" },
+    ],
+  },
+  {
+    label: "Configuración",
+    defaultExpanded: route.path.startsWith('/unidades-medida') || route.path.startsWith('/unidades-medida-tipo') || route.path.startsWith('/unidades-conversion'),
+    children: [
+      { label: "Unidades de Medida", icon: "i-heroicons-scale", to: "/unidades-medida" },
+      { label: "Tipos de Unidad", icon: "i-heroicons-swatch", to: "/unidades-medida-tipo" },
+      { label: "Conversiones", icon: "i-heroicons-arrows-right-left", to: "/unidades-conversion" },
     ],
   },
 ];

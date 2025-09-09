@@ -1,0 +1,5 @@
+mutation UpdateOrdenProduccion($id: ID!, $input: OrdenProduccionInput!) {
+  updateOrdenProduccion(id: $id, input: $input) {
+    id
+  }
+}

@@ -1,0 +1,13 @@
+query GetProductos {
+  productos {
+    id
+    codigo
+    nombre
+    costoBase
+    unidadBase {
+      id
+      nombre
+      abreviatura
+    }
+  }
+}

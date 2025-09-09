@@ -1,0 +1,5 @@
+mutation CreateEstadoOrden($input: EstadoOrdenInput!) {
+  createEstadoOrden(input: $input) {
+    id
+  }
+}

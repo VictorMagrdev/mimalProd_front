@@ -1,0 +1,19 @@
+query GetLineasOrden {
+  lineasOrden {
+    id
+    numeroLinea
+    cantidadRequerida
+    cantidadUsada
+    costoUnitario
+    costoTotal
+    orden {
+      numeroOrden
+    }
+    productoComponente {
+      nombre
+    }
+    unidadComponente {
+      abreviatura
+    }
+  }
+}

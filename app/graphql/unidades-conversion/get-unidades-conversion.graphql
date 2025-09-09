@@ -1,0 +1,14 @@
+query GetUnidadesConversion {
+  unidadesConversion {
+    id
+    factor
+    origen {
+      id
+      nombre
+    }
+    destino {
+      id
+      nombre
+    }
+  }
+}

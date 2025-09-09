@@ -1,0 +1,5 @@
+mutation CreateLoteProduccion($input: LoteProduccionInput!) {
+  createLoteProduccion(input: $input) {
+    id
+  }
+}

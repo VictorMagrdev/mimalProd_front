@@ -1,0 +1,22 @@
+query GetOrdenesProduccion {
+  ordenesProduccion {
+    id
+    numeroOrden
+    cantidad
+    cantidadProducida
+    inicioPlanificado
+    finPlanificado
+    lote {
+      numeroLote
+    }
+    producto {
+      nombre
+    }
+    unidad {
+      abreviatura
+    }
+    estado {
+      nombre
+    }
+  }
+}

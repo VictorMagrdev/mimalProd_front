@@ -1,0 +1,10 @@
+query GetCostoOrdenById($id: ID!) {
+  costoOrden(id: $id) {
+    id
+    descripcion
+    monto
+    moneda
+    idOrden: orden { id }
+    idTipoCosto: tipoCosto { id }
+  }
+}

@@ -1,0 +1,5 @@
+mutation CreateLineaOrden($input: LineaOrdenInput!) {
+  createLineaOrden(input: $input) {
+    id
+  }
+}

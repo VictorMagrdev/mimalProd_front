@@ -65,24 +65,23 @@ El análisis de los componentes existentes revela un patrón claro para las oper
   - Estos componentes utilizan el componente `<UModal>` de Nuxt UI para presentarse como una ventana modal.
   - El modal se activa/desactiva desde una vista principal (generalmente una tabla) a través de una prop `open` y emite un evento `close` para cerrarse.
 
-- **2. Flujo de Datos y API (Component-to-API):**
-  - **Llamadas Directas:** Los componentes deben realizar llamadas a la API directamente desde la lógica de su `<script setup>`.
-  - **Uso de `$fetch` y `useFetch`:** Se deben utilizar los composables `$fetch` (para acciones como POST, PUT, DELETE) y `useFetch` (para obtener datos como en tablas o al cargar un formulario de actualización).
-  - **Sin Stores para CRUD:** El estado de las entidades (usuarios, roles) no se gestiona en un store de Pinia. Los stores solo se usan para estado global como la autenticación.
-  - **Autenticación:** El `useAuthStore()` se importa para obtener el `token`, que debe ser incluido en la cabecera `Authorization: Bearer ${token}` de cada petición a la API.
+- **2. Flujo de Datos y API (GraphQL):**
+  - **Archivos `.graphql`:** Las operaciones de GraphQL (queries, mutaciones) deben definirse en archivos `.graphql` individuales dentro de una carpeta con el nombre de la entidad (ej. `app/graphql/productos/get-productos.graphql`). No se deben escribir `gql` strings directamente en los archivos de TypeScript.
+  - **Uso de Composables de Apollo:** Se deben utilizar los composables de `@vue/apollo-composable` (`useQuery`, `useMutation`) para interactuar con la API de GraphQL.
+  - **Autenticación:** El plugin de Apollo (`app/plugins/apollo.ts`) ya está configurado para inyectar el token de autenticación en cada petición.
 
 - **3. Manejo de Estado y Formularios:**
   - **Estado Local:** El estado del formulario dentro de un componente modal se gestiona con `reactive()`.
   - **Función `resetForm()`:** Cada componente debe tener una función `resetForm()` que restaure el estado inicial del formulario. Esta función se llama después de un envío exitoso o al cancelar.
-  - **Carga de Datos Auxiliares:** Si un formulario necesita datos adicionales (ej. una lista de roles), estos se deben cargar con un `watch` sobre la prop `open` del modal para que se pidan solo cuando el modal se abre.
+  - **Carga de Datos Auxiliares:** Si un formulario necesita datos adicionales (ej. una lista de `UnidadMedida`), estos se deben cargar con `useQuery` cuando el modal se abre.
 
 - **4. Comunicación entre Componentes (Event-driven):**
-  - **Emisión de Eventos:** Tras una operación exitosa (crear, actualizar, borrar), el componente modal debe emitir un evento descriptivo al componente padre (ej: `@user-created`, `@user-updated`).
-  - **Refresco de Datos:** El componente padre (la página con la tabla) debe escuchar estos eventos y volver a ejecutar su propia función de `fetch` para recargar los datos y reflejar los cambios en la UI.
+  - **Emisión de Eventos:** Tras una operación exitosa (crear, actualizar), el componente modal debe emitir un evento descriptivo al componente padre (ej: `@producto-creado`, `@producto-actualizado`).
+  - **Refresco de Datos:** El componente padre (la página con la tabla) debe escuchar estos eventos y usar el método `refetch()` devuelto por `useQuery` para recargar los datos y reflejar los cambios en la UI.
 
 - **5. Feedback al Usuario:**
   - **Notificaciones:** Se debe usar `useToast()` para mostrar un mensaje de éxito o error después de cada operación.
-  - **Manejo de Errores:** Las llamadas a la API deben estar envueltas en `try...catch` (para `$fetch`) o manejar la variable `error` (de `useFetch`) para mostrar notificaciones de error claras.
+  - **Manejo de Errores:** El objeto `error` devuelto por `useQuery` y `useMutation` debe usarse para mostrar notificaciones de error claras.
 
 ## 4. Pruebas (Testing)
 
