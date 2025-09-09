@@ -30,11 +30,13 @@ La aplicación sigue la estructura estándar de Nuxt 3.
 ## 3. Convenciones y Estándares de Código
 
 ### 3.1. Lenguaje y Estilo
+
 - **TypeScript:** Utilizar siempre tipado estricto. Evitar el uso de `any` a menos que sea estrictamente necesario.
 - **Estilo de Código:** Las reglas están definidas en `eslint.config.mjs`. **Es obligatorio seguir estas reglas**. Antes de finalizar una tarea, se debe ejecutar un linter para validar el código.
 - **Nomenclatura de Archivos:** Usar `kebab-case` para la mayoría de los archivos, excepto para los componentes de Vue.
 
 ### 3.2. Componentes de Vue (`.vue`)
+
 - **Nomenclatura:** Usar **PascalCase** para los nombres de archivo y componentes (ej. `UpdateUser.vue`, `NewPolicy.vue`).
 - **Ubicación:** Deben crearse en `app/components/`.
 - **Especificidad:** Los componentes actuales están orientados a acciones y entidades específicas (CRUD), como `NewUser.vue` o `DeleteRoleUser.vue`. Este patrón debe mantenerse.
@@ -45,14 +47,17 @@ La aplicación sigue la estructura estándar de Nuxt 3.
 - **Estilos:** Usar `scoped` en los estilos para evitar colisiones de CSS.
 
 ### 3.3. Gestión de Estado (Pinia)
+
 - **Ubicación:** `app/stores/`.
 - **Estructura:** La gestión de estado es modular. Cada módulo de estado (store) debe tener su propio archivo (ej. `auth.ts`, `users.ts`).
 
 ### 3.4. Rutas y Páginas
+
 - **Sistema de Rutas:** Se utiliza el sistema basado en archivos de Nuxt. La estructura de la carpeta `app/pages/` define las URLs.
 - **Rutas Dinámicas:** Se crean usando corchetes en el nombre del directorio o archivo (ej. `app/pages/usuarios/[id]/index.vue`).
 
 ### 3.5. Autenticación y Middleware
+
 - **Mecanismo Central:** La autenticación es manejada por el middleware global `app/middleware/auth.global.ts`.
 - **Lógica:** Este middleware se ejecuta en cada cambio de ruta. Probablemente revisa un token (almacenado en el store `auth.ts` de Pinia o en cookies) y redirige a `/login` si el usuario no está autenticado. Cualquier nueva ruta protegida debe respetar esta lógica.
 

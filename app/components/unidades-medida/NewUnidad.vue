@@ -1,60 +1,171 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
-import CreateUnidadMedida from '~/graphql/unidades-medida/create-unidad-medida.graphql';
-import GetUnidadesMedidaTipo from '~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql';
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { reactive, ref, computed, watch } from "vue";
+import CreateUnidadMedida from "~/graphql/unidades-medida/create-unidad-medida.graphql";
+import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
 
-const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits(['close', 'created']);
+const open = ref(false);
 
-const initialState = { codigo: '', nombre: '', abreviatura: '', idTipo: undefined, esActiva: true, esBase: false };
-const state = reactive({ ...initialState });
-
-// Fetch tipos for select menu
-const { data: tiposResult, pending: tiposLoading } = await useAsyncQuery(GetUnidadesMedidaTipo);
-const tiposOptions = computed(() => 
-  tiposResult.value?.unidadesMedidaTipo.map((t: any) => ({ label: t.nombre, value: t.id })) || []
-);
-
-const { mutate, loading } = useMutation(CreateUnidadMedida);
-
-const toast = useToast();
-
-function closeModal() {
-  Object.assign(state, initialState);
-  emit('close');
+interface UnidadMedidaFormState {
+  codigo: string;
+  nombre: string;
+  abreviatura: string;
+  idTipo?: string;
+  esActiva: boolean;
+  esBase: boolean;
 }
 
-async function onSubmit() {
+const UnidadSchemaInitialState: UnidadMedidaFormState = {
+  codigo: "",
+  nombre: "",
+  abreviatura: "",
+  idTipo: undefined,
+  esActiva: true,
+  esBase: false,
+};
+
+const state = reactive({ ...UnidadSchemaInitialState });
+const error = ref<string | null>(null);
+
+const {
+  result: tiposResult,
+  loading: tiposLoading,
+  refetch: refetchTipos,
+} = useQuery(GetUnidadesMedidaTipo);
+
+const tiposOptions = computed(() => {
+  return (tiposResult.value?.unidadesMedidaTipo ?? []).map(
+    (t: UnidadMedidaTipo) => ({
+      label: t.nombre,
+      value: t.id,
+    }),
+  );
+});
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    refetchTipos();
+  }
+});
+
+function resetForm() {
+  Object.assign(state, UnidadSchemaInitialState);
+}
+
+const toast = useToast();
+const { mutate, loading } = useMutation(CreateUnidadMedida);
+
+async function onSubmit(event: FormSubmitEvent<UnidadMedidaFormState>) {
+  error.value = null;
+
   try {
-    await mutate({ input: state });
-    toast.add({ title: 'Éxito', description: 'Unidad de medida creada.' });
-    emit('created');
-    closeModal();
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    toast.add({ title: 'Error', description: message });
+    await mutate({ input: event.data });
+
+    toast.add({
+      title: "Unidad de medida creada",
+      description: "La unidad de medida fue registrada correctamente",
+      color: "success",
+    });
+
+    resetForm();
+    open.value = false;
+  } catch (e: any) {
+    error.value = e.message;
+    toast.add({
+      title: "Error",
+      description: e.message,
+      color: "error",
+    });
   }
 }
 </script>
 
 <template>
-  <UModal :model-value="props.isOpen" @update:model-value="closeModal">
-    <UCard>
-      <template #header><h2>Crear Unidad de Medida</h2></template>
-      <UForm :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo"><UInput v-model="state.codigo" /></UFormGroup>
-        <UFormGroup label="Nombre" name="nombre"><UInput v-model="state.nombre" /></UFormGroup>
-        <UFormGroup label="Abreviatura" name="abreviatura"><UInput v-model="state.abreviatura" /></UFormGroup>
-        <UFormGroup label="Tipo" name="idTipo">
-          <USelectMenu v-model="state.idTipo" :options="tiposOptions" value-attribute="value" option-attribute="label" :loading="tiposLoading" />
-        </UFormGroup>
-        <UFormGroup label="Activa" name="esActiva"><UCheckbox v-model="state.esActiva" /></UFormGroup>
-        <UFormGroup label="Es Base" name="esBase"><UCheckbox v-model="state.esBase" /></UFormGroup>
-        <div class="flex justify-end space-x-2">
-          <UButton  variant="ghost" @click="closeModal">Cancelar</UButton>
-          <UButton type="submit" :loading="loading">Crear</UButton>
-        </div>
+  <UModal v-model:open="open" title="Crear unidad de medida">
+    <template #description>
+      Completa el formulario para registrar una nueva unidad de medida.
+    </template>
+
+    <UButton
+      class="right-0"
+      label="Nueva unidad"
+      color="neutral"
+      variant="subtle"
+    />
+
+    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
+
+    <template #body>
+      <UForm
+        id="unidadForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Código" name="codigo">
+          <UInput
+            v-model="state.codigo"
+            class="w-full"
+            placeholder="Código de la unidad"
+          />
+        </UFormField>
+
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            class="w-full"
+            placeholder="Nombre de la unidad"
+          />
+        </UFormField>
+
+        <UFormField label="Abreviatura" name="abreviatura">
+          <UInput
+            v-model="state.abreviatura"
+            class="w-full"
+            placeholder="Abreviatura de la unidad"
+          />
+        </UFormField>
+
+        <UFormField label="Tipo" name="idTipo">
+          <UInputMenu
+            v-model="state.idTipo"
+            :options="tiposOptions"
+            value-key="value"
+            class="w-full"
+            placeholder="Seleccione un tipo"
+            :loading="tiposLoading"
+          />
+        </UFormField>
+
+        <UFormField label="Activa" name="esActiva">
+          <UCheckbox v-model="state.esActiva" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Es Base" name="esBase">
+          <UCheckbox v-model="state.esBase" class="w-full" />
+        </UFormField>
       </UForm>
-    </UCard>
+    </template>
+
+    <template #footer="{ close }">
+      <UButton
+        label="Cancelar"
+        color="neutral"
+        variant="outline"
+        @click="
+          () => {
+            close();
+            resetForm();
+          }
+        "
+      />
+      <UButton
+        label="Crear unidad"
+        type="submit"
+        color="neutral"
+        form="unidadForm"
+        :loading="loading"
+      />
+    </template>
   </UModal>
 </template>

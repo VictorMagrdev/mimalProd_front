@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineEmits, defineProps, watch } from "vue"; 
+import { reactive, ref, computed, defineEmits, defineProps, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
 interface Role {
@@ -16,11 +16,8 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-
 const auth = useAuthStore();
 const error = ref<string | null>(null);
-
-
 
 const state = reactive({
   roleId: undefined as number | undefined,
@@ -34,7 +31,7 @@ const toast = useToast();
 const roles = ref<Role[]>([]);
 
 const roleOptions = computed(() =>
-  roles.value.map((r) => ({ label: r.name, id: r.id }))
+  roles.value.map((r) => ({ label: r.name, id: r.id })),
 );
 
 async function fetchRoles() {
@@ -53,7 +50,7 @@ watch(
     if (isOpen) fetchRoles();
     else resetForm();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 async function onSubmit() {
@@ -82,8 +79,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')" >
-
+  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')">
     <template #description>
       Selecciona un rol para asignar al usuario.
     </template>

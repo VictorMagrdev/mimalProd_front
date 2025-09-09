@@ -1,48 +1,128 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import CreateEstadoOrden from '~/graphql/estados-orden/create-estado-orden.graphql';
-const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits(['close', 'created']);
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { reactive, ref } from "vue";
+import CreateEstadoOrden from "~/graphql/estados-orden/create-estado-orden.graphql";
 
-const initialState = { codigo: '', nombre: '', descripcion: '', activo: true };
-const state = reactive({ ...initialState });
+const open = ref(false);
 
-const { mutate, loading } = useMutation(CreateEstadoOrden);
-
-const toast = useToast();
-
-function closeModal() {
-  Object.assign(state, initialState);
-  emit('close');
+interface EstadoOrdenFormState {
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  activo: boolean;
 }
 
-async function onSubmit() {
+const EstadoOrdenSchemaInitialState: EstadoOrdenFormState = {
+  codigo: "",
+  nombre: "",
+  descripcion: "",
+  activo: true,
+};
+
+const state = reactive({ ...EstadoOrdenSchemaInitialState });
+const error = ref<string | null>(null);
+
+function resetForm() {
+  Object.assign(state, EstadoOrdenSchemaInitialState);
+}
+
+const toast = useToast();
+const { mutate, loading } = useMutation(CreateEstadoOrden);
+
+async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
+  error.value = null;
+
   try {
-    await mutate({ input: state });
-    toast.add({ title: 'Éxito', description: 'Estado de orden creado.' });
-    emit('created');
-    closeModal();
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    toast.add({ title: 'Error', description: message });
+    await mutate({ input: event.data });
+    
+    toast.add({
+      title: "Estado de orden creado",
+      description: "El estado de orden fue registrado correctamente",
+      color: "success",
+    });
+
+    resetForm();
+    open.value = false;
+  } catch (e: unknown) {
+    const message = typeof e === "object" && e !== null && "message" in e
+      ? (e as { message: string }).message
+      : String(e);
+    error.value = message;
+    toast.add({
+      title: "Error",
+      description: message,
+      color: "error",
+    });
   }
 }
 </script>
 
 <template>
-  <UModal :model-value="props.isOpen" @update:model-value="closeModal">
-    <UCard>
-      <template #header><h2>Crear Estado de Orden</h2></template>
-      <UForm :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo"><UInput v-model="state.codigo" /></UFormGroup>
-        <UFormGroup label="Nombre" name="nombre"><UInput v-model="state.nombre" /></UFormGroup>
-        <UFormGroup label="Descripción" name="descripcion"><UInput v-model="state.descripcion" /></UFormGroup>
-        <UFormGroup label="Activo" name="activo"><UCheckbox v-model="state.activo" /></UFormGroup>
-        <div class="flex justify-end space-x-2">
-          <UButton  variant="ghost" @click="closeModal">Cancelar</UButton>
-          <UButton type="submit" :loading="loading">Crear</UButton>
-        </div>
+  <UModal v-model:open="open" title="Crear estado de orden">
+    <template #description>
+      Completa el formulario para registrar un nuevo estado de orden.
+    </template>
+
+    <UButton
+      class="right-0"
+      label="Nuevo estado"
+      color="neutral"
+      variant="subtle"
+    />
+
+    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
+
+    <template #body>
+      <UForm id="estadoOrdenForm" :state="state" class="space-y-4" @submit="onSubmit">
+        <UFormField label="Código" name="codigo">
+          <UInput
+            v-model="state.codigo"
+            class="w-full"
+            placeholder="Código del estado"
+          />
+        </UFormField>
+
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            class="w-full"
+            placeholder="Nombre del estado"
+          />
+        </UFormField>
+
+        <UFormField label="Descripción" name="descripcion">
+          <UInput
+            v-model="state.descripcion"
+            class="w-full"
+            placeholder="Descripción del estado"
+          />
+        </UFormField>
+
+        <UFormField label="Activo" name="activo">
+          <UCheckbox v-model="state.activo" class="w-full" />
+        </UFormField>
       </UForm>
-    </UCard>
+    </template>
+
+    <template #footer="{ close }">
+      <UButton
+        label="Cancelar"
+        color="neutral"
+        variant="outline"
+        @click="
+          () => {
+            close();
+            resetForm();
+          }
+        "
+      />
+      <UButton
+        label="Crear estado"
+        type="submit"
+        color="neutral"
+        form="estadoOrdenForm"
+        :loading="loading"
+      />
+    </template>
   </UModal>
 </template>

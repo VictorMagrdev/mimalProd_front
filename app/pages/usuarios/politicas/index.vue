@@ -24,7 +24,6 @@ const {
   },
   default: () => [],
 });
-console.log(policies.value);
 const toast = useToast();
 
 async function deletePolicy(policy: PolicyUI) {

@@ -19,11 +19,9 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-
 const state = reactive({
   roleId: undefined as number | undefined,
 });
-
 
 function resetForm() {
   state.roleId = undefined;
@@ -32,7 +30,7 @@ function resetForm() {
 const toast = useToast();
 const roles = ref<Role[]>([]);
 const roleOptions = computed(() =>
-  roles.value.map((r) => ({ label: r.name, id: r.id }))
+  roles.value.map((r) => ({ label: r.name, id: r.id })),
 );
 
 watch(
@@ -44,18 +42,17 @@ watch(
           `http://localhost:8080/api/users/${props.userId}/roles`,
           {
             headers: { Authorization: `Bearer ${auth.token}` },
-          }
+          },
         );
 
         roles.value = rolesRes || [];
         console.log(roles.value);
-
       } catch (err) {
         toast.add({ title: "Error", description: String(err), color: "error" });
       }
-    } 
+    }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 async function onSubmit() {
@@ -69,7 +66,7 @@ async function onSubmit() {
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${auth.token}` },
-      }
+      },
     );
 
     toast.add({
@@ -86,11 +83,9 @@ async function onSubmit() {
 </script>
 
 <template>
-  <UModal :open="props.open" title="quitar rol" @close="emit('close')" >
-
+  <UModal :open="props.open" title="quitar rol" @close="emit('close')">
     <template #description>
       Selecciona un rol para quitar al usuario.
-
     </template>
 
     <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>

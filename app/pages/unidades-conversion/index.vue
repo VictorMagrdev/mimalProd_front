@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { ref, h, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import GetUnidadesConversion from '~/graphql/unidades-conversion/get-unidades-conversion.graphql';
+import GetUnidadesConversion from "~/graphql/unidades-conversion/get-unidades-conversion.graphql";
 
-const { data, pending, error, refresh: refetch } = await useAsyncQuery(GetUnidadesConversion);
+const {
+  data,
+  pending,
+  error,
+  refresh: refetch,
+} = await useAsyncQuery(GetUnidadesConversion);
 const rows = computed(() => data.value?.unidadesConversion || []);
 
 const columns: TableColumn[] = [
   { key: "origen.nombre", label: "Origen" },
   { key: "destino.nombre", label: "Destino" },
   { key: "factor", label: "Factor" },
-  { key: 'actions', label: 'Acciones' }
+  { key: "actions", label: "Acciones" },
 ];
 
 const selectedId = ref<string | null>(null);
@@ -19,7 +24,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
 </script>
 
 <template>
@@ -32,13 +36,24 @@ function openUpdateModal(id: string) {
 
     <UTable :columns="columns" :rows="rows" :loading="pending">
       <template #actions-data="{ row }">
-        <UButton variant="ghost" @click="openUpdateModal(row.id)">Actualizar</UButton>
+        <UButton variant="ghost" @click="openUpdateModal(row.id)"
+          >Actualizar</UButton
+        >
       </template>
     </UTable>
 
     <div v-if="error">Error: {{ error.message }}</div>
 
-    <UnidadesConversionNewConversion :is-open="isNewModalOpen" @close="isNewModalOpen = false" @created="refetch" />
-    <UnidadesConversionUpdateConversion :is-open="!!selectedId" :conversion-id="selectedId" @close="selectedId = null" @updated="refetch" />
+    <UnidadesConversionNewConversion
+      :is-open="isNewModalOpen"
+      @close="isNewModalOpen = false"
+      @created="refetch"
+    />
+    <UnidadesConversionUpdateConversion
+      :is-open="!!selectedId"
+      :conversion-id="selectedId"
+      @close="selectedId = null"
+      @updated="refetch"
+    />
   </div>
 </template>

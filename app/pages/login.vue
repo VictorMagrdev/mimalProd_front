@@ -38,7 +38,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     error.value =
       err instanceof Error && err.message ? err.message : "An error occurred";
   }
-  
 }
 </script>
 

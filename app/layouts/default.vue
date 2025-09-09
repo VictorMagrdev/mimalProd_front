@@ -4,7 +4,10 @@
       class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
       <div class="flex flex-col items-center mb-6">
-        <UDropdown :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
+        <UDropdown
+          :items="dropdownItems"
+          :popper="{ placement: 'bottom-start' }"
+        >
           <UAvatar :src="avatarUrl" size="lg" />
         </UDropdown>
       </div>
@@ -67,30 +70,72 @@ const treeItems = [
   },
   {
     label: "Producción",
-    defaultExpanded: route.path.startsWith('/ordenes-produccion') || route.path.startsWith('/lineas-orden') || route.path.startsWith('/lotes-produccion') || route.path.startsWith('/costos-orden'),
+    defaultExpanded:
+      route.path.startsWith("/ordenes-produccion") ||
+      route.path.startsWith("/lineas-orden") ||
+      route.path.startsWith("/lotes-produccion") ||
+      route.path.startsWith("/costos-orden"),
     children: [
-      { label: "Órdenes", icon: "i-heroicons-clipboard-document-list", to: "/ordenes-produccion" },
-      { label: "Líneas de Orden", icon: "i-heroicons-bars-3", to: "/lineas-orden" },
-      { label: "Lotes", icon: "i-heroicons-archive-box", to: "/lotes-produccion" },
-      { label: "Costos", icon: "i-heroicons-currency-dollar", to: "/costos-orden" },
+      {
+        label: "Órdenes",
+        icon: "i-heroicons-clipboard-document-list",
+        to: "/ordenes-produccion",
+      },
+      {
+        label: "Líneas de Orden",
+        icon: "i-heroicons-bars-3",
+        to: "/lineas-orden",
+      },
+      {
+        label: "Lotes",
+        icon: "i-heroicons-archive-box",
+        to: "/lotes-produccion",
+      },
+      {
+        label: "Costos",
+        icon: "i-heroicons-currency-dollar",
+        to: "/costos-orden",
+      },
     ],
   },
   {
     label: "Catálogos",
-    defaultExpanded: route.path.startsWith('/productos') || route.path.startsWith('/estados-orden') || route.path.startsWith('/tipos-costo'),
+    defaultExpanded:
+      route.path.startsWith("/productos") ||
+      route.path.startsWith("/estados-orden") ||
+      route.path.startsWith("/tipos-costo"),
     children: [
       { label: "Productos", icon: "i-heroicons-cube", to: "/productos" },
-      { label: "Estados de Orden", icon: "i-heroicons-tag", to: "/estados-orden" },
+      {
+        label: "Estados de Orden",
+        icon: "i-heroicons-tag",
+        to: "/estados-orden",
+      },
       { label: "Tipos de Costo", icon: "i-heroicons-tag", to: "/tipos-costo" },
     ],
   },
   {
     label: "Configuración",
-    defaultExpanded: route.path.startsWith('/unidades-medida') || route.path.startsWith('/unidades-medida-tipo') || route.path.startsWith('/unidades-conversion'),
+    defaultExpanded:
+      route.path.startsWith("/unidades-medida") ||
+      route.path.startsWith("/unidades-medida-tipo") ||
+      route.path.startsWith("/unidades-conversion"),
     children: [
-      { label: "Unidades de Medida", icon: "i-heroicons-scale", to: "/unidades-medida" },
-      { label: "Tipos de Unidad", icon: "i-heroicons-swatch", to: "/unidades-medida-tipo" },
-      { label: "Conversiones", icon: "i-heroicons-arrows-right-left", to: "/unidades-conversion" },
+      {
+        label: "Unidades de Medida",
+        icon: "i-heroicons-scale",
+        to: "/unidades-medida",
+      },
+      {
+        label: "Tipos de Unidad",
+        icon: "i-heroicons-swatch",
+        to: "/unidades-medida-tipo",
+      },
+      {
+        label: "Conversiones",
+        icon: "i-heroicons-arrows-right-left",
+        to: "/unidades-conversion",
+      },
     ],
   },
 ];

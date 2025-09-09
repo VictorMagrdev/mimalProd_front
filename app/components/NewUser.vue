@@ -10,7 +10,7 @@ const auth = useAuthStore();
 const open = ref(false);
 const roles = ref<Role[]>([]);
 const roleOptions = computed(() =>
-  roles.value.map((r) => ({ label: r.name, id: r.id.toString() }))
+  roles.value.map((r) => ({ label: r.name, id: r.id.toString() })),
 );
 
 watch(open, async (isOpen) => {
@@ -49,7 +49,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
 
   const payload = {
     ...event.data,
-    roleIds: event.data.roleIds.map(id => Number(id)) // Convert back to numbers
+    roleIds: event.data.roleIds.map((id) => Number(id)), // Convert back to numbers
   };
 
   try {
@@ -77,7 +77,6 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
     });
   }
 }
-
 </script>
 
 <template>
@@ -119,7 +118,8 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
           name="password"
           :rules="[
             (v: any) => !!v || 'La contraseña es obligatoria',
-            (v: string | any[]) => v.length >= 8 || 'La contraseña debe tener al menos 8 caracteres'
+            (v: string | any[]) =>
+              v.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
           ]"
         >
           <UInput
@@ -130,21 +130,19 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
           />
         </UFormField>
 
-
         <UFormField label="Activo" name="active">
           <UCheckbox v-model="state.active" class="w-full" />
         </UFormField>
         <UFormField label="Roles" name="roleIds">
-        <UInputMenu
-          v-model="state.roleIds"
-          :items="roleOptions"
-          value-key="id"
-          multiple
-          class="w-full"
-          placeholder="Selecciona uno o varios roles"
-        />
-      </UFormField>
-
+          <UInputMenu
+            v-model="state.roleIds"
+            :items="roleOptions"
+            value-key="id"
+            multiple
+            class="w-full"
+            placeholder="Selecciona uno o varios roles"
+          />
+        </UFormField>
       </UForm>
     </template>
 

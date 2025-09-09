@@ -7,9 +7,17 @@ query GetOrdenProduccionById($id: ID!) {
     inicioPlanificado
     finPlanificado
     observaciones
-    idLote: lote { id }
-    idProducto: producto { id }
-    idUnidad: unidad { id }
-    idEstado: estado { id }
+    idLote: lote {
+      id
+    }
+    idProducto: producto {
+      id
+    }
+    idUnidad: unidad {
+      id
+    }
+    idEstado: estado {
+      id
+    }
   }
 }

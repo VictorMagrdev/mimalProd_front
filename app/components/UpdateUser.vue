@@ -3,7 +3,6 @@ import { ref, reactive, defineProps, defineEmits } from "vue";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { useAuthStore } from "@/stores/auth";
 
-
 const props = defineProps<{
   userId: number | null;
   open: boolean;
@@ -12,7 +11,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
-
 
 const auth = useAuthStore();
 
@@ -55,9 +53,8 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
-
 
 function resetForm() {
   state.username = "";
@@ -96,7 +93,7 @@ async function onSubmit(event: FormSubmitEvent<UserUpdateState>) {
     color: "success",
   });
 
-  emit('close');
+  emit("close");
 }
 
 async function deactivateUser() {
@@ -125,13 +122,12 @@ async function deactivateUser() {
     color: "success",
   });
 
-  emit('close');
+  emit("close");
 }
 </script>
 
 <template>
-  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')" >
-
+  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')">
     <template #description>
       Modifica los campos para actualizar la información del usuario.
     </template>

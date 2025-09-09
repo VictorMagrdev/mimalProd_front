@@ -50,7 +50,12 @@ const permissionOptions = computed(() =>
 );
 
 watch(open, async (val) => {
-  if (val && (roles.value.length === 0 || tags.value.length === 0 || permissions.value.length === 0)) {
+  if (
+    val &&
+    (roles.value.length === 0 ||
+      tags.value.length === 0 ||
+      permissions.value.length === 0)
+  ) {
     try {
       const [rolesRes, tagsRes, permsRes] = await Promise.all([
         $fetch<Role[]>("http://localhost:8080/api/roles", {

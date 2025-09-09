@@ -4,7 +4,11 @@ query GetCostoOrdenById($id: ID!) {
     descripcion
     monto
     moneda
-    idOrden: orden { id }
-    idTipoCosto: tipoCosto { id }
+    idOrden: orden {
+      id
+    }
+    idTipoCosto: tipoCosto {
+      id
+    }
   }
 }

@@ -1,90 +1,169 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
-import CreateProducto from '~/graphql/productos/create-producto.graphql';
-import GetUnidadesMedida from '~/graphql/unidades-medida/get-unidades-medida.graphql'; // Assuming this query exists
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { reactive, ref, computed, watch } from "vue";
+import createProducto from "~/graphql/productos/create-producto.graphql";
+import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 
-const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits(['close', 'producto-creado']);
+const open = ref(false);
 
-const initialState = {
-  codigo: '',
-  nombre: '',
-  idUnidadBase: undefined as number | undefined,
+interface ProductoFormState {
+  codigo: string;
+  nombre: string;
+  idUnidadBase?: string;
+  costoBase?: number;
+}
+
+const ProductoSchemaInitialState: ProductoFormState = {
+  codigo: "",
+  nombre: "",
+  idUnidadBase: undefined,
   costoBase: 0,
 };
 
-const state = reactive({ ...initialState });
+const state = reactive({ ...ProductoSchemaInitialState });
+const error = ref<string | null>(null);
 
-// Fetch unidades de medida for the select menu
-const { data: unidadesResult, pending: unidadesLoading } = await useAsyncQuery(GetUnidadesMedida);
-const unidadesOptions = computed(() => 
-  unidadesResult.value?.unidadesMedida.map((u: any) => ({ label: u.nombre, value: u.id })) || []
-);
+const {
+  result: unidadesResult,
+  loading: unidadesLoading,
+  refetch: refetchUnidades,
+} = useQuery(getUnidadesMedida);
 
-const { mutate, loading, error } = useMutation(CreateProducto);
+const unidadesOptions = computed(() => {
+  return (unidadesResult.value?.unidadesMedida ?? []).map(
+    (u: UnidadMedida) => ({
+      label: u.nombre,
+      value: u.id,
+    }),
+  );
+});
 
-const toast = useToast();
+watch(open, (isOpen) => {
+  if (isOpen && unidadesOptions.value.length === 0) {
+    refetchUnidades();
+  }
+});
 
 function resetForm() {
-  Object.assign(state, initialState);
+  Object.assign(state, ProductoSchemaInitialState);
 }
 
-function closeModal() {
-  resetForm();
-  emit('close');
-}
+const toast = useToast();
+const { mutate, loading } = useMutation(createProducto);
 
-async function onSubmit() {
+async function onSubmit(event: FormSubmitEvent<ProductoFormState>) {
+  error.value = null;
+
   try {
-    await mutate({ input: state });
-    toast.add({ title: 'Producto Creado', description: 'El producto ha sido creado exitosamente.' });
-    emit('producto-creado');
-    closeModal();
+    const input = {
+      ...event.data,
+      costoBase: Number(event.data.costoBase),
+      idUnidadBase: event.data.idUnidadBase
+        ? String(event.data.idUnidadBase)
+        : undefined,
+    };
+
+    await mutate({ input });
+
+    toast.add({
+      title: "Producto creado",
+      description: "El producto fue registrado correctamente",
+      color: "success",
+    });
+
+    resetForm();
+    open.value = false;
   } catch (e: any) {
-    toast.add({ title: 'Error', description: e.message });
+    error.value = e.message;
+    toast.add({
+      title: "Error",
+      description: e.message,
+      color: "error",
+    });
   }
 }
-
 </script>
 
 <template>
-  <UModal :model-value="props.isOpen" @update:model-value="closeModal">
-    <UCard>
-      <template #header>
-        <h2>Crear Nuevo Producto</h2>
-      </template>
+  <UModal v-model:open="open" title="Crear producto">
+    <template #description>
+      Completa el formulario para registrar un nuevo producto.
+    </template>
 
-      <UForm :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo">
-          <UInput v-model="state.codigo" />
-        </UFormGroup>
+    <UButton
+      class="right-0"
+      label="Nuevo producto"
+      color="neutral"
+      variant="subtle"
+    />
 
-        <UFormGroup label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" />
-        </UFormGroup>
+    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
 
-        <UFormGroup label="Costo Base" name="costoBase">
-          <UInput v-model.number="state.costoBase" type="number" />
-        </UFormGroup>
+    <template #body>
+      <UForm
+        id="productoForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Código" name="codigo">
+          <UInput
+            v-model="state.codigo"
+            class="w-full"
+            placeholder="Código del producto"
+          />
+        </UFormField>
 
-        <UFormGroup label="Unidad Base" name="idUnidadBase">
-          <USelectMenu 
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            class="w-full"
+            placeholder="Nombre del producto"
+          />
+        </UFormField>
+
+        <UFormField label="Costo Base" name="costoBase">
+          <UInput
+            v-model.number="state.costoBase"
+            class="w-full"
+            type="number"
+            placeholder="0.00"
+          />
+        </UFormField>
+
+        <UFormField label="Unidad Base" name="idUnidadBase">
+          <UInputMenu
             v-model="state.idUnidadBase"
             :options="unidadesOptions"
-            value-attribute="value"
-            option-attribute="label"
+            value-key="value"
+            class="w-full"
             placeholder="Seleccione una unidad"
             :loading="unidadesLoading"
+            searchable
           />
-        </UFormGroup>
-
-        <div class="flex justify-end space-x-2">
-          <UButton  variant="ghost" @click="closeModal">Cancelar</UButton>
-          <UButton type="submit" :loading="loading">Crear Producto</UButton>
-        </div>
-
-        <p v-if="error" class="text-red-500 mt-2">{{ error.message }}</p>
+        </UFormField>
       </UForm>
-    </UCard>
+    </template>
+
+    <template #footer="{ close }">
+      <UButton
+        label="Cancelar"
+        color="neutral"
+        variant="outline"
+        @click="
+          () => {
+            close();
+            resetForm();
+          }
+        "
+      />
+      <UButton
+        label="Crear producto"
+        type="submit"
+        color="neutral"
+        form="productoForm"
+        :loading="loading"
+      />
+    </template>
   </UModal>
 </template>

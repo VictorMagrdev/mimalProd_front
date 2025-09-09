@@ -1,100 +1,75 @@
 <script setup lang="ts">
-import { ref, h } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import GetProductos from '~/graphql/productos/get-productos.graphql';
+import { ref, computed } from "vue";
+import type { Producto } from "~/graphql/types";
+import getProductos from "~/graphql/productos/get-productos.graphql";
 
-// This requires a GraphQL client setup, which we've done in plugins/apollo.ts
-// and a way to import .graphql files, which might require a vite plugin if not default.
-const { data, pending, error, refresh: refetch } = await useAsyncQuery(GetProductos);
+definePageMeta({
+  middleware: "auth",
+});
 
-const productos = computed(() => data.value?.productos || []);
+const { result, loading, error, refetch } = useQuery(getProductos);
 
-export interface ProductoUI {
-  id: string;
-  codigo: string;
-  nombre: string;
-  costoBase: number;
-  unidadBase: {
-    nombre: string;
-  };
-}
+const productos = computed(() => result.value?.productos ?? []);
 
-const columns: TableColumn<ProductoUI>[] = [
-  {
-    accessorKey: "codigo",
-    header: "Código",
-  },
-  {
-    accessorKey: "nombre",
-    header: "Nombre",
-  },
-  {
-    accessorKey: "costoBase",
-    header: "Costo Base",
-  },
-  {
-    accessorKey: "unidadBase.nombre",
-    header: "Unidad",
-  },
-  {
-    id: "actions",
-    header: "Acciones",
-    cell: ({ row }) => h("div", { class: "text-right" }, [
-      h("button", { onClick: () => console.log('Update', row.original.id) }, "Actualizar")
-    ]),
-  },
+const columns = [
+  { key: "codigo", label: "Código" },
+  { key: "nombre", label: "Nombre" },
+  { key: "costoBase", label: "Costo Base" },
+  { key: "unidadBase.nombre", label: "Unidad Base" },
+  { key: "actions", label: "Acciones" },
 ];
 
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
+const isNewOpen = ref(false);
+const isUpdateOpen = ref(false);
+const selectedProductoId = ref<string | null>(null);
 
-const isNewProductoModalOpen = ref(false);
+function openUpdateModal(id: string) {
+  selectedProductoId.value = id;
+  isUpdateOpen.value = true;
+}
 
+function handleProductoCreated() {
+  isNewOpen.value = false;
+  refetch();
+}
+
+function handleProductoUpdated() {
+  isUpdateOpen.value = false;
+  refetch();
+}
 </script>
 
 <template>
-  <div class="w-full space-y-4 pb-4">
-    <h1>Vista de Productos</h1>
+  <div>
+    <h1 class="text-2xl font-bold mb-4">Productos</h1>
 
-    <div class="flex items-center justify-between border-b border-accented px-4 py-3.5">
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <UButton label="Nuevo Producto" @click="isNewOpen = true" class="mb-4" />
 
-      <div class="flex items-center space-x-2">
-        <UButton label="Nuevo Producto" color="neutral" variant="subtle" @click="isNewProductoModalOpen = true" />
-      </div>
-    </div>
+    <div v-if="loading">Cargando...</div>
+    <div v-if="error" class="text-red-500">{{ error.message }}</div>
 
-    <div class="relative z-0 w-full">
-      <UTable
-        v-model:pagination="pagination"
-        v-model:global-filter="globalFilter"
-        :rows="productos"
-        :columns="columns"
-        :loading="pending"
-      />
-      <div class="sticky bottom-8 z-10 mt-4 w-full bg-white">
-        <UPagination
-          v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
-          :total="productos?.length || 0"
+    <UTable v-if="!loading && !error" :rows="productos" :columns="columns">
+      <template #actions-data="{ row }">
+        <UButton
+          icon="i-heroicons-pencil"
+          size="sm"
+          color="primary"
+          variant="ghost"
+          @click="openUpdateModal(row.id)"
         />
-      </div>
-    </div>
+      </template>
+    </UTable>
 
-    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
-
-    <!-- New Producto Modal -->
-    <ProductosNewProducto 
-      :is-open="isNewProductoModalOpen" 
-      @close="isNewProductoModalOpen = false" 
-      @producto-creado="refetch"
+    <ProductosNewProducto
+      v-model:open="isNewOpen"
+      @producto-creado="handleProductoCreated"
     />
 
-    <!-- <UpdateProducto :product-id="selectedId" @updated="refetch()" /> -->
-
+    <ProductosUpdateProducto
+      v-if="selectedProductoId"
+      v-model:open="isUpdateOpen"
+      :producto-id="selectedProductoId"
+      @producto-actualizado="handleProductoUpdated"
+    />
   </div>
 </template>

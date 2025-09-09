@@ -6,8 +6,14 @@ query GetLineaOrdenById($id: ID!) {
     cantidadUsada
     costoUnitario
     observaciones
-    idOrden: orden { id }
-    idProductoComponente: productoComponente { id }
-    idUnidadComponente: unidadComponente { id }
+    idOrden: orden {
+      id
+    }
+    idProductoComponente: productoComponente {
+      id
+    }
+    idUnidadComponente: unidadComponente {
+      id
+    }
   }
 }

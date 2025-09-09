@@ -1,103 +1,195 @@
 <script setup lang="ts">
-import { reactive, watch, computed } from 'vue';
-import { useQuery } from '#imports';
-import GetProductoById from '~/graphql/productos/get-producto-by-id.graphql';
-import UpdateProducto from '~/graphql/productos/update-producto.graphql';
-import GetUnidadesMedida from '~/graphql/unidades-medida/get-unidades-medida.graphql';
+import { reactive, ref, computed, watch } from "vue";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import getProductoById from "~/graphql/productos/get-producto-by-id.graphql";
+import updateProducto from "~/graphql/productos/update-producto.graphql";
+import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
+import type { UnidadMedida, Producto } from "~/graphql/types";
 
-const props = defineProps<{ 
-  isOpen: boolean;
+const props = defineProps<{
+  open: boolean;
   productoId: string | null;
 }>();
-const emit = defineEmits(['close', 'producto-actualizado']);
+const emit = defineEmits<{ (e: "close"): void }>();
 
-const state = reactive({
-  codigo: '',
-  nombre: '',
-  idUnidadBase: undefined as number | undefined,
+const error = ref<string | null>(null);
+
+interface ProductoUpdateState {
+  codigo: string;
+  nombre: string;
+  idUnidadBase?: string;
+  costoBase?: number;
+}
+
+const state = reactive<ProductoUpdateState>({
+  codigo: "",
+  nombre: "",
+  idUnidadBase: undefined,
   costoBase: 0,
 });
 
-// Fetch product data when ID changes
-const { result: productoResult, loading: productoLoading } = useQuery(GetProductoById, { id: computed(() => props.productoId) }, { enabled: computed(() => !!props.productoId) });
+const { result: productoResult, loading: productoLoading } = useQuery(
+  getProductoById,
+  { id: computed(() => props.productoId) },
+  { enabled: computed(() => !!props.productoId) },
+);
 
 watch(productoResult, (newVal) => {
   if (newVal?.producto) {
-    const p = newVal.producto;
+    const p = newVal.producto as Producto;
     state.codigo = p.codigo;
     state.nombre = p.nombre;
-    state.costoBase = p.costoBase;
+    state.costoBase = p.costoBase ?? 0;
     state.idUnidadBase = p.unidadBase?.id;
   }
 });
 
-// Fetch unidades de medida for the select menu
-const { data: unidadesResult, pending: unidadesLoading } = await useAsyncQuery(GetUnidadesMedida);
-const unidadesOptions = computed(() => 
-  unidadesResult.value?.unidadesMedida.map((u: any) => ({ label: u.nombre, value: u.id })) || []
+const {
+  result: unidadesResult,
+  loading: unidadesLoading,
+  refetch: refetchUnidades,
+} = useQuery(getUnidadesMedida, null, { immediate: false });
+
+const unidadesOptions = computed(() => {
+  return (unidadesResult.value?.unidadesMedida ?? []).map(
+    (u: UnidadMedida) => ({
+      label: u.nombre,
+      value: u.id,
+    }),
+  );
+});
+
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (isOpen) {
+      refetchUnidades();
+    }
+  },
 );
 
-const { mutate, loading: updateLoading, error } = useMutation(UpdateProducto);
-
 const toast = useToast();
+const { mutate, loading: updateLoading } = useMutation(updateProducto);
 
-function closeModal() {
-  emit('close');
+function resetForm() {
+  state.codigo = "";
+  state.nombre = "";
+  state.idUnidadBase = undefined;
+  state.costoBase = 0;
 }
 
-async function onSubmit() {
+async function onSubmit(event: FormSubmitEvent<ProductoUpdateState>) {
+  error.value = null;
+
   if (!props.productoId) return;
+
   try {
-    await mutate({ id: props.productoId, input: state });
-    toast.add({ title: 'Producto Actualizado', description: 'El producto ha sido actualizado exitosamente.' });
-    emit('producto-actualizado');
-    closeModal();
+    const input = {
+      ...event.data,
+      costoBase: Number(event.data.costoBase),
+      idUnidadBase: event.data.idUnidadBase
+        ? String(event.data.idUnidadBase)
+        : undefined,
+    };
+
+    await mutate({ id: props.productoId, input });
+
+    toast.add({
+      title: "Producto actualizado",
+      description: "El producto fue actualizado correctamente",
+      color: "success",
+    });
+
+    emit("close");
   } catch (e: any) {
-    toast.add({ title: 'Error', description: e.message });
+    error.value = e.message;
+    toast.add({
+      title: "Error",
+      description: e.message,
+      color: "error",
+    });
   }
 }
-
 </script>
 
 <template>
-  <UModal :model-value="props.isOpen" @update:model-value="closeModal">
-    <UCard>
-      <template #header>
-        <h2>Actualizar Producto</h2>
-      </template>
+  <UModal :open="props.open" title="Actualizar producto" @close="emit('close')">
+    <template #description>
+      Modifica los campos para actualizar la información del producto.
+    </template>
 
-      <div v-if="productoLoading" class="text-center">Cargando...</div>
-      <UForm v-else :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Código" name="codigo">
-          <UInput v-model="state.codigo" />
-        </UFormGroup>
+    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
-        <UFormGroup label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" />
-        </UFormGroup>
+    <template #body>
+      <div v-if="productoLoading" class="text-center py-4">
+        Cargando datos...
+      </div>
 
-        <UFormGroup label="Costo Base" name="costoBase">
-          <UInput v-model.number="state.costoBase" type="number" />
-        </UFormGroup>
+      <UForm
+        v-else
+        id="updateProductoForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Código" name="codigo">
+          <UInput
+            v-model="state.codigo"
+            class="w-full"
+            placeholder="Código del producto"
+          />
+        </UFormField>
 
-        <UFormGroup label="Unidad Base" name="idUnidadBase">
-          <USelectMenu 
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            class="w-full"
+            placeholder="Nombre del producto"
+          />
+        </UFormField>
+
+        <UFormField label="Costo Base" name="costoBase">
+          <UInput
+            v-model.number="state.costoBase"
+            class="w-full"
+            type="number"
+            placeholder="0.00"
+          />
+        </UFormField>
+
+        <UFormField label="Unidad Base" name="idUnidadBase">
+          <UInputMenu
             v-model="state.idUnidadBase"
             :options="unidadesOptions"
-            value-attribute="value"
-            option-attribute="label"
+            value-key="value"
+            class="w-full"
             placeholder="Seleccione una unidad"
             :loading="unidadesLoading"
+            searchable
           />
-        </UFormGroup>
-
-        <div class="flex justify-end space-x-2">
-          <UButton  variant="ghost" @click="closeModal">Cancelar</UButton>
-          <UButton type="submit" :loading="updateLoading">Actualizar Producto</UButton>
-        </div>
-
-        <p v-if="error" class="text-red-500 mt-2">{{ error.message }}</p>
+        </UFormField>
       </UForm>
-    </UCard>
+    </template>
+
+    <template #footer>
+      <UButton
+        label="Cancelar"
+        color="neutral"
+        variant="outline"
+        @click="
+          () => {
+            resetForm();
+            emit('close');
+          }
+        "
+      />
+      <UButton
+        label="Actualizar"
+        type="submit"
+        color="neutral"
+        form="updateProductoForm"
+        :loading="updateLoading"
+      />
+    </template>
   </UModal>
 </template>

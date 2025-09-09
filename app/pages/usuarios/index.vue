@@ -23,13 +23,16 @@ const fetchUsers = async () => {
   pending.value = true;
   error.value = null;
   try {
-    const { data, error: fetchError } = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
+    const { data, error: fetchError } = await useFetch<UserUI[]>(
+      "http://localhost:8080/api/users",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
       },
-    });
-    
+    );
+
     if (fetchError.value) throw fetchError.value;
     users.value = data.value || [];
   } catch (err) {
@@ -56,18 +59,17 @@ const desactivar = async (id: number) => {
         headers: { Authorization: `Bearer ${auth.token}` },
       },
     );
-    
+
     if (fetchError.value) throw fetchError.value;
-    
+
     toast.add({
       title: "Usuario desactivado",
       description: `El usuario fue desactivado`,
       color: "success",
     });
-    
+
     // Actualizar la lista después de desactivar
     fetchUsers();
-    
   } catch (err) {
     toast.add({
       title: "Error",
@@ -118,7 +120,7 @@ const columns: TableColumn<UserUI>[] = [
       return h("span", { class: "text-gray-700" }, roles.join(", "));
     },
   },
-   {
+  {
     id: "actions",
     cell: ({ row }) => {
       return h(
@@ -147,42 +149,43 @@ const columns: TableColumn<UserUI>[] = [
   },
 ];
 function getRowItems(row: Row<UserUI>) {
-  const userId = row.original.id; 
+  const userId = row.original.id;
   return [
     {
       type: "label",
       label: "Acciones",
-    },{
-        label: "Detalles",
-        icon: "i-heroicons-eye-20-solid",
-        onSelect: () => router.push(`/usuarios/${userId}`),
+    },
+    {
+      label: "Detalles",
+      icon: "i-heroicons-eye-20-solid",
+      onSelect: () => router.push(`/usuarios/${userId}`),
+    },
+    {
+      label: "Actualizar",
+      icon: "i-heroicons-pencil-square-20-solid",
+      onSelect: () => {
+        selectedUserId.value = Number(userId);
       },
-      {
-        label: "Actualizar",
-        icon: "i-heroicons-pencil-square-20-solid",
-        onSelect: () => {
-          selectedUserId.value = Number(userId)
-        },
+    },
+    {
+      label: "Asignar Rol",
+      icon: "i-heroicons-user-plus-20-solid",
+      onSelect: () => {
+        selectedUserForRole.value = Number(userId);
       },
-      {
-        label: "Asignar Rol",
-        icon: "i-heroicons-user-plus-20-solid",
-        onSelect: () => {
-          selectedUserForRole.value = Number(userId)
-        },
+    },
+    {
+      label: "Quitar Rol",
+      icon: "i-heroicons-user-minus-20-solid",
+      onSelect: () => {
+        selectedUserForDeleteRole.value = Number(userId);
       },
-      {
-        label: "Quitar Rol",
-        icon: "i-heroicons-user-minus-20-solid",
-        onSelect: () => {
-          selectedUserForDeleteRole.value = Number(userId)
-        },
-      },
-      {
-        label: "Desactivar",
-        icon: "i-heroicons-trash-20-solid",
-        onSelect: () => desactivar(Number(userId)),
-      }
+    },
+    {
+      label: "Desactivar",
+      icon: "i-heroicons-trash-20-solid",
+      onSelect: () => desactivar(Number(userId)),
+    },
   ];
 }
 const pagination = ref({
@@ -208,29 +211,28 @@ const globalFilter = ref();
 
       <div class="flex items-center space-x-2">
         <UpdateUser
-  v-if="selectedUserId !== null"
-  :user-id="selectedUserId"
-  :open="true"
-  @close="selectedUserId = null"
-  @user-updated="fetchUsers"
-/>
+          v-if="selectedUserId !== null"
+          :user-id="selectedUserId"
+          :open="true"
+          @close="selectedUserId = null"
+          @user-updated="fetchUsers"
+        />
 
-<PutRoleUser
-  v-if="selectedUserForRole !== null"
-  :user-id="selectedUserForRole"
-  :open="true"
-  @close="selectedUserForRole = null"
-  @role-updated="fetchUsers"
-/>
+        <PutRoleUser
+          v-if="selectedUserForRole !== null"
+          :user-id="selectedUserForRole"
+          :open="true"
+          @close="selectedUserForRole = null"
+          @role-updated="fetchUsers"
+        />
 
-<DeleteRoleUser
-  v-if="selectedUserForDeleteRole !== null"
-  :user-id="selectedUserForDeleteRole"
-  :open="true"
-  @close="selectedUserForDeleteRole = null"
-  @role-removed="fetchUsers"
-/>
-
+        <DeleteRoleUser
+          v-if="selectedUserForDeleteRole !== null"
+          :user-id="selectedUserForDeleteRole"
+          :open="true"
+          @close="selectedUserForDeleteRole = null"
+          @role-removed="fetchUsers"
+        />
 
         <NewUser @user-created="fetchUsers" />
       </div>
