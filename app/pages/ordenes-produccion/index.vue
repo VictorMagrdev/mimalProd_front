@@ -13,8 +13,8 @@ export interface OrdenProduccionUI {
   cantidad: number;
   unidad: { abreviatura: string };
   estado: { nombre: string };
-  inicioPlanificado: string; // ISO date
-  finPlanificado: string; // ISO date
+  inicioPlanificado: string; 
+  finPlanificado: string;
 }
 
 // Tipo del resultado del query
@@ -27,7 +27,6 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
 // Ahora TS sabe que existe "ordenesProduccion"
@@ -180,17 +179,5 @@ function openUpdateModal(id: string) {
     </div>
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
-
-    <OrdenesProduccionNewOrden
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="refetch"
-    />
-    <OrdenesProduccionUpdateOrden
-      :open="!!selectedId"
-      :orden-id="selectedId"
-      @close="selectedId = null"
-      @updated="refetch"
-    />
   </div>
 </template>

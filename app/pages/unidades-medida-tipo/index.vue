@@ -24,12 +24,10 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
 
 const tipos = computed(() => data.value?.unidadesMedidaTipo || []);
 
-const toast = useToast();
 
 const columns: TableColumn<UnidadMedidaTipo>[] = [
   {
@@ -87,17 +85,7 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
 }
 
-function handleCreated() {
-  isNewModalOpen.value = false;
-  refetch();
-  toast.add({ title: "Tipo de unidad creado", color: "success" });
-}
 
-function handleUpdated() {
-  selectedId.value = null;
-  refetch();
-  toast.add({ title: "Tipo de unidad actualizado", color: "success" });
-}
 </script>
 
 <template>
@@ -164,18 +152,6 @@ function handleUpdated() {
         />
       </div>
     </div>
-
-    <UnidadesMedidaTipoNewTipo
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="handleCreated"
-    />
-    <UnidadesMedidaTipoUpdateTipo
-      :is-open="!!selectedId"
-      :tipo-id="selectedId"
-      @close="selectedId = null"
-      @updated="handleUpdated"
-    />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

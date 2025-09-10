@@ -55,26 +55,10 @@ const state = reactive({ ...OrdenSchemaInitialState });
 const error = ref<string | null>(null);
 
 // Queries
-const {
-  result: lotesResult,
-  loading: lotesLoading,
-  refetch: refetchLotes,
-} = useQuery(GetLotesProduccion);
-const {
-  result: productosResult,
-  loading: productosLoading,
-  refetch: refetchProductos,
-} = useQuery(GetProductos);
-const {
-  result: unidadesResult,
-  loading: unidadesLoading,
-  refetch: refetchUnidades,
-} = useQuery(GetUnidadesMedida);
-const {
-  result: estadosResult,
-  loading: estadosLoading,
-  refetch: refetchEstados,
-} = useQuery(GetEstadosOrden);
+const { result: lotesResult, loading: lotesLoading, refetch: refetchLotes } = useQuery(GetLotesProduccion);
+const { result: productosResult, loading: productosLoading, refetch: refetchProductos } = useQuery(GetProductos);
+const { result: unidadesResult, loading: unidadesLoading, refetch: refetchUnidades } = useQuery(GetUnidadesMedida);
+const { result: estadosResult, loading: estadosLoading, refetch: refetchEstados } = useQuery(GetEstadosOrden);
 
 // Options tipados
 const lotesOptions = computed(() =>
@@ -118,6 +102,7 @@ watch(open, (isOpen) => {
 // Reset
 function resetForm() {
   Object.assign(state, OrdenSchemaInitialState);
+  error.value = null;
 }
 
 const toast = useToast();
@@ -150,17 +135,19 @@ async function onSubmit(event: FormSubmitEvent<OrdenProduccionFormState>) {
 </script>
 
 <template>
+  <!-- Botón para abrir modal -->
+  <UButton
+    label="Nueva orden"
+    color="neutral"
+    variant="subtle"
+    @click="open = true"
+  />
+
+  <!-- Modal -->
   <UModal v-model:open="open" title="Crear orden de producción">
     <template #description>
       Completa el formulario para registrar una nueva orden de producción.
     </template>
-
-    <UButton
-      class="right-0"
-      label="Nueva orden"
-      color="neutral"
-      variant="subtle"
-    />
 
     <UForm id="ordenForm" :state="state" class="space-y-4" @submit="onSubmit">
       <UFormField label="Número de Orden" name="numeroOrden">

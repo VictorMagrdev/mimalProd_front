@@ -15,10 +15,9 @@ export interface Producto {
   unidadBase: { id: string; nombre: string };
 }
 
-const { result, loading, error, refetch } = useQuery(getProductos);
+const { result, loading, error } = useQuery(getProductos);
 const productos = computed(() => result.value?.productos ?? []);
 
-const toast = useToast();
 
 function openUpdateModal(id: string) {
   selectedProductoId.value = id;
@@ -83,17 +82,6 @@ const isNewOpen = ref(false);
 const isUpdateOpen = ref(false);
 const selectedProductoId = ref<string | null>(null);
 
-function handleProductoCreated() {
-  isNewOpen.value = false;
-  refetch();
-  toast.add({ title: "Producto creado", color: "success" });
-}
-
-function handleProductoUpdated() {
-  isUpdateOpen.value = false;
-  refetch();
-  toast.add({ title: "Producto actualizado", color: "success" });
-}
 </script>
 
 <template>
@@ -161,17 +149,6 @@ function handleProductoUpdated() {
       </div>
     </div>
 
-    <ProductosNewProducto
-      v-model:open="isNewOpen"
-      @producto-creado="handleProductoCreated"
-    />
-
-    <ProductosUpdateProducto
-      v-if="selectedProductoId"
-      v-model:open="isUpdateOpen"
-      :producto-id="selectedProductoId"
-      @producto-actualizado="handleProductoUpdated"
-    />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

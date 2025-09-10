@@ -34,7 +34,6 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<EstadosOrdenResult>(GetEstadosOrden);
 
 // Ahora TS sabe que data.value?.estadosOrden existe
@@ -169,16 +168,5 @@ function openUpdateModal(id: string) {
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
 
-    <EstadosOrdenNewEstadoOrden
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="refetch"
-    />
-    <EstadosOrdenUpdateEstadoOrden
-      :is-open="!!selectedId"
-      :estado-id="selectedId"
-      @close="selectedId = null"
-      @updated="refetch"
-    />
   </div>
 </template>

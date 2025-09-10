@@ -25,7 +25,6 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
 
 const rows = computed<LineaOrdenUI[]>(() => data.value?.lineasOrden || []);
@@ -170,16 +169,5 @@ function openUpdateModal(id: string) {
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
 
-    <LineasOrdenNewLinea
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="refetch"
-    />
-    <LineasOrdenUpdateLinea
-      :is-open="!!selectedId"
-      :linea-id="selectedId"
-      @close="selectedId = null"
-      @updated="refetch"
-    />
   </div>
 </template>

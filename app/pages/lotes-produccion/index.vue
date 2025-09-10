@@ -24,7 +24,6 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
 
 const rows = computed<LoteProduccionUI[]>(
@@ -160,16 +159,5 @@ function openUpdateModal(id: string) {
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
 
-    <LotesProduccionNewLote
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="refetch"
-    />
-    <LotesProduccionUpdateLote
-      :is-open="!!selectedId"
-      :lote-id="selectedId"
-      @close="selectedId = null"
-      @updated="refetch"
-    />
   </div>
 </template>

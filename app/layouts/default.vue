@@ -4,12 +4,11 @@
       class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
       <div class="flex flex-col items-center mb-6">
-        <UDropdown
-          :items="dropdownItems"
-          :popper="{ placement: 'bottom-start' }"
-        >
-          <UAvatar :src="avatarUrl" size="lg" />
-        </UDropdown>
+        <UDropdownMenu :items="dropdownItems">
+          <UButton circle>
+            <UAvatar :src="avatarUrl" />
+          </UButton>
+        </UDropdownMenu>
       </div>
 
       <nav class="space-y-4 flex-1">
@@ -54,17 +53,20 @@ const treeItems = [
       {
         label: "Listado",
         icon: "i-heroicons-list-bullet",
-        to: "/usuarios",
+        value: "/usuarios",
+        onSelect: () => router.push("/usuarios"),
       },
       {
         label: "Roles",
         icon: "i-heroicons-user-group",
-        to: "/usuarios/roles",
+        value: "/usuarios/roles",
+        onSelect: () => router.push("/usuarios/roles"),
       },
       {
         label: "Políticas",
         icon: "i-heroicons-shield-check",
-        to: "/usuarios/politicas",
+        value: "/usuarios/politicas",
+        onSelect: () => router.push("/usuarios/politicas"),
       },
     ],
   },
@@ -79,22 +81,26 @@ const treeItems = [
       {
         label: "Órdenes",
         icon: "i-heroicons-clipboard-document-list",
-        to: "/ordenes-produccion",
+        value: "/ordenes-produccion",
+        onSelect: () => router.push("/ordenes-produccion"),
       },
       {
         label: "Líneas de Orden",
         icon: "i-heroicons-bars-3",
-        to: "/lineas-orden",
+        value: "/lineas-orden",
+        onSelect: () => router.push("/lineas-orden"),
       },
       {
         label: "Lotes",
         icon: "i-heroicons-archive-box",
-        to: "/lotes-produccion",
+        value: "/lotes-produccion",
+        onSelect: () => router.push("/lotes-produccion"),
       },
       {
         label: "Costos",
         icon: "i-heroicons-currency-dollar",
-        to: "/costos-orden",
+        value: "/costos-orden",
+        onSelect: () => router.push("/costos-orden"),
       },
     ],
   },
@@ -105,13 +111,24 @@ const treeItems = [
       route.path.startsWith("/estados-orden") ||
       route.path.startsWith("/tipos-costo"),
     children: [
-      { label: "Productos", icon: "i-heroicons-cube", to: "/productos" },
+      {
+        label: "Productos",
+        icon: "i-heroicons-cube",
+        value: "/productos",
+        onSelect: () => router.push("/productos"),
+      },
       {
         label: "Estados de Orden",
         icon: "i-heroicons-tag",
-        to: "/estados-orden",
+        value: "/estados-orden",
+        onSelect: () => router.push("/estados-orden"),
       },
-      { label: "Tipos de Costo", icon: "i-heroicons-tag", to: "/tipos-costo" },
+      {
+        label: "Tipos de Costo",
+        icon: "i-heroicons-tag",
+        value: "/tipos-costo",
+        onSelect: () => router.push("/tipos-costo"),
+      },
     ],
   },
   {
@@ -124,17 +141,20 @@ const treeItems = [
       {
         label: "Unidades de Medida",
         icon: "i-heroicons-scale",
-        to: "/unidades-medida",
+        value: "/unidades-medida",
+        onSelect: () => router.push("/unidades-medida"),
       },
       {
         label: "Tipos de Unidad",
         icon: "i-heroicons-swatch",
-        to: "/unidades-medida-tipo",
+        value: "/unidades-medida-tipo",
+        onSelect: () => router.push("/unidades-medida-tipo"),
       },
       {
         label: "Conversiones",
         icon: "i-heroicons-arrows-right-left",
-        to: "/unidades-conversion",
+        value: "/unidades-conversion",
+        onSelect: () => router.push("/unidades-conversion"),
       },
     ],
   },

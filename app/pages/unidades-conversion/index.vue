@@ -14,7 +14,6 @@ export interface UnidadConversion {
   factor: number;
 }
 
-// Tipo del resultado del query
 interface UnidadesConversionResult {
   unidadesConversion: UnidadConversion[];
 }
@@ -24,13 +23,10 @@ const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<UnidadesConversionResult>(GetUnidadesConversion);
 
 // Ahora TS reconoce `unidadesConversion`
 const conversiones = computed(() => data.value?.unidadesConversion || []);
-
-const toast = useToast();
 
 const columns: TableColumn<UnidadConversion>[] = [
   {
@@ -89,17 +85,7 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
 }
 
-function handleCreated() {
-  isNewModalOpen.value = false;
-  refetch();
-  toast.add({ title: "Conversión creada", color: "success" });
-}
 
-function handleUpdated() {
-  selectedId.value = null;
-  refetch();
-  toast.add({ title: "Conversión actualizada", color: "success" });
-}
 </script>
 
 <template>
@@ -166,18 +152,6 @@ function handleUpdated() {
         />
       </div>
     </div>
-
-    <UnidadesConversionNewConversion
-      :is-open="isNewModalOpen"
-      @close="isNewModalOpen = false"
-      @created="handleCreated"
-    />
-    <UnidadesConversionUpdateConversion
-      :is-open="!!selectedId"
-      :conversion-id="selectedId"
-      @close="selectedId = null"
-      @updated="handleUpdated"
-    />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

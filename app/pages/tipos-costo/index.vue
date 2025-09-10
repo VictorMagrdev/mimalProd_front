@@ -19,18 +19,14 @@ interface TiposCostoResult {
   tiposCosto: TipoCosto[];
 }
 
-// Query tipada
 const {
   data,
   pending,
   error,
-  refresh: refetch,
 } = await useAsyncQuery<TiposCostoResult>(GetTiposCosto);
 
-// Ahora TS reconoce `tiposCosto`
 const tiposCosto = computed(() => data.value?.tiposCosto || []);
 
-const toast = useToast();
 
 const columns: TableColumn<TipoCosto>[] = [
   {
@@ -93,17 +89,6 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
 }
 
-function handleCreated() {
-  isNewModalOpen.value = false;
-  refetch();
-  toast.add({ title: "Tipo de costo creado", color: "success" });
-}
-
-function handleUpdated() {
-  selectedId.value = null;
-  refetch();
-  toast.add({ title: "Tipo de costo actualizado", color: "success" });
-}
 </script>
 
 <template>
@@ -171,16 +156,6 @@ function handleUpdated() {
       </div>
     </div>
 
-    <TiposCostoNewTipoCosto
-      v-model:open="isNewModalOpen"
-      @created="handleCreated"
-    />
-    <TiposCostoUpdateTipoCosto
-      :is-open="!!selectedId"
-      :tipo-costo-id="selectedId"
-      @close="selectedId = null"
-      @updated="handleUpdated"
-    />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>
