@@ -1,0 +1,8 @@
+mutation UpdateDiscrepanciaInventario(
+  $id: ID!
+  $input: DiscrepanciaInventarioInput!
+) {
+  updateDiscrepanciaInventario(id: $id, input: $input) {
+    id
+  }
+}

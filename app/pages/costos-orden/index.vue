@@ -26,11 +26,9 @@ export interface CostoOrden {
   registradoEn: string;
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<{ costosOrden: CostoOrden[] }>(GetCostosOrden);
+const { data, pending, error } = await useAsyncQuery<{
+  costosOrden: CostoOrden[];
+}>(GetCostosOrden);
 
 const rows = computed<CostoOrden[]>(() => data.value?.costosOrden ?? []);
 
@@ -94,7 +92,6 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
   updateModalOpen.value = true;
 }
-
 </script>
 
 <template>
@@ -106,13 +103,13 @@ function openUpdateModal(id: string) {
     >
       <UInput placeholder="Filtrar..." class="max-w-sm" />
       <UpdateCosto
-    :open="updateModalOpen"
-    :costo-id="selectedId"
-    @close="updateModalOpen = false"
-  />
+        :open="updateModalOpen"
+        :costo-id="selectedId"
+        @close="updateModalOpen = false"
+      />
 
-  <UButton label="Nuevo costo de orden" @click="createModalOpen = true" />
-  <NewCosto v-model:open="createModalOpen" />
+      <UButton label="Nuevo costo de orden" @click="createModalOpen = true" />
+      <NewCosto v-model:open="createModalOpen" />
     </div>
 
     <UTable :columns="columns" :data="rows" :loading="pending" class="mt-4" />

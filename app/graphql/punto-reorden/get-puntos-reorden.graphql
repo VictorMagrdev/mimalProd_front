@@ -1,0 +1,10 @@
+query GetPuntosReorden {
+  puntosReorden {
+    id
+    puntoMinimo
+    puntoMaximo
+    producto {
+      nombre
+    }
+  }
+}

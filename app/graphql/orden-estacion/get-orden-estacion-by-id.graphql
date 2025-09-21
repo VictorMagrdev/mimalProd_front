@@ -1,0 +1,13 @@
+query GetOrdenEstacionById($id: ID!) {
+  ordenEstacion(id: $id) {
+    id
+    fechaInicio
+    fechaFin
+    idOrden: orden {
+      id
+    }
+    idEstacion: estacion {
+      id
+    }
+  }
+}

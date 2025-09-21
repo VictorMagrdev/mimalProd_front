@@ -1,0 +1,12 @@
+query GetReservaMaterialOrdenById($id: ID!) {
+  reservaMaterialOrden(id: $id) {
+    id
+    cantidadReservada
+    idOrden: orden {
+      id
+    }
+    idMaterial: material {
+      id
+    }
+  }
+}

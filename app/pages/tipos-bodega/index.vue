@@ -19,14 +19,10 @@ interface TiposBodegaResult {
   tiposBodega: TipoBodega[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<TiposBodegaResult>(GetTiposBodega);
+const { data, pending, error } =
+  await useAsyncQuery<TiposBodegaResult>(GetTiposBodega);
 
 const tiposBodega = computed(() => data.value?.tiposBodega || []);
-
 
 const columns: TableColumn<TipoBodega>[] = [
   {
@@ -88,7 +84,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
 </script>
 
 <template>
@@ -155,7 +150,6 @@ function openUpdateModal(id: string) {
         />
       </div>
     </div>
-
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

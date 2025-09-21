@@ -52,14 +52,14 @@ const ordenesOptions = computed<SelectItem[]>(() =>
   (ordenesResult.value?.ordenesProduccion ?? []).map((o) => ({
     id: o.id,
     label: o.numeroOrden,
-  }))
+  })),
 );
 
 const tiposOptions = computed<SelectItem[]>(() =>
   (tiposResult.value?.tiposCosto ?? []).map((t) => ({
     id: t.id,
     label: t.nombre,
-  }))
+  })),
 );
 
 const { mutate, loading } = useMutation(CreateCostoOrden);
@@ -89,7 +89,6 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
     toast.add({ title: "Error", description: message, color: "error" });
   }
 }
-
 </script>
 
 <template>

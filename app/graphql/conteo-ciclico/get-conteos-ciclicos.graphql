@@ -1,0 +1,10 @@
+query GetConteosCiclicos {
+  conteosCiclicos {
+    id
+    fechaConteo
+    cantidadContada
+    producto {
+      nombre
+    }
+  }
+}

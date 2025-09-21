@@ -1,0 +1,10 @@
+query GetOrdenEventoById($id: ID!) {
+  ordenEvento(id: $id) {
+    id
+    evento
+    fecha
+    idOrden: orden {
+      id
+    }
+  }
+}

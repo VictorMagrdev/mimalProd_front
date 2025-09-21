@@ -10,12 +10,12 @@ import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
 
 const props = defineProps<{
   costoId: string | null;
-  open: boolean; 
- }>();
+  open: boolean;
+}>();
 
-const emit = defineEmits<{ 
+const emit = defineEmits<{
   (e: "close"): void;
- }>();
+}>();
 
 const toast = useToast();
 const error = ref<string | null>(null);
@@ -46,7 +46,7 @@ function resetForm() {
 const { result, loading: queryLoading } = useQuery(
   GetCostoOrdenById,
   { id: computed(() => props.costoId) },
-  { enabled: computed(() => !!props.costoId) }
+  { enabled: computed(() => !!props.costoId) },
 );
 
 watch(result, (newVal) => {
@@ -62,28 +62,26 @@ watch(result, (newVal) => {
   }
 });
 
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery<{ ordenesProduccion: { id: string; numeroOrden: string }[] }>(
-    GetOrdenesProduccion
-  );
+const { data: ordenesResult, pending: ordenesLoading } = await useAsyncQuery<{
+  ordenesProduccion: { id: string; numeroOrden: string }[];
+}>(GetOrdenesProduccion);
 
-const { data: tiposResult, pending: tiposLoading } =
-  await useAsyncQuery<{ tiposCosto: { id: string; nombre: string }[] }>(
-    GetTiposCosto
-  );
+const { data: tiposResult, pending: tiposLoading } = await useAsyncQuery<{
+  tiposCosto: { id: string; nombre: string }[];
+}>(GetTiposCosto);
 
 const ordenesOptions = computed(() =>
   (ordenesResult.value?.ordenesProduccion ?? []).map((o) => ({
     id: o.id,
     label: o.numeroOrden,
-  }))
+  })),
 );
 
 const tiposOptions = computed(() =>
   (tiposResult.value?.tiposCosto ?? []).map((t) => ({
     id: t.id,
     label: t.nombre,
-  }))
+  })),
 );
 
 // Mutación para actualizar costo

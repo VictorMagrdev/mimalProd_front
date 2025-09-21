@@ -1,0 +1,7 @@
+query GetEstacionesProduccion {
+  estacionesProduccion {
+    id
+    nombre
+    descripcion
+  }
+}

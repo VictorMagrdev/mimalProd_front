@@ -1,0 +1,13 @@
+query GetOrdenesEstacion {
+  ordenesEstacion {
+    id
+    fechaInicio
+    fechaFin
+    orden {
+      numeroOrden
+    }
+    estacion {
+      nombre
+    }
+  }
+}

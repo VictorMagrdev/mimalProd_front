@@ -1,0 +1,8 @@
+mutation UpdateReservaMaterialOrden(
+  $id: ID!
+  $input: ReservaMaterialOrdenInput!
+) {
+  updateReservaMaterialOrden(id: $id, input: $input) {
+    id
+  }
+}

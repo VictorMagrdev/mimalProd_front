@@ -1,0 +1,12 @@
+query GetInventariosLote {
+  inventariosLote {
+    id
+    cantidad
+    lote {
+      id
+    }
+    inventario {
+      id
+    }
+  }
+}

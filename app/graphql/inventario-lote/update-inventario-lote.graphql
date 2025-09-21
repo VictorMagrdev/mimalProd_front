@@ -1,0 +1,5 @@
+mutation UpdateInventarioLote($id: ID!, $input: InventarioLoteInput!) {
+  updateInventarioLote(id: $id, input: $input) {
+    id
+  }
+}

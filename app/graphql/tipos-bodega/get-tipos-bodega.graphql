@@ -1,5 +1,5 @@
 query GetTiposBodega {
-    tiposBodega {
+  tiposBodega {
     id
     codigo
     nombre

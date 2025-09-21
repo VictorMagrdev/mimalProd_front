@@ -21,11 +21,8 @@ interface UnidadesMedidaResult {
   unidadesMedida: UnidadMedida[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
+const { data, pending, error } =
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
 
 const unidades = computed(() => data.value?.unidadesMedida || []);
 
@@ -99,8 +96,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
-
 </script>
 
 <template>

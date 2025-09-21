@@ -20,14 +20,11 @@ interface UnidadesMedidaTipoResult {
 }
 
 // Query tipada
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
+const { data, pending, error } = await useAsyncQuery<UnidadesMedidaTipoResult>(
+  GetUnidadesMedidaTipo,
+);
 
 const tipos = computed(() => data.value?.unidadesMedidaTipo || []);
-
 
 const columns: TableColumn<UnidadMedidaTipo>[] = [
   {
@@ -84,8 +81,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
-
 </script>
 
 <template>

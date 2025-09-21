@@ -1,542 +1,556 @@
 scalar DateTime
 
 type EstadoOrden {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    activo: Boolean
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  activo: Boolean
+  creadoEn: DateTime
 }
 
 type TipoCosto {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    activo: Boolean
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  activo: Boolean
+  creadoEn: DateTime
 }
 
 type UnidadMedidaTipo {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  creadoEn: DateTime
 }
 
 type UnidadMedida {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    abreviatura: String
-    tipo: UnidadMedidaTipo!
-    esActiva: Boolean
-    esBase: Boolean
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  abreviatura: String
+  tipo: UnidadMedidaTipo!
+  esActiva: Boolean
+  esBase: Boolean
+  creadoEn: DateTime
 }
 
 type UnidadConversion {
-    id: ID!
-    origen: UnidadMedida!
-    destino: UnidadMedida!
-    factor: Float!
+  id: ID!
+  origen: UnidadMedida!
+  destino: UnidadMedida!
+  factor: Float!
 }
 
-type TipoProducto{
-    id:ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String!
+type TipoProducto {
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String!
 }
 
-type MetodoValoracion{
-    id:ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String!
+type MetodoValoracion {
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String!
 }
 
 type Producto {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    metodoValoracion: MetodoValoracion
-    tipo: TipoProducto
-    unidadBase: UnidadMedida
-    costoBase: Float
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  metodoValoracion: MetodoValoracion
+  tipo: TipoProducto
+  unidadBase: UnidadMedida
+  costoBase: Float
+  creadoEn: DateTime
 }
 
 type LoteProduccion {
-    id: ID!
-    numeroLote: String!
-    producto: Producto
-    fabricadoEn: DateTime
-    venceEn: DateTime
-    creadoEn: DateTime
+  id: ID!
+  numeroLote: String!
+  producto: Producto
+  fabricadoEn: DateTime
+  venceEn: DateTime
+  creadoEn: DateTime
 }
 
 type OrdenProduccion {
-    id: ID!
-    numeroOrden: String!
-    lote: LoteProduccion
-    producto: Producto
-    cantidad: Float!
-    unidad: UnidadMedida
-    estado: EstadoOrden
-    inicioPlanificado: DateTime
-    finPlanificado: DateTime
-    inicioReal: DateTime
-    finReal: DateTime
-    cantidadDesperdicio: Float
-    cantidadProducida: Float
-    creadoPor: Int
-    observaciones: String
-    creadoEn: DateTime
-    actualizadoEn: DateTime
+  id: ID!
+  numeroOrden: String!
+  lote: LoteProduccion
+  producto: Producto
+  cantidad: Float!
+  unidad: UnidadMedida
+  estado: EstadoOrden
+  inicioPlanificado: DateTime
+  finPlanificado: DateTime
+  inicioReal: DateTime
+  finReal: DateTime
+  cantidadDesperdicio: Float
+  cantidadProducida: Float
+  creadoPor: Int
+  observaciones: String
+  creadoEn: DateTime
+  actualizadoEn: DateTime
 }
 
 type LineaOrden {
-    id: ID!
-    orden: OrdenProduccion
-    numeroLinea: Int!
-    productoComponente: Producto
-    cantidadRequerida: Float!
-    unidadComponente: UnidadMedida
-    cantidadUsada: Float
-    costoUnitario: Float
-    costoTotal: Float
-    observaciones: String
-    creadoEn: DateTime
+  id: ID!
+  orden: OrdenProduccion
+  numeroLinea: Int!
+  productoComponente: Producto
+  cantidadRequerida: Float!
+  unidadComponente: UnidadMedida
+  cantidadUsada: Float
+  costoUnitario: Float
+  costoTotal: Float
+  observaciones: String
+  creadoEn: DateTime
 }
 
 type CostoOrden {
-    id: ID!
-    orden: OrdenProduccion
-    tipoCosto: TipoCosto
-    descripcion: String
-    monto: Float!
-    moneda: String
-    registradoEn: DateTime
+  id: ID!
+  orden: OrdenProduccion
+  tipoCosto: TipoCosto
+  descripcion: String
+  monto: Float!
+  moneda: String
+  registradoEn: DateTime
 }
 
 type TipoBodega {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    bodegas: [Bodega]
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  bodegas: [Bodega]
 }
 
 type Bodega {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    tipo: TipoBodega
-    creadoEn: DateTime
-    inventario: [InventarioLote]
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  tipo: TipoBodega
+  creadoEn: DateTime
+  inventario: [InventarioLote]
 }
 
 type TipoMovimiento {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    afectaWip: Boolean
-    creadoEn: DateTime
-    movimientos: [MovimientoInventario]
+  id: ID!
+  codigo: String!
+  nombre: String!
+  afectaWip: Boolean
+  creadoEn: DateTime
+  movimientos: [MovimientoInventario]
 }
 
 type MovimientoInventario {
-    id: ID!
-    fecha: DateTime
-    bodegaOrigen: Bodega
-    bodegaDestino: Bodega
-    tipo: TipoMovimiento
-    referencia: String
-    observaciones: String
-    creadoPor: Int
-    creadoEn: DateTime
-    detalles: [MovimientoInventarioDetalle]
+  id: ID!
+  fecha: DateTime
+  bodegaOrigen: Bodega
+  bodegaDestino: Bodega
+  tipo: TipoMovimiento
+  referencia: String
+  observaciones: String
+  creadoPor: Int
+  creadoEn: DateTime
+  detalles: [MovimientoInventarioDetalle]
 }
 
 type MovimientoInventarioDetalle {
-    id: ID!
-    movimiento: MovimientoInventario!
-    producto: Producto!
-    lote: LoteProduccion
-    cantidad: Float!
-    unidad: UnidadMedida
-    costoUnitario: Float
-    costoTotal: Float
+  id: ID!
+  movimiento: MovimientoInventario!
+  producto: Producto!
+  lote: LoteProduccion
+  cantidad: Float!
+  unidad: UnidadMedida
+  costoUnitario: Float
+  costoTotal: Float
 }
 
 type InventarioLote {
-    id: ID!
-    producto: Producto!
-    lote: LoteProduccion
-    bodega: Bodega!
-    cantidad: Float!
-    unidad: UnidadMedida
-    actualizadoEn: DateTime
+  id: ID!
+  producto: Producto!
+  lote: LoteProduccion
+  bodega: Bodega!
+  cantidad: Float!
+  unidad: UnidadMedida
+  actualizadoEn: DateTime
 }
 
 type ReservaMaterialOrden {
-    id: ID!
-    orden: OrdenProduccion!
-    producto: Producto!
-    lote: LoteProduccion
-    cantidadReservada: Float!
-    unidad: UnidadMedida
-    fechaReserva: DateTime
+  id: ID!
+  orden: OrdenProduccion!
+  producto: Producto!
+  lote: LoteProduccion
+  cantidadReservada: Float!
+  unidad: UnidadMedida
+  fechaReserva: DateTime
 }
 
 type EstacionProduccion {
-    id: ID!
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    orden: Int!
-    creadoEn: DateTime
+  id: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  orden: Int!
+  creadoEn: DateTime
 }
 
 type OrdenEstacion {
-    id: ID!
-    orden: OrdenProduccion!
-    estacion: EstacionProduccion!
-    inicioPlanificado: DateTime
-    finPlanificado: DateTime
-    inicioReal: DateTime
-    finReal: DateTime
-    estado: String
-    observaciones: String
+  id: ID!
+  orden: OrdenProduccion!
+  estacion: EstacionProduccion!
+  inicioPlanificado: DateTime
+  finPlanificado: DateTime
+  inicioReal: DateTime
+  finReal: DateTime
+  estado: String
+  observaciones: String
 }
 
 type OrdenEvento {
-    id: ID!
-    orden: OrdenProduccion!
-    evento: String!
-    descripcion: String
-    fecha: DateTime
+  id: ID!
+  orden: OrdenProduccion!
+  evento: String!
+  descripcion: String
+  fecha: DateTime
 }
 
 type ConteoCiclico {
-    id: ID!
-    producto: Producto!
-    bodega: Bodega!
-    lote: LoteProduccion
-    cantidadContada: Float!
-    unidad: UnidadMedida
-    fecha: DateTime
-    discrepancias: [DiscrepanciaInventario]
+  id: ID!
+  producto: Producto!
+  bodega: Bodega!
+  lote: LoteProduccion
+  cantidadContada: Float!
+  unidad: UnidadMedida
+  fecha: DateTime
+  discrepancias: [DiscrepanciaInventario]
 }
 
 type DiscrepanciaInventario {
-    id: ID!
-    conteo: ConteoCiclico!
-    cantidadSistema: Float!
-    cantidadContada: Float!
-    diferencia: Float!
-    resuelto: Boolean
+  id: ID!
+  conteo: ConteoCiclico!
+  cantidadSistema: Float!
+  cantidadContada: Float!
+  diferencia: Float!
+  resuelto: Boolean
 }
 
 type PuntoReorden {
-    id: ID!
-    producto: Producto!
-    stockMinimo: Float!
-    stockSeguridad: Float
-    unidad: UnidadMedida
+  id: ID!
+  producto: Producto!
+  stockMinimo: Float!
+  stockSeguridad: Float
+  unidad: UnidadMedida
 }
 
 input TipoBodegaInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
+  codigo: String!
+  nombre: String!
+  descripcion: String
 }
 
 input BodegaInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    idTipo: ID!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  idTipo: ID!
 }
 
 input TipoMovimientoInput {
-    codigo: String!
-    nombre: String!
-    afectaWip: Boolean
+  codigo: String!
+  nombre: String!
+  afectaWip: Boolean
 }
 
 input MovimientoInventarioInput {
-    idBodegaOrigen: ID
-    idBodegaDestino: ID
-    idTipoMovimiento: ID!
-    referencia: String
-    observaciones: String
-    creadoPor: Int
+  idBodegaOrigen: ID
+  idBodegaDestino: ID
+  idTipoMovimiento: ID!
+  referencia: String
+  observaciones: String
+  creadoPor: Int
 }
 
 input MovimientoInventarioDetalleInput {
-    idMovimiento: ID!
-    idProducto: ID!
-    idLote: ID
-    cantidad: Float!
-    idUnidad: ID!
-    costoUnitario: Float
+  idMovimiento: ID!
+  idProducto: ID!
+  idLote: ID
+  cantidad: Float!
+  idUnidad: ID!
+  costoUnitario: Float
 }
 
 input ReservaMaterialOrdenInput {
-    idOrden: ID!
-    idProducto: ID!
-    idLote: ID
-    cantidadReservada: Float!
-    idUnidad: ID!
+  idOrden: ID!
+  idProducto: ID!
+  idLote: ID
+  cantidadReservada: Float!
+  idUnidad: ID!
 }
 
 input EstacionProduccionInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    orden: Int!
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  orden: Int!
 }
 
 input OrdenEstacionInput {
-    idOrden: ID!
-    idEstacion: ID!
-    inicioPlanificado: DateTime
-    finPlanificado: DateTime
-    inicioReal: DateTime
-    finReal: DateTime
-    estado: String
-    observaciones: String
+  idOrden: ID!
+  idEstacion: ID!
+  inicioPlanificado: DateTime
+  finPlanificado: DateTime
+  inicioReal: DateTime
+  finReal: DateTime
+  estado: String
+  observaciones: String
 }
 
 input OrdenEventoInput {
-    idOrden: ID!
-    evento: String!
-    descripcion: String
+  idOrden: ID!
+  evento: String!
+  descripcion: String
 }
 
 input ConteoCiclicoInput {
-    idProducto: ID!
-    idBodega: ID!
-    idLote: ID
-    cantidadContada: Float!
-    idUnidad: ID!
+  idProducto: ID!
+  idBodega: ID!
+  idLote: ID
+  cantidadContada: Float!
+  idUnidad: ID!
 }
 
 input PuntoReordenInput {
-    idProducto: ID!
-    stockMinimo: Float!
-    stockSeguridad: Float
-    idUnidad: ID!
+  idProducto: ID!
+  stockMinimo: Float!
+  stockSeguridad: Float
+  idUnidad: ID!
 }
 input EstadoOrdenInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    activo: Boolean
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  activo: Boolean
 }
 
 input TipoCostoInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
-    activo: Boolean
+  codigo: String!
+  nombre: String!
+  descripcion: String
+  activo: Boolean
 }
 
 input UnidadMedidaTipoInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
+  codigo: String!
+  nombre: String!
+  descripcion: String
 }
 
 input UnidadMedidaInput {
-    codigo: String!
-    nombre: String!
-    abreviatura: String
-    idTipo: ID!
-    esActiva: Boolean
-    esBase: Boolean
+  codigo: String!
+  nombre: String!
+  abreviatura: String
+  idTipo: ID!
+  esActiva: Boolean
+  esBase: Boolean
 }
 
 input UnidadConversionInput {
-    idOrigen: ID!
-    idDestino: ID!
-    factor: Float!
+  idOrigen: ID!
+  idDestino: ID!
+  factor: Float!
 }
 
 input ProductoInput {
-    codigo: String!
-    nombre: String!
-    idUnidadBase: ID
-    costoBase: Float
-    idMetodoValoracion: ID
-    idTipoProducto: ID
+  codigo: String!
+  nombre: String!
+  idUnidadBase: ID
+  costoBase: Float
+  idMetodoValoracion: ID
+  idTipoProducto: ID
 }
 
-
 input LoteProduccionInput {
-    numeroLote: String!
-    idProducto: ID
-    fabricadoEn: DateTime
-    venceEn: DateTime
+  numeroLote: String!
+  idProducto: ID
+  fabricadoEn: DateTime
+  venceEn: DateTime
 }
 
 input OrdenProduccionInput {
-    numeroOrden: String!
-    idLote: ID
-    idProducto: ID
-    cantidad: Float!
-    idUnidad: ID
-    idEstado: ID
-    inicioPlanificado: DateTime
-    finPlanificado: DateTime
-    inicioReal: DateTime
-    finReal: DateTime
-    cantidadDesperdicio: Float
-    cantidadProducida: Float
-    creadoPor: Int
-    observaciones: String
+  numeroOrden: String!
+  idLote: ID
+  idProducto: ID
+  cantidad: Float!
+  idUnidad: ID
+  idEstado: ID
+  inicioPlanificado: DateTime
+  finPlanificado: DateTime
+  inicioReal: DateTime
+  finReal: DateTime
+  cantidadDesperdicio: Float
+  cantidadProducida: Float
+  creadoPor: Int
+  observaciones: String
 }
 
 input LineaOrdenInput {
-    idOrden: ID!
-    numeroLinea: Int!
-    idProductoComponente: ID
-    cantidadRequerida: Float!
-    idUnidadComponente: ID
-    cantidadUsada: Float
-    costoUnitario: Float
-    observaciones: String
+  idOrden: ID!
+  numeroLinea: Int!
+  idProductoComponente: ID
+  cantidadRequerida: Float!
+  idUnidadComponente: ID
+  cantidadUsada: Float
+  costoUnitario: Float
+  observaciones: String
 }
 
 input CostoOrdenInput {
-    idOrden: ID!
-    idTipoCosto: ID!
-    descripcion: String
-    monto: Float!
-    moneda: String!
+  idOrden: ID!
+  idTipoCosto: ID!
+  descripcion: String
+  monto: Float!
+  moneda: String!
 }
 
 input MetodoValoracionInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
+  codigo: String!
+  nombre: String!
+  descripcion: String
 }
 
 input TipoProductoInput {
-    codigo: String!
-    nombre: String!
-    descripcion: String
+  codigo: String!
+  nombre: String!
+  descripcion: String
 }
 type Query {
-    tiposBodega: [TipoBodega]
-    tipoBodega(id: ID!): TipoBodega
-    bodegas: [Bodega]
-    bodega(id: ID!): Bodega
-    tiposMovimiento: [TipoMovimiento]
-    tipoMovimiento(id: ID!): TipoMovimiento
-    movimientosInventario: [MovimientoInventario]
-    movimientoInventario(id: ID!): MovimientoInventario
-    inventarioLotes: [InventarioLote]
-    reservasMaterial: [ReservaMaterialOrden]
-    estacionesProduccion: [EstacionProduccion]
-    ordenesEstacion: [OrdenEstacion]
-    ordenesEvento: [OrdenEvento]
-    conteosCiclicos: [ConteoCiclico]
-    discrepanciasInventario: [DiscrepanciaInventario]
-    puntosReorden: [PuntoReorden]
-    metodosValoracion: [MetodoValoracion]
-    metodoValoracion(id: ID!): MetodoValoracion
-    tiposProducto: [TipoProducto]
-    tipoProducto(id: ID!): TipoProducto
-    estadosOrden: [EstadoOrden]
-    estadoOrden(id: ID!): EstadoOrden
-    tiposCosto: [TipoCosto]
-    tipoCosto(id: ID!): TipoCosto
-    unidadesMedidaTipo: [UnidadMedidaTipo]
-    unidadMedidaTipo(id: ID!): UnidadMedidaTipo
-    unidadesMedida: [UnidadMedida]
-    unidadMedida(id: ID!): UnidadMedida
-    unidadesConversion: [UnidadConversion]
-    unidadConversion(id: ID!): UnidadConversion
-    productos: [Producto]
-    producto(id: ID!): Producto
-    lotesProduccion: [LoteProduccion]
-    loteProduccion(id: ID!): LoteProduccion
-    ordenesProduccion: [OrdenProduccion]
-    ordenProduccion(id: ID!): OrdenProduccion
-    lineasOrden: [LineaOrden]
-    lineaOrden(id: ID!): LineaOrden
-    costosOrden: [CostoOrden]
-    costoOrden(id: ID!): CostoOrden
+  tiposBodega: [TipoBodega]
+  tipoBodega(id: ID!): TipoBodega
+  bodegas: [Bodega]
+  bodega(id: ID!): Bodega
+  tiposMovimiento: [TipoMovimiento]
+  tipoMovimiento(id: ID!): TipoMovimiento
+  movimientosInventario: [MovimientoInventario]
+  movimientoInventario(id: ID!): MovimientoInventario
+  inventarioLotes: [InventarioLote]
+  reservasMaterial: [ReservaMaterialOrden]
+  estacionesProduccion: [EstacionProduccion]
+  ordenesEstacion: [OrdenEstacion]
+  ordenesEvento: [OrdenEvento]
+  conteosCiclicos: [ConteoCiclico]
+  discrepanciasInventario: [DiscrepanciaInventario]
+  puntosReorden: [PuntoReorden]
+  metodosValoracion: [MetodoValoracion]
+  metodoValoracion(id: ID!): MetodoValoracion
+  tiposProducto: [TipoProducto]
+  tipoProducto(id: ID!): TipoProducto
+  estadosOrden: [EstadoOrden]
+  estadoOrden(id: ID!): EstadoOrden
+  tiposCosto: [TipoCosto]
+  tipoCosto(id: ID!): TipoCosto
+  unidadesMedidaTipo: [UnidadMedidaTipo]
+  unidadMedidaTipo(id: ID!): UnidadMedidaTipo
+  unidadesMedida: [UnidadMedida]
+  unidadMedida(id: ID!): UnidadMedida
+  unidadesConversion: [UnidadConversion]
+  unidadConversion(id: ID!): UnidadConversion
+  productos: [Producto]
+  producto(id: ID!): Producto
+  lotesProduccion: [LoteProduccion]
+  loteProduccion(id: ID!): LoteProduccion
+  ordenesProduccion: [OrdenProduccion]
+  ordenProduccion(id: ID!): OrdenProduccion
+  lineasOrden: [LineaOrden]
+  lineaOrden(id: ID!): LineaOrden
+  costosOrden: [CostoOrden]
+  costoOrden(id: ID!): CostoOrden
 }
 
 type Mutation {
-    createEstadoOrden(input: EstadoOrdenInput!): EstadoOrden
-    updateEstadoOrden(id: ID!, input: EstadoOrdenInput!): EstadoOrden
-    deleteEstadoOrden(id: ID!): Boolean
+  createEstadoOrden(input: EstadoOrdenInput!): EstadoOrden
+  updateEstadoOrden(id: ID!, input: EstadoOrdenInput!): EstadoOrden
+  deleteEstadoOrden(id: ID!): Boolean
 
-    createTipoCosto(input: TipoCostoInput!): TipoCosto
-    updateTipoCosto(id: ID!, input: TipoCostoInput!): TipoCosto
-    deleteTipoCosto(id: ID!): Boolean
+  createTipoCosto(input: TipoCostoInput!): TipoCosto
+  updateTipoCosto(id: ID!, input: TipoCostoInput!): TipoCosto
+  deleteTipoCosto(id: ID!): Boolean
 
-    createUnidadMedidaTipo(input: UnidadMedidaTipoInput!): UnidadMedidaTipo
-    updateUnidadMedidaTipo(id: ID!, input: UnidadMedidaTipoInput!): UnidadMedidaTipo
-    deleteUnidadMedidaTipo(id: ID!): Boolean
+  createUnidadMedidaTipo(input: UnidadMedidaTipoInput!): UnidadMedidaTipo
+  updateUnidadMedidaTipo(
+    id: ID!
+    input: UnidadMedidaTipoInput!
+  ): UnidadMedidaTipo
+  deleteUnidadMedidaTipo(id: ID!): Boolean
 
-    createUnidadMedida(input: UnidadMedidaInput!): UnidadMedida
-    updateUnidadMedida(id: ID!, input: UnidadMedidaInput!): UnidadMedida
-    deleteUnidadMedida(id: ID!): Boolean
+  createUnidadMedida(input: UnidadMedidaInput!): UnidadMedida
+  updateUnidadMedida(id: ID!, input: UnidadMedidaInput!): UnidadMedida
+  deleteUnidadMedida(id: ID!): Boolean
 
-    createUnidadConversion(input: UnidadConversionInput!): UnidadConversion
-    updateUnidadConversion(id: ID!, input: UnidadConversionInput!): UnidadConversion
-    deleteUnidadConversion(id: ID!): Boolean
+  createUnidadConversion(input: UnidadConversionInput!): UnidadConversion
+  updateUnidadConversion(
+    id: ID!
+    input: UnidadConversionInput!
+  ): UnidadConversion
+  deleteUnidadConversion(id: ID!): Boolean
 
-    createProducto(input: ProductoInput!): Producto
-    updateProducto(id: ID!, input: ProductoInput!): Producto
-    deleteProducto(id: ID!): Boolean
+  createProducto(input: ProductoInput!): Producto
+  updateProducto(id: ID!, input: ProductoInput!): Producto
+  deleteProducto(id: ID!): Boolean
 
-    createTipoBodega(input: TipoBodegaInput!): TipoBodega
-    updateTipoBodega(id: ID!, input: TipoBodegaInput!): TipoBodega
-    deleteTipoBodega(id: ID!): Boolean
+  createTipoBodega(input: TipoBodegaInput!): TipoBodega
+  updateTipoBodega(id: ID!, input: TipoBodegaInput!): TipoBodega
+  deleteTipoBodega(id: ID!): Boolean
 
-    createBodega(input: BodegaInput!): Bodega
-    updateBodega(id: ID!, input: BodegaInput!): Bodega
-    deleteBodega(id: ID!): Boolean
+  createBodega(input: BodegaInput!): Bodega
+  updateBodega(id: ID!, input: BodegaInput!): Bodega
+  deleteBodega(id: ID!): Boolean
 
-    createTipoMovimiento(input: TipoMovimientoInput!): TipoMovimiento
-    updateTipoMovimiento(id: ID!, input: TipoMovimientoInput!): TipoMovimiento
-    deleteTipoMovimiento(id: ID!): Boolean
+  createTipoMovimiento(input: TipoMovimientoInput!): TipoMovimiento
+  updateTipoMovimiento(id: ID!, input: TipoMovimientoInput!): TipoMovimiento
+  deleteTipoMovimiento(id: ID!): Boolean
 
-    createEstacionProduccion(input: EstacionProduccionInput!): EstacionProduccion
-    updateEstacionProduccion(id: ID!, input: EstacionProduccionInput!): EstacionProduccion
-    deleteEstacionProduccion(id: ID!): Boolean
+  createEstacionProduccion(input: EstacionProduccionInput!): EstacionProduccion
+  updateEstacionProduccion(
+    id: ID!
+    input: EstacionProduccionInput!
+  ): EstacionProduccion
+  deleteEstacionProduccion(id: ID!): Boolean
 
-    createPuntoReorden(input: PuntoReordenInput!): PuntoReorden
+  createPuntoReorden(input: PuntoReordenInput!): PuntoReorden
 
-    createMetodoValoracion(input: MetodoValoracionInput!): MetodoValoracion
-    updateMetodoValoracion(id: ID!, input: MetodoValoracionInput!): MetodoValoracion
-    deleteMetodoValoracion(id: ID!): Boolean
+  createMetodoValoracion(input: MetodoValoracionInput!): MetodoValoracion
+  updateMetodoValoracion(
+    id: ID!
+    input: MetodoValoracionInput!
+  ): MetodoValoracion
+  deleteMetodoValoracion(id: ID!): Boolean
 
-    createTipoProducto(input: TipoProductoInput!): TipoProducto
-    updateTipoProducto(id: ID!, input: TipoProductoInput!): TipoProducto
-    deleteTipoProducto(id: ID!): Boolean
+  createTipoProducto(input: TipoProductoInput!): TipoProducto
+  updateTipoProducto(id: ID!, input: TipoProductoInput!): TipoProducto
+  deleteTipoProducto(id: ID!): Boolean
 
-    # --- Mutaciones de Producción e Inventario por Eventos ---
+  # --- Mutaciones de Producción e Inventario por Eventos ---
 
-    # Creación de entidades raíz que inician un flujo
-    createOrdenProduccion(input: OrdenProduccionInput!): OrdenProduccion
-    createLineaOrden(input: LineaOrdenInput!): LineaOrden
-    createConteoCiclico(input: ConteoCiclicoInput!): ConteoCiclico
-    createMovimientoInventarioAjuste(input: MovimientoInventarioInput!, detalles: [MovimientoInventarioDetalleInput!]!): MovimientoInventario
+  # Creación de entidades raíz que inician un flujo
+  createOrdenProduccion(input: OrdenProduccionInput!): OrdenProduccion
+  createLineaOrden(input: LineaOrdenInput!): LineaOrden
+  createConteoCiclico(input: ConteoCiclicoInput!): ConteoCiclico
+  createMovimientoInventarioAjuste(
+    input: MovimientoInventarioInput!
+    detalles: [MovimientoInventarioDetalleInput!]!
+  ): MovimientoInventario
 
-    # Acciones que disparan eventos de ciclo de vida
-    iniciarOrdenProduccion(id: ID!): OrdenProduccion
-    avanzarEstacionProduccion(ordenEstacionId: ID!): OrdenEstacion
-    finalizarOrdenProduccion(id: ID!): OrdenProduccion # Forzada/manual
-    consumirLineaOrden(id: ID!): LineaOrden
+  # Acciones que disparan eventos de ciclo de vida
+  iniciarOrdenProduccion(id: ID!): OrdenProduccion
+  avanzarEstacionProduccion(ordenEstacionId: ID!): OrdenEstacion
+  finalizarOrdenProduccion(id: ID!): OrdenProduccion # Forzada/manual
+  consumirLineaOrden(id: ID!): LineaOrden
 }

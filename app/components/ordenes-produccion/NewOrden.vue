@@ -55,10 +55,26 @@ const state = reactive({ ...OrdenSchemaInitialState });
 const error = ref<string | null>(null);
 
 // Queries
-const { result: lotesResult, loading: lotesLoading, refetch: refetchLotes } = useQuery(GetLotesProduccion);
-const { result: productosResult, loading: productosLoading, refetch: refetchProductos } = useQuery(GetProductos);
-const { result: unidadesResult, loading: unidadesLoading, refetch: refetchUnidades } = useQuery(GetUnidadesMedida);
-const { result: estadosResult, loading: estadosLoading, refetch: refetchEstados } = useQuery(GetEstadosOrden);
+const {
+  result: lotesResult,
+  loading: lotesLoading,
+  refetch: refetchLotes,
+} = useQuery(GetLotesProduccion);
+const {
+  result: productosResult,
+  loading: productosLoading,
+  refetch: refetchProductos,
+} = useQuery(GetProductos);
+const {
+  result: unidadesResult,
+  loading: unidadesLoading,
+  refetch: refetchUnidades,
+} = useQuery(GetUnidadesMedida);
+const {
+  result: estadosResult,
+  loading: estadosLoading,
+  refetch: refetchEstados,
+} = useQuery(GetEstadosOrden);
 
 // Options tipados
 const lotesOptions = computed(() =>

@@ -1,9 +1,9 @@
 query GetTiposMovimiento {
-    tiposMovimiento {
-        id
-        codigo
-        nombre
-        afectaWip
-        creadoEn
-    }
+  tiposMovimiento {
+    id
+    codigo
+    nombre
+    afectaWip
+    creadoEn
+  }
 }

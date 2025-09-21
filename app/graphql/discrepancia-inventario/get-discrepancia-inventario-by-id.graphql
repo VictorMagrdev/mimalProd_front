@@ -1,0 +1,11 @@
+query GetDiscrepanciaInventarioById($id: ID!) {
+  discrepanciaInventario(id: $id) {
+    id
+    cantidadEsperada
+    cantidadReal
+    fecha
+    idProducto: producto {
+      id
+    }
+  }
+}

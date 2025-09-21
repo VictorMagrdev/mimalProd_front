@@ -1,0 +1,5 @@
+mutation CreateOrdenEvento($input: OrdenEventoInput!) {
+  createOrdenEvento(input: $input) {
+    id
+  }
+}

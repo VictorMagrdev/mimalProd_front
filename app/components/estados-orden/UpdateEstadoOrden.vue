@@ -4,9 +4,9 @@ import { reactive, watch, computed } from "vue";
 import GetEstadoOrdenById from "~/graphql/estados-orden/get-estado-orden-by-id.graphql";
 import UpdateEstadoOrden from "~/graphql/estados-orden/update-estado-orden.graphql";
 
-const props = defineProps<{ 
-  isOpen: boolean; 
-  estadoId: string | null 
+const props = defineProps<{
+  isOpen: boolean;
+  estadoId: string | null;
 }>();
 
 const emit = defineEmits<{

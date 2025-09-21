@@ -1,5 +1,5 @@
 query GetMetodoValoracion {
-    metodosValoracion {
+  metodosValoracion {
     id
     codigo
     nombre

@@ -18,7 +18,6 @@ export interface Producto {
 const { result, loading, error } = useQuery(getProductos);
 const productos = computed(() => result.value?.productos ?? []);
 
-
 function openUpdateModal(id: string) {
   selectedProductoId.value = id;
   isUpdateOpen.value = true;
@@ -81,7 +80,6 @@ const globalFilter = ref();
 const isNewOpen = ref(false);
 const isUpdateOpen = ref(false);
 const selectedProductoId = ref<string | null>(null);
-
 </script>
 
 <template>
@@ -148,7 +146,6 @@ const selectedProductoId = ref<string | null>(null);
         />
       </div>
     </div>
-
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

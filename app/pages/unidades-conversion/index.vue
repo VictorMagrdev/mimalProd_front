@@ -19,11 +19,9 @@ interface UnidadesConversionResult {
 }
 
 // Query tipada
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<UnidadesConversionResult>(GetUnidadesConversion);
+const { data, pending, error } = await useAsyncQuery<UnidadesConversionResult>(
+  GetUnidadesConversion,
+);
 
 // Ahora TS reconoce `unidadesConversion`
 const conversiones = computed(() => data.value?.unidadesConversion || []);
@@ -84,8 +82,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
-
 </script>
 
 <template>

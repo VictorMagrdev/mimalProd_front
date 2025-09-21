@@ -20,11 +20,8 @@ interface LotesProduccionResult {
   lotesProduccion: LoteProduccionUI[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
+const { data, pending, error } =
+  await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
 
 const rows = computed<LoteProduccionUI[]>(
   () => data.value?.lotesProduccion || [],
@@ -158,6 +155,5 @@ function openUpdateModal(id: string) {
     </div>
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
-
   </div>
 </template>

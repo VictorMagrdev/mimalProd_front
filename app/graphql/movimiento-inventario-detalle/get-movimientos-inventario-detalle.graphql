@@ -1,0 +1,13 @@
+query GetMovimientosInventarioDetalle {
+  movimientosInventarioDetalle {
+    id
+    cantidad
+    costoUnitario
+    movimiento {
+      id
+    }
+    producto {
+      nombre
+    }
+  }
+}

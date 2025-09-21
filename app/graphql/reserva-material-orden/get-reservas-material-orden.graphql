@@ -1,0 +1,12 @@
+query GetReservasMaterialOrden {
+  reservasMaterialOrden {
+    id
+    cantidadReservada
+    orden {
+      numeroOrden
+    }
+    material {
+      nombre
+    }
+  }
+}

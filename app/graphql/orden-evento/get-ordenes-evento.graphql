@@ -1,0 +1,10 @@
+query GetOrdenesEvento {
+  ordenesEvento {
+    id
+    evento
+    fecha
+    orden {
+      numeroOrden
+    }
+  }
+}

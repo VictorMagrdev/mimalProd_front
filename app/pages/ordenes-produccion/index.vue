@@ -13,7 +13,7 @@ export interface OrdenProduccionUI {
   cantidad: number;
   unidad: { abreviatura: string };
   estado: { nombre: string };
-  inicioPlanificado: string; 
+  inicioPlanificado: string;
   finPlanificado: string;
 }
 
@@ -23,11 +23,8 @@ interface OrdenesProduccionResult {
 }
 
 // Query tipada
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
+const { data, pending, error } =
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
 // Ahora TS sabe que existe "ordenesProduccion"
 const rows = computed<OrdenProduccionUI[]>(

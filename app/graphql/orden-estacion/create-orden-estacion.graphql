@@ -1,0 +1,5 @@
+mutation CreateOrdenEstacion($input: OrdenEstacionInput!) {
+  createOrdenEstacion(input: $input) {
+    id
+  }
+}

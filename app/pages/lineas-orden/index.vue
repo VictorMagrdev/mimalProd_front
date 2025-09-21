@@ -21,11 +21,8 @@ interface LineasOrdenResult {
   lineasOrden: LineaOrdenUI[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
+const { data, pending, error } =
+  await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
 
 const rows = computed<LineaOrdenUI[]>(() => data.value?.lineasOrden || []);
 
@@ -168,6 +165,5 @@ function openUpdateModal(id: string) {
     </div>
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
-
   </div>
 </template>

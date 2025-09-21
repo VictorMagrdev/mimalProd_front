@@ -1,0 +1,10 @@
+query GetConteoCiclicoById($id: ID!) {
+  conteoCiclico(id: $id) {
+    id
+    fechaConteo
+    cantidadContada
+    idProducto: producto {
+      id
+    }
+  }
+}

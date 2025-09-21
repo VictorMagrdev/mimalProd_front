@@ -1,0 +1,11 @@
+query GetDiscrepanciasInventario {
+  discrepanciasInventario {
+    id
+    cantidadEsperada
+    cantidadReal
+    fecha
+    producto {
+      nombre
+    }
+  }
+}

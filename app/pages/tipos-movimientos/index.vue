@@ -19,14 +19,10 @@ interface TipoMovimientoResult {
   tiposMovimiento: TipoMovimiento[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<TipoMovimientoResult>(GetTiposMovimiento);
+const { data, pending, error } =
+  await useAsyncQuery<TipoMovimientoResult>(GetTiposMovimiento);
 
 const tiposMovimiento = computed(() => data.value?.tiposMovimiento || []);
-
 
 const columns: TableColumn<TipoMovimiento>[] = [
   {
@@ -45,13 +41,13 @@ const columns: TableColumn<TipoMovimiento>[] = [
     cell: ({ row }: { row: Row<TipoMovimiento> }) => {
       const activo = row.getValue("afectaWip");
       return h(
-          "span",
-          {
-            class: activo
-                ? "text-green-600 font-semibold"
-                : "text-red-600 font-semibold",
-          },
-          activo ? "Sí" : "No",
+        "span",
+        {
+          class: activo
+            ? "text-green-600 font-semibold"
+            : "text-red-600 font-semibold",
+        },
+        activo ? "Sí" : "No",
       );
     },
   },
@@ -63,17 +59,17 @@ const columns: TableColumn<TipoMovimiento>[] = [
   {
     id: "actions",
     cell: ({ row }) =>
-        h(
-            "div",
-            { class: "text-right" },
-            h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-                h(UButton, {
-                  icon: "i-lucide-ellipsis-vertical",
-                  color: "neutral",
-                  variant: "ghost",
-                }),
-            ),
+      h(
+        "div",
+        { class: "text-right" },
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
         ),
+      ),
   },
 ];
 
@@ -99,7 +95,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
 </script>
 
 <template>
@@ -107,17 +102,17 @@ function openUpdateModal(id: string) {
     <h1 class="text-2xl font-bold">Tipos de Costo</h1>
 
     <div
-        class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
-          v-model="globalFilter"
-          class="max-w-sm"
-          placeholder="Filtrar..."
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
       />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
-            :items="
+          :items="
             table?.tableApi
               ?.getAllColumns()
               .filter((column) => column.getCanHide())
@@ -135,13 +130,13 @@ function openUpdateModal(id: string) {
                 },
               }))
           "
-            :content="{ align: 'end' }"
+          :content="{ align: 'end' }"
         >
           <UButton
-              label="Columnas"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
 
@@ -151,22 +146,21 @@ function openUpdateModal(id: string) {
 
     <div class="relative z-0 w-full">
       <UTable
-          ref="table"
-          v-model:pagination="pagination"
-          v-model:global-filter="globalFilter"
-          :data="tiposMovimiento || []"
-          :columns="columns"
-          :loading="pending"
+        ref="table"
+        v-model:pagination="pagination"
+        v-model:global-filter="globalFilter"
+        :data="tiposMovimiento || []"
+        :columns="columns"
+        :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
-            v-model="pagination.pageIndex"
-            :page-count="pagination.pageSize"
-            :total="tiposMovimiento?.length || 0"
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
+          :total="tiposMovimiento?.length || 0"
         />
       </div>
     </div>
-
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

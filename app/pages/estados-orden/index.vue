@@ -31,11 +31,8 @@ interface EstadosOrdenResult {
 }
 
 // Query tipada
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<EstadosOrdenResult>(GetEstadosOrden);
+const { data, pending, error } =
+  await useAsyncQuery<EstadosOrdenResult>(GetEstadosOrden);
 
 // Ahora TS sabe que data.value?.estadosOrden existe
 const rows = computed<EstadoOrdenUI[]>(() => data.value?.estadosOrden || []);
@@ -100,7 +97,6 @@ const selectedId = ref<string | null>(null);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
 </script>
 
 <template>
@@ -146,7 +142,6 @@ function openUpdateModal(id: string) {
         </UDropdownMenu>
 
         <NewEstadoOrden />
-
       </div>
     </div>
 
@@ -169,6 +164,5 @@ function openUpdateModal(id: string) {
     </div>
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
-
   </div>
 </template>

@@ -78,6 +78,6 @@ export const useAuthStore = defineStore("auth", {
     async logout() {
       this.clearAuth();
       await navigateTo("/");
-    }
-  }
+    },
+  },
 });

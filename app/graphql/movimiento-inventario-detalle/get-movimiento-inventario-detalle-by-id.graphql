@@ -1,0 +1,13 @@
+query GetMovimientoInventarioDetalleById($id: ID!) {
+  movimientoInventarioDetalle(id: $id) {
+    id
+    cantidad
+    costoUnitario
+    idMovimiento: movimiento {
+      id
+    }
+    idProducto: producto {
+      id
+    }
+  }
+}

@@ -32,14 +32,12 @@ interface MovimientoInventarioResult {
   movimientosInventario: MovimientoInventario[];
 }
 
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
+const { data, pending, error } =
+  await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
 
-const movimientosInventario = computed(() => data.value?.movimientosInventario || []);
-
+const movimientosInventario = computed(
+  () => data.value?.movimientosInventario || [],
+);
 
 const columns: TableColumn<MovimientoInventario>[] = [
   {
@@ -60,7 +58,8 @@ const columns: TableColumn<MovimientoInventario>[] = [
   {
     accessorKey: "bodegaDestino",
     header: "bodegaDestino",
-    cell: ({ row }: { row: Row<MovimientoInventario> }) => row.original.bodegaDestino.nombre,
+    cell: ({ row }: { row: Row<MovimientoInventario> }) =>
+      row.original.bodegaDestino.nombre,
   },
   {
     accessorKey: "tipo",
@@ -85,17 +84,17 @@ const columns: TableColumn<MovimientoInventario>[] = [
   {
     id: "actions",
     cell: ({ row }) =>
-        h(
-            "div",
-            { class: "text-right" },
-            h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-                h(UButton, {
-                  icon: "i-lucide-ellipsis-vertical",
-                  color: "neutral",
-                  variant: "ghost",
-                }),
-            ),
+      h(
+        "div",
+        { class: "text-right" },
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
         ),
+      ),
   },
 ];
 
@@ -121,7 +120,6 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
-
 </script>
 
 <template>
@@ -129,17 +127,17 @@ function openUpdateModal(id: string) {
     <h1 class="text-2xl font-bold">Tipos de Costo</h1>
 
     <div
-        class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
-          v-model="globalFilter"
-          class="max-w-sm"
-          placeholder="Filtrar..."
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
       />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
-            :items="
+          :items="
             table?.tableApi
               ?.getAllColumns()
               .filter((column) => column.getCanHide())
@@ -157,13 +155,13 @@ function openUpdateModal(id: string) {
                 },
               }))
           "
-            :content="{ align: 'end' }"
+          :content="{ align: 'end' }"
         >
           <UButton
-              label="Columnas"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
 
@@ -173,22 +171,21 @@ function openUpdateModal(id: string) {
 
     <div class="relative z-0 w-full">
       <UTable
-          ref="table"
-          v-model:pagination="pagination"
-          v-model:global-filter="globalFilter"
-          :data="movimientosInventario || []"
-          :columns="columns"
-          :loading="pending"
+        ref="table"
+        v-model:pagination="pagination"
+        v-model:global-filter="globalFilter"
+        :data="movimientosInventario || []"
+        :columns="columns"
+        :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
-            v-model="pagination.pageIndex"
-            :page-count="pagination.pageSize"
-            :total="movimientosInventario?.length || 0"
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
+          :total="movimientosInventario?.length || 0"
         />
       </div>
     </div>
-
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

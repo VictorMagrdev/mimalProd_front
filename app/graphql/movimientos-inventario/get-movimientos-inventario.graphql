@@ -1,23 +1,22 @@
 query GetMovimientosInventario {
-    movimientosInventario {
-        id
-        fecha
-        referencia
-        observaciones
-        creadoPor
-        creadoEn
-        bodegaOrigen {
-            id
-            nombre
-        }
-        bodegaDestino {
-            id
-            nombre
-        }
-        tipo {
-            id
-            nombre
-        }
-
+  movimientosInventario {
+    id
+    fecha
+    referencia
+    observaciones
+    creadoPor
+    creadoEn
+    bodegaOrigen {
+      id
+      nombre
     }
+    bodegaDestino {
+      id
+      nombre
+    }
+    tipo {
+      id
+      nombre
+    }
+  }
 }
