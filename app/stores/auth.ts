@@ -78,32 +78,6 @@ export const useAuthStore = defineStore("auth", {
     async logout() {
       this.clearAuth();
       await navigateTo("/");
-    },
-
-    async checkAuth() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return false;
-
-        const response = await $fetch<LoginResponse>("/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        this.setToken(token);
-        this.setUser({
-          username: response.username,
-          roles: response.roles,
-          policies: response.policies,
-        });
-        return true;
-      } catch {
-        this.clearAuth();
-        return false;
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+    }
+  }
 });

@@ -1,0 +1,5 @@
+mutation UpdateTipoCosto($id: ID!, $input: TipoCostoInput!) {
+  updateTipoCosto(id: $id, input: $input) {
+    id
+  }
+}

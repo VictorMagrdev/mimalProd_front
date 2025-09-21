@@ -92,7 +92,7 @@ const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
-  updateModalOpen.value = true; // 👈 abre solo el de update
+  updateModalOpen.value = true;
 }
 
 </script>

@@ -1,0 +1,8 @@
+query GetMetodoValoracion {
+    metodosValoracion {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}

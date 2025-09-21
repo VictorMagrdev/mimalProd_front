@@ -8,6 +8,7 @@ import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produ
 import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
 
 const open = ref(false);
+
 type ID = string;
 
 interface SelectItem {
@@ -88,7 +89,6 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
     toast.add({ title: "Error", description: message, color: "error" });
   }
 }
-
 
 </script>
 

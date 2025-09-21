@@ -1,59 +1,56 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
+import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import GetLotesProduccion from "~/graphql/lotes-produccion/get-lotes-produccion.graphql";
+import GetTiposBodega from "~/graphql/tipos-bodega/get-tipos-bodega.graphql";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-// Tipo de cada lote (ya lo definiste)
-export interface LoteProduccionUI {
+export interface TipoBodega {
   id: string;
-  numeroLote: string;
-  producto: { nombre: string };
-  fabricadoEn: string;
-  venceEn: string;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  activo: boolean;
 }
 
-interface LotesProduccionResult {
-  lotesProduccion: LoteProduccionUI[];
+interface TiposBodegaResult {
+  tiposBodega: TipoBodega[];
 }
 
 const {
   data,
   pending,
   error,
-} = await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
+} = await useAsyncQuery<TiposBodegaResult>(GetTiposBodega);
 
-const rows = computed<LoteProduccionUI[]>(
-  () => data.value?.lotesProduccion || [],
-);
+const tiposBodega = computed(() => data.value?.tiposBodega || []);
 
-const columns: TableColumn<LoteProduccionUI>[] = [
+
+const columns: TableColumn<TipoBodega>[] = [
   {
-    accessorKey: "numeroLote",
-    header: "Número de Lote",
-    cell: ({ row }: { row: Row<LoteProduccionUI> }) => row.original.numeroLote,
+    accessorKey: "codigo",
+    header: "Código",
+    cell: ({ row }: { row: Row<TipoBodega> }) => row.original.codigo,
   },
   {
-    accessorKey: "producto.nombre",
-    header: "Producto",
-    cell: ({ row }) => row.original.producto.nombre,
+    accessorKey: "nombre",
+    header: "Nombre",
+    cell: ({ row }) => row.original.nombre,
   },
   {
-    accessorKey: "fabricadoEn",
-    header: "Fabricado",
-    cell: ({ row }) => new Date(row.original.fabricadoEn).toLocaleDateString(),
+    accessorKey: "descripcion",
+    header: "Descripción",
+    cell: ({ row }) => row.original.descripcion,
   },
   {
-    accessorKey: "venceEn",
-    header: "Vence",
-    cell: ({ row }) => new Date(row.original.venceEn).toLocaleDateString(),
+    accessorKey: "activo",
+    header: "Activo",
+    cell: ({ row }) => (row.original.activo ? "Sí" : "No"),
   },
   {
     id: "actions",
-    header: "Acciones",
     cell: ({ row }) =>
       h(
         "div",
@@ -69,13 +66,13 @@ const columns: TableColumn<LoteProduccionUI>[] = [
   },
 ];
 
-function getRowItems(lote: LoteProduccionUI) {
+function getRowItems(tipo: TipoBodega) {
   return [
     [
       {
         label: "Actualizar",
-        icon: "i-heroicons-pencil-square-20-solid",
-        onSelect: () => openUpdateModal(lote.id),
+        icon: "i-heroicons-pencil-20-solid",
+        onSelect: () => openUpdateModal(tipo.id),
       },
     ],
   ];
@@ -91,11 +88,13 @@ const isNewModalOpen = ref(false);
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
+
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Lotes de Producción</h1>
+    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
@@ -135,7 +134,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton @click="isNewModalOpen = true">Nuevo Lote</UButton>
+        <UButton label="Nuevo Tipo de Costo" @click="isNewModalOpen = true" />
       </div>
     </div>
 
@@ -144,7 +143,7 @@ function openUpdateModal(id: string) {
         ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        :data="rows"
+        :data="tiposBodega || []"
         :columns="columns"
         :loading="pending"
       />
@@ -152,12 +151,12 @@ function openUpdateModal(id: string) {
         <UPagination
           v-model="pagination.pageIndex"
           :page-count="pagination.pageSize"
-          :total="rows.length"
+          :total="tiposBodega?.length || 0"
         />
       </div>
     </div>
 
-    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
 
+    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>
 </template>

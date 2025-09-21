@@ -4,8 +4,14 @@ import { reactive, watch, computed } from "vue";
 import GetEstadoOrdenById from "~/graphql/estados-orden/get-estado-orden-by-id.graphql";
 import UpdateEstadoOrden from "~/graphql/estados-orden/update-estado-orden.graphql";
 
-const props = defineProps<{ isOpen: boolean; estadoId: string | null }>();
-const emit = defineEmits(["close", "updated"]);
+const props = defineProps<{ 
+  isOpen: boolean; 
+  estadoId: string | null 
+}>();
+
+const emit = defineEmits<{
+  (e: "close"): void;
+}>();
 
 interface EstadoOrdenFormState {
   codigo: string;
@@ -53,7 +59,7 @@ async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
   try {
     await mutate({ id: props.estadoId, input: event.data });
     toast.add({ title: "Éxito", description: "Estado de orden actualizado." });
-    emit("updated");
+    emit("close");
     closeModal();
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

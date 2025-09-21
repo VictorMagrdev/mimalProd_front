@@ -127,7 +127,10 @@ async function deactivateUser() {
 </script>
 
 <template>
-  <UModal :open="props.open" title="Actualizar usuario" @close="emit('close')">
+  <UModal 
+  :open="props.open" 
+  title="Actualizar usuario" 
+  @close="emit('close')">
     <template #description>
       Modifica los campos para actualizar la información del usuario.
     </template>

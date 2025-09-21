@@ -1,0 +1,9 @@
+query GetTipoCostoById($id: ID!) {
+  tipoCosto(id: $id) {
+    id
+    codigo
+    nombre
+    descripcion
+    activo
+  }
+}

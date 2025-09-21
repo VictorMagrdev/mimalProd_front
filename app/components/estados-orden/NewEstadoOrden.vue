@@ -43,15 +43,10 @@ async function onSubmit(event: FormSubmitEvent<EstadoOrdenFormState>) {
 
     resetForm();
     open.value = false;
-  } catch (e: unknown) {
-    const message =
-      typeof e === "object" && e !== null && "message" in e
-        ? (e as { message: string }).message
-        : String(e);
-    error.value = message;
+  } catch (err) {
     toast.add({
       title: "Error",
-      description: message,
+      description: String(err),
       color: "error",
     });
   }

@@ -1,0 +1,8 @@
+query GetTiposBodega {
+    tiposBodega {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}

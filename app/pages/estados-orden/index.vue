@@ -3,6 +3,7 @@ import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetEstadosOrden from "~/graphql/estados-orden/get-estados-orden.graphql";
+import NewEstadoOrden from "~/components/estados-orden/NewEstadoOrden.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -95,11 +96,11 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
 }
+
 </script>
 
 <template>
@@ -127,7 +128,7 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(!!checked);
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
                   e?.preventDefault();
@@ -144,7 +145,8 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton @click="isNewModalOpen = true">Nuevo Estado</UButton>
+        <NewEstadoOrden />
+
       </div>
     </div>
 

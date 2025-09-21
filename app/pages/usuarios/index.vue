@@ -69,7 +69,7 @@ const desactivar = async (id: number) => {
     });
 
     // Actualizar la lista después de desactivar
-    fetchUsers();
+    await fetchUsers();
   } catch (err) {
     toast.add({
       title: "Error",

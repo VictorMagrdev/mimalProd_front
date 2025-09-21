@@ -1,0 +1,12 @@
+query GetBodegas{
+    bodegas {
+        id
+        codigo
+        nombre
+        descripcion
+        tipo {
+            id
+            nombre
+        }
+    }
+}

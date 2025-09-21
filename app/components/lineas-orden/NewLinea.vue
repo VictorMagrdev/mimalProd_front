@@ -20,7 +20,6 @@ interface UnidadMedida {
 }
 
 const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits(["close", "created"]);
 
 const initialState = {
   idOrden: "" as string | undefined,
@@ -46,7 +45,6 @@ interface UnidadMedida {
   nombre: string;
 }
 
-// Interfaces de resultados de queries
 interface OrdenesProduccionResult {
   ordenesProduccion: OrdenProduccion[];
 }
@@ -57,7 +55,6 @@ interface UnidadesMedidaResult {
   unidadesMedida: UnidadMedida[];
 }
 
-// Queries tipadas
 const { data: ordenesResult, pending: ordenesLoading } =
   await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
@@ -98,7 +95,6 @@ const error = ref<string | null>(null);
 
 function closeModal() {
   Object.assign(state, initialState);
-  emit("close");
 }
 
 async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
@@ -106,12 +102,13 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
     error.value = null;
     await mutate({ input: event.data });
     toast.add({ title: "Éxito", description: "Línea de orden creada." });
-    emit("created");
     closeModal();
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    error.value = message;
-    toast.add({ title: "Error", description: message });
+  } catch (err) {
+    toast.add({
+      title: "Error",
+      description: String(err),
+      color: "error",
+    });
   }
 }
 </script>

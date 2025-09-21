@@ -110,7 +110,7 @@ const selectedProductoId = ref<string | null>(null);
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(!!checked);
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
                   e?.preventDefault();

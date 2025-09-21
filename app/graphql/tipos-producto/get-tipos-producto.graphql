@@ -1,0 +1,8 @@
+query GetTiposProducto {
+  tiposProducto {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}

@@ -8,8 +8,14 @@ import UpdateCostoOrden from "~/graphql/costos-orden/update-costo-orden.graphql"
 import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
 import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
 
-const props = defineProps<{ open: boolean; costoId: string | null }>();
-const emit = defineEmits<{ (e: "close"): void }>();
+const props = defineProps<{
+  costoId: string | null;
+  open: boolean; 
+ }>();
+
+const emit = defineEmits<{ 
+  (e: "close"): void;
+ }>();
 
 const toast = useToast();
 const error = ref<string | null>(null);
@@ -56,7 +62,6 @@ watch(result, (newVal) => {
   }
 });
 
-// Queries para selects
 const { data: ordenesResult, pending: ordenesLoading } =
   await useAsyncQuery<{ ordenesProduccion: { id: string; numeroOrden: string }[] }>(
     GetOrdenesProduccion
