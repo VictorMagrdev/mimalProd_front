@@ -49,7 +49,8 @@ const columns: TableColumn<InventarioLote>[] = [
   {
     accessorKey: "lote.id",
     header: "Lote",
-    cell: ({ row }: { row: Row<InventarioLote> }) => row.original.lote?.id || "-",
+    cell: ({ row }: { row: Row<InventarioLote> }) =>
+      row.original.lote?.id || "-",
   },
   {
     accessorKey: "producto.nombre",
@@ -82,7 +83,6 @@ const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
-
 
 <template>
   <div class="w-full space-y-4 pb-4">
@@ -126,6 +126,7 @@ const globalFilter = ref();
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
+        <InventarioLoteNewInventarioLote />
       </div>
     </div>
 

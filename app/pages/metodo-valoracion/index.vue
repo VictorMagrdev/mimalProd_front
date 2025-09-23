@@ -3,7 +3,7 @@ import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetMetodoValoracion from "~/graphql/metodos-valoracion/get-metodos-valoracion.graphql";
-
+import NewMetodoValoracion from "~/components/metodo-valoracion/NewMetodoValoracion.vue";
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
@@ -74,7 +74,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -83,7 +82,7 @@ function openUpdateModal(id: string) {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Metodo valoracion</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
@@ -123,8 +122,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
-        <UButton label="Nuevo Tipo de Costo" @click="isNewModalOpen = true" />
+        <NewMetodoValoracion />
       </div>
     </div>
 

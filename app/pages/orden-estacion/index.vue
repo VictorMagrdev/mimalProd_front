@@ -38,7 +38,8 @@ const columns: TableColumn<OrdenEstacion>[] = [
   {
     accessorKey: "orden.numeroOrden",
     header: "N° Orden",
-    cell: ({ row }: { row: Row<OrdenEstacion> }) => row.original.orden.numeroOrden,
+    cell: ({ row }: { row: Row<OrdenEstacion> }) =>
+      row.original.orden.numeroOrden,
   },
   {
     accessorKey: "estacion.nombre",

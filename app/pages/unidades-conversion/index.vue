@@ -18,12 +18,10 @@ interface UnidadesConversionResult {
   unidadesConversion: UnidadConversion[];
 }
 
-// Query tipada
 const { data, pending, error } = await useAsyncQuery<UnidadesConversionResult>(
   GetUnidadesConversion,
 );
 
-// Ahora TS reconoce `unidadesConversion`
 const conversiones = computed(() => data.value?.unidadesConversion || []);
 
 const columns: TableColumn<UnidadConversion>[] = [

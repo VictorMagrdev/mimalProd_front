@@ -26,7 +26,8 @@ interface PuntoReordenResult {
   puntosReorden: PuntoReorden[];
 }
 
-const { data, pending, error } = await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
+const { data, pending, error } =
+  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
 
 const puntosReorden = computed(() => data.value?.puntosReorden || []);
 
@@ -58,7 +59,6 @@ const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
-
 
 <template>
   <div class="w-full space-y-4 pb-4">

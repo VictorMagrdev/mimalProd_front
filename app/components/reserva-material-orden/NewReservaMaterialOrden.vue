@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref, computed, watch } from "vue";
 import CreateReservaMaterialOrden from "~/graphql/reserva-material-orden/create-reserva-material-orden.graphql";
-import OrdenesConDetalles from "~/graphql/reserva-material-orden/get-ordenes-con-detalles.graphql";
+import OrdenesConDetalles from "~/graphql/reserva-material-orden/get-ordenes-detalladas.graphql";
 
 const open = ref(false);
 
@@ -37,26 +37,31 @@ interface OrdenesConDetallesData {
 
 const { result } = useQuery<OrdenesConDetallesData>(OrdenesConDetalles);
 
-const ordenesOptions = computed(() =>
-  result.value?.ordenesProduccion.map(o => ({
-    label: o.numeroOrden,
-    value: o.id
-  })) ?? []
+const ordenesOptions = computed(
+  () =>
+    result.value?.ordenesProduccion.map((o) => ({
+      label: o.numeroOrden,
+      value: o.id,
+    })) ?? [],
 );
 
-watch(() => state.ordenId, (newOrdenId) => {
-  
-  const orden = result.value?.ordenesProduccion.find(o => o.id === newOrdenId);
-  if (orden) {
-    state.productoId = orden.idProducto;
-    state.loteId = orden.idLote ?? "";
-    state.unidadId = orden.idUnidad;
-  } else {
-    state.productoId = "";
-    state.loteId = "";
-    state.unidadId = "";
-  }
-});
+watch(
+  () => state.ordenId,
+  (newOrdenId) => {
+    const orden = result.value?.ordenesProduccion.find(
+      (o) => o.id === newOrdenId,
+    );
+    if (orden) {
+      state.productoId = orden.idProducto;
+      state.loteId = orden.idLote ?? "";
+      state.unidadId = orden.idUnidad;
+    } else {
+      state.productoId = "";
+      state.loteId = "";
+      state.unidadId = "";
+    }
+  },
+);
 
 function resetForm() {
   Object.assign(state, ReservaMaterialOrdenSchemaInitialState);
@@ -123,27 +128,15 @@ async function onSubmit(event: FormSubmitEvent<ReservaMaterialOrdenFormState>) {
         </UFormField>
 
         <UFormField label="Producto" name="productoId">
-          <UInput
-            v-model="state.productoId"
-            class="w-full"
-            disabled
-          />
+          <UInput v-model="state.productoId" class="w-full" disabled />
         </UFormField>
 
         <UFormField label="Lote" name="loteId">
-          <UInput
-            v-model="state.loteId"
-            class="w-full"
-            disabled
-          />
+          <UInput v-model="state.loteId" class="w-full" disabled />
         </UFormField>
 
         <UFormField label="Unidad de Medida" name="unidadId">
-          <UInput
-            v-model="state.unidadId"
-            class="w-full"
-            disabled
-          />
+          <UInput v-model="state.unidadId" class="w-full" disabled />
         </UFormField>
 
         <UFormField label="Cantidad" name="cantidad">
@@ -162,7 +155,12 @@ async function onSubmit(event: FormSubmitEvent<ReservaMaterialOrdenFormState>) {
         label="Cancelar"
         color="neutral"
         variant="outline"
-        @click="() => { close(); resetForm(); }"
+        @click="
+          () => {
+            close();
+            resetForm();
+          }
+        "
       />
       <UButton
         label="Crear Reserva"

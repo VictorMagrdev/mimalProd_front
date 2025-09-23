@@ -34,8 +34,8 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
     await mutate({ input: event.data });
 
     toast.add({
-      title: "Tipo de costo creado",
-      description: "El tipo de costo fue registrado correctamente",
+      title: "metodo de valoracion creado",
+      description: "El metodo de valoracion fue registrado correctamente",
       color: "success",
     });
 
@@ -57,14 +57,14 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de costo">
+  <UModal v-model:open="open" title="Crear metodo de valoracion">
     <template #description>
-      Completa el formulario para registrar un nuevo tipo de costo.
+      Completa el formulario para registrar un nuevo metodo de valoracion.
     </template>
 
     <UButton
       class="right-0"
-      label="Nuevo tipo de costo"
+      label="Nuevo metodo de valoracion"
       color="neutral"
       variant="subtle"
     />
@@ -82,7 +82,7 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
           <UInput
             v-model="state.codigo"
             class="w-full"
-            placeholder="Código del tipo de costo"
+            placeholder="Código del metodo de valoracion"
           />
         </UFormField>
 
@@ -90,7 +90,7 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
           <UInput
             v-model="state.nombre"
             class="w-full"
-            placeholder="Nombre del tipo de costo"
+            placeholder="Nombre del metodo de valoracion"
           />
         </UFormField>
 
@@ -98,7 +98,7 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
           <UInput
             v-model="state.descripcion"
             class="w-full"
-            placeholder="Descripción del tipo de costo"
+            placeholder="Descripción del metodo de valoracion"
           />
         </UFormField>
       </UForm>
@@ -117,7 +117,7 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
         "
       />
       <UButton
-        label="Crear tipo de costo"
+        label="Crear metodo de valoracion"
         type="submit"
         color="neutral"
         form="tipoCostoForm"

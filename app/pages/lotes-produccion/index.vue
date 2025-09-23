@@ -3,6 +3,7 @@ import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetLotesProduccion from "~/graphql/lotes-produccion/get-lotes-produccion.graphql";
+import NewLote from "~/components/lotes-produccion/NewLote.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -132,7 +133,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton @click="isNewModalOpen = true">Nuevo Lote</UButton>
+        <NewLote />
       </div>
     </div>
 

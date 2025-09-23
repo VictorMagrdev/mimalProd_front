@@ -3,9 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive } from "vue";
 import CreateUnidadMedidaTipo from "~/graphql/unidades-medida-tipo/create-unidad-medida-tipo.graphql";
 
-const props = defineProps<{ isOpen: boolean }>();
-const emit = defineEmits(["close", "created"]);
-
+const open = ref(false);
 interface UnidadMedidaTipoFormState {
   codigo: string;
   nombre: string;
@@ -29,7 +27,6 @@ function resetForm() {
 
 function closeModal() {
   resetForm();
-  emit("close");
 }
 
 async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
@@ -42,7 +39,6 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
       color: "success",
     });
 
-    emit("created");
     closeModal();
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
@@ -52,33 +48,39 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
 </script>
 
 <template>
-  <UModal :model-value="props.isOpen" @update:model-value="closeModal">
+  <UModal v-model:open="open" title="Crear tipo de unidad de medida">
     <template #header>
       <h2 class="text-lg font-semibold">Crear Tipo de Unidad de Medida</h2>
     </template>
+    <UButton
+      label="Nueva linea"
+      color="neutral"
+      variant="subtle"
+      @click="open = true"
+    />
+    <template #body>
+      <UForm
+        id="unidadMedidaTipoForm"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Código" name="codigo">
+          <UInput v-model="state.codigo" placeholder="Ej. KG" />
+        </UFormField>
 
-    <UForm
-      id="unidadMedidaTipoForm"
-      :state="state"
-      class="space-y-4"
-      @submit="onSubmit"
-    >
-      <UFormField label="Código" name="codigo">
-        <UInput v-model="state.codigo" placeholder="Ej. KG" />
-      </UFormField>
+        <UFormField label="Nombre" name="nombre">
+          <UInput v-model="state.nombre" placeholder="Ej. Kilogramos" />
+        </UFormField>
 
-      <UFormField label="Nombre" name="nombre">
-        <UInput v-model="state.nombre" placeholder="Ej. Kilogramos" />
-      </UFormField>
-
-      <UFormField label="Descripción" name="descripcion">
-        <UInput
-          v-model="state.descripcion"
-          placeholder="Descripción opcional"
-        />
-      </UFormField>
-    </UForm>
-
+        <UFormField label="Descripción" name="descripcion">
+          <UInput
+            v-model="state.descripcion"
+            placeholder="Descripción opcional"
+          />
+        </UFormField>
+      </UForm>
+    </template>
     <template #footer>
       <UButton
         label="Cancelar"

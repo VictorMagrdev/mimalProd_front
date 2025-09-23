@@ -3,7 +3,7 @@ import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
-
+import NewUnidadMedidaTipo from "~/components/unidades-medida-tipo/NewUnidadMedidaTipo.vue";
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
@@ -76,7 +76,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -125,9 +124,8 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
-        <UButton label="Nuevo Tipo" @click="isNewModalOpen = true" />
       </div>
+      <NewUnidadMedidaTipo />
     </div>
 
     <div class="relative z-0 w-full">

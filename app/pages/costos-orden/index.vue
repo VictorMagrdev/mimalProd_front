@@ -107,9 +107,7 @@ function openUpdateModal(id: string) {
         :costo-id="selectedId"
         @close="updateModalOpen = false"
       />
-
-      <UButton label="Nuevo costo de orden" @click="createModalOpen = true" />
-      <NewCosto v-model:open="createModalOpen" />
+      <NewCosto />
     </div>
 
     <UTable :columns="columns" :data="rows" :loading="pending" class="mt-4" />

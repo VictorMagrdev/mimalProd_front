@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref,} from "vue";
+import { ref } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetReservasMaterialOrden from "~/graphql/reserva-material-orden/get-reservas-material-orden.graphql";
-
+import NewReservaMaterialOrden from "~/components/reserva-material-orden/NewReservaMaterialOrden.vue";
 interface Orden {
   id: string;
   numeroOrden: string;
@@ -23,19 +23,19 @@ export interface ReservaMaterialOrden {
 interface ReservaMaterialOrdenResult {
   reservasMaterialOrden: ReservaMaterialOrden[];
 }
-const {
-  data,
-  pending,
-  error,
-} = await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden);
-const reservasMaterialOrden = computed(() => data.value?.reservasMaterialOrden || []);
+const { data, pending, error } =
+  await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden);
+const reservasMaterialOrden = computed(
+  () => data.value?.reservasMaterialOrden || [],
+);
 
 // columnas tipadas
 const columns: TableColumn<ReservaMaterialOrden>[] = [
   {
     accessorKey: "orden.numeroOrden",
     header: "N° Orden",
-    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) => row.original.orden.numeroOrden,
+    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) =>
+      row.original.orden.numeroOrden,
   },
   {
     accessorKey: "material.nombre",
@@ -46,7 +46,7 @@ const columns: TableColumn<ReservaMaterialOrden>[] = [
     accessorKey: "cantidadReservada",
     header: "Cantidad Reservada",
     cell: ({ row }) => row.original.cantidadReservada,
-  }
+  },
 ];
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
@@ -55,20 +55,20 @@ const globalFilter = ref();
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Ordenes de reserva de material</h1>
 
     <div
-        class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
-          v-model="globalFilter"
-          class="max-w-sm"
-          placeholder="Filtrar..."
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
       />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
-            :items="
+          :items="
             table?.tableApi
               ?.getAllColumns()
               .filter((column) => column.getCanHide())
@@ -86,37 +86,36 @@ const globalFilter = ref();
                 },
               }))
           "
-            :content="{ align: 'end' }"
+          :content="{ align: 'end' }"
         >
           <UButton
-              label="Columnas"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
+        <NewReservaMaterialOrden />
       </div>
     </div>
 
     <div class="relative z-0 w-full">
       <UTable
-          ref="table"
-          v-model:pagination="pagination"
-          v-model:global-filter="globalFilter"
-          :data="reservasMaterialOrden || []"
-          :columns="columns"
-          :loading="pending"
+        ref="table"
+        v-model:pagination="pagination"
+        v-model:global-filter="globalFilter"
+        :data="reservasMaterialOrden || []"
+        :columns="columns"
+        :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
-            v-model="pagination.pageIndex"
-            :page-count="pagination.pageSize"
-            :total="reservasMaterialOrden?.length || 0"
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
+          :total="reservasMaterialOrden?.length || 0"
         />
       </div>
     </div>
-
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
   </div>

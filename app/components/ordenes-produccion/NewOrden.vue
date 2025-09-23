@@ -151,101 +151,104 @@ async function onSubmit(event: FormSubmitEvent<OrdenProduccionFormState>) {
 </script>
 
 <template>
-  <!-- Botón para abrir modal -->
-  <UButton
-    label="Nueva orden"
-    color="neutral"
-    variant="subtle"
-    @click="open = true"
-  />
-
-  <!-- Modal -->
   <UModal v-model:open="open" title="Crear orden de producción">
     <template #description>
       Completa el formulario para registrar una nueva orden de producción.
     </template>
+    <UButton
+      label="Nueva orden"
+      color="neutral"
+      variant="subtle"
+      @click="open = true"
+    />
+    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
-    <UForm id="ordenForm" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormField label="Número de Orden" name="numeroOrden">
-        <UInput
-          v-model="state.numeroOrden"
-          class="w-full"
-          placeholder="Número de la orden"
-        />
-      </UFormField>
+    <template #body>
+      <UForm id="ordenForm" :state="state" class="space-y-4" @submit="onSubmit">
+        <UFormField label="Número de Orden" name="numeroOrden">
+          <UInput
+            v-model="state.numeroOrden"
+            class="w-full"
+            placeholder="Número de la orden"
+          />
+        </UFormField>
 
-      <UFormField label="Producto" name="idProducto">
-        <UInputMenu
-          v-model="state.idProducto"
-          :items="productosOptions"
-          value-key="id"
-          class="w-full"
-          placeholder="Seleccione un producto"
-          :loading="productosLoading"
-        />
-      </UFormField>
+        <UFormField label="Producto" name="idProducto">
+          <UInputMenu
+            v-model="state.idProducto"
+            :items="productosOptions"
+            value-key="id"
+            class="w-full"
+            placeholder="Seleccione un producto"
+            :loading="productosLoading"
+          />
+        </UFormField>
 
-      <UFormField label="Lote" name="idLote">
-        <UInputMenu
-          v-model="state.idLote"
-          :items="lotesOptions"
-          value-key="id"
-          class="w-full"
-          placeholder="Seleccione un lote"
-          :loading="lotesLoading"
-        />
-      </UFormField>
+        <UFormField label="Lote" name="idLote">
+          <UInputMenu
+            v-model="state.idLote"
+            :items="lotesOptions"
+            value-key="id"
+            class="w-full"
+            placeholder="Seleccione un lote"
+            :loading="lotesLoading"
+          />
+        </UFormField>
 
-      <UFormField label="Cantidad" name="cantidad">
-        <UInput
-          v-model.number="state.cantidad"
-          class="w-full"
-          type="number"
-          placeholder="0"
-        />
-      </UFormField>
+        <UFormField label="Cantidad" name="cantidad">
+          <UInput
+            v-model.number="state.cantidad"
+            class="w-full"
+            type="number"
+            placeholder="0"
+          />
+        </UFormField>
 
-      <UFormField label="Unidad" name="idUnidad">
-        <UInputMenu
-          v-model="state.idUnidad"
-          :items="unidadesOptions"
-          value-key="id"
-          class="w-full"
-          placeholder="Seleccione una unidad"
-          :loading="unidadesLoading"
-        />
-      </UFormField>
+        <UFormField label="Unidad" name="idUnidad">
+          <UInputMenu
+            v-model="state.idUnidad"
+            :items="unidadesOptions"
+            value-key="id"
+            class="w-full"
+            placeholder="Seleccione una unidad"
+            :loading="unidadesLoading"
+          />
+        </UFormField>
 
-      <UFormField label="Estado" name="idEstado">
-        <UInputMenu
-          v-model="state.idEstado"
-          :items="estadosOptions"
-          value-key="id"
-          class="w-full"
-          placeholder="Seleccione un estado"
-          :loading="estadosLoading"
-        />
-      </UFormField>
+        <UFormField label="Estado" name="idEstado">
+          <UInputMenu
+            v-model="state.idEstado"
+            :items="estadosOptions"
+            value-key="id"
+            class="w-full"
+            placeholder="Seleccione un estado"
+            :loading="estadosLoading"
+          />
+        </UFormField>
 
-      <UFormField label="Inicio Planificado" name="inicioPlanificado">
-        <UInput v-model="state.inicioPlanificado" class="w-full" type="date" />
-      </UFormField>
+        <UFormField label="Inicio Planificado" name="inicioPlanificado">
+          <UInput
+            v-model="state.inicioPlanificado"
+            class="w-full"
+            type="date"
+          />
+        </UFormField>
 
-      <UFormField label="Fin Planificado" name="finPlanificado">
-        <UInput v-model="state.finPlanificado" class="w-full" type="date" />
-      </UFormField>
+        <UFormField label="Fin Planificado" name="finPlanificado">
+          <UInput v-model="state.finPlanificado" class="w-full" type="date" />
+        </UFormField>
 
-      <UFormField label="Observaciones" name="observaciones">
-        <UTextarea
-          v-model="state.observaciones"
-          class="w-full"
-          placeholder="Observaciones adicionales"
-        />
-      </UFormField>
+        <UFormField label="Observaciones" name="observaciones">
+          <UTextarea
+            v-model="state.observaciones"
+            class="w-full"
+            placeholder="Observaciones adicionales"
+          />
+        </UFormField>
 
-      <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-    </UForm>
-
+        <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
+      </UForm>
+    </template>
     <template #footer="{ close }">
       <UButton
         label="Cancelar"

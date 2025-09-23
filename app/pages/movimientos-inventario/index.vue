@@ -3,7 +3,7 @@ import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetMovimientosInventario from "~/graphql/movimientos-inventario/get-movimientos-inventario.graphql";
-
+import NewMovimientoInventario from "~/components/movimientos-inventario/NewMovimientoInventario.vue";
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
@@ -115,7 +115,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -164,7 +163,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
+        <NewMovimientoInventario />
       </div>
     </div>
 

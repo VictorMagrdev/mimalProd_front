@@ -3,7 +3,7 @@ import { ref, h, resolveComponent, onMounted } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { useRouter } from "vue-router";
-
+import NewUser from "~/components/user/NewUser.vue";
 const selectedUserId = ref<number | null>(null);
 const selectedUserForRole = ref<number | null>(null);
 const selectedUserForDeleteRole = ref<number | null>(null);

@@ -3,6 +3,7 @@ import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetLineasOrden from "~/graphql/lineas-orden/get-lineas-orden.graphql";
+import NewLinea from "~/components/lineas-orden/NewLinea.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -142,7 +143,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton @click="isNewModalOpen = true">Nueva Línea</UButton>
+        <NewLinea />
       </div>
     </div>
 

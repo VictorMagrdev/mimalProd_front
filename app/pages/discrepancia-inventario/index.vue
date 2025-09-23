@@ -16,8 +16,8 @@ export interface ConteoCiclico {
 
 export interface DiscrepanciaInventario {
   id: string;
-  cantidadSistema: number;     // antes: cantidadEsperada
-  cantidadContada: number;     // antes: cantidadReal
+  cantidadSistema: number; // antes: cantidadEsperada
+  cantidadContada: number; // antes: cantidadReal
   diferencia: number;
   resuelto: boolean;
   conteo: ConteoCiclico;
@@ -63,7 +63,6 @@ const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
-
 
 <template>
   <div class="w-full space-y-4 pb-4">

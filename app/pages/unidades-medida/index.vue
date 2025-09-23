@@ -3,6 +3,7 @@ import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
+import NewUnidad from "~/components/unidades-medida/NewUnidad.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -141,7 +142,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton label="Nueva Unidad" @click="isNewModalOpen = true" />
+        <NewUnidad />
       </div>
     </div>
 

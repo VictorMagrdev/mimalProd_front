@@ -2,7 +2,7 @@
 import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
-
+import NewOrden from "~/components/ordenes-produccion/NewOrden.vue";
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
@@ -104,7 +104,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -152,8 +151,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
-        <UButton @click="isNewModalOpen = true">Nueva Orden</UButton>
+        <NewOrden />
       </div>
     </div>
 

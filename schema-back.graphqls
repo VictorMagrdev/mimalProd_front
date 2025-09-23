@@ -553,14 +553,19 @@ type Mutation {
 
   iniciarOrdenProduccion(id: ID!): OrdenProduccion
   avanzarEstacionProduccion(ordenEstacionId: ID!): OrdenEstacion
-  finalizarOrdenProduccion(id: ID!): OrdenProduccion 
+  finalizarOrdenProduccion(id: ID!): OrdenProduccion
   consumirLineaOrden(id: ID!): LineaOrden
 
   createInventarioLote(input: InventarioLoteInput!): InventarioLote
   updateInventarioLote(id: ID!, input: InventarioLoteInput!): InventarioLote
   deleteInventarioLote(id: ID!): Boolean
 
-  createReservaMaterialOrden(input: ReservaMaterialOrdenInput!): ReservaMaterialOrden
-  updateReservaMaterialOrden(id: ID!, input: ReservaMaterialOrdenInput!): ReservaMaterialOrden
+  createReservaMaterialOrden(
+    input: ReservaMaterialOrdenInput!
+  ): ReservaMaterialOrden
+  updateReservaMaterialOrden(
+    id: ID!
+    input: ReservaMaterialOrdenInput!
+  ): ReservaMaterialOrden
   deleteReservaMaterialOrden(id: ID!): Boolean
 }

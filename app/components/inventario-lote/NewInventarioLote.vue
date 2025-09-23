@@ -31,37 +31,42 @@ interface ProductosLotesBodegasUnidadesData {
   unidadesMedida: { id: string; nombre: string }[];
 }
 
-  const { result, refetch: refetchResult } = useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
+const { result, refetch: refetchResult } =
+  useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
 
-  const { productos, lotesProduccion: lotes, bodegas, unidadesMedida: unidades } = result.value ?? {
-    productos: [],
-    lotesProduccion: [],
-    bodegas: [],
-    unidadesMedida: [],
-  };
+const {
+  productos,
+  lotesProduccion: lotes,
+  bodegas,
+  unidadesMedida: unidades,
+} = result.value ?? {
+  productos: [],
+  lotesProduccion: [],
+  bodegas: [],
+  unidadesMedida: [],
+};
 
 const productosOptions = computed(() =>
-    productos.map((p) => ({ label: p.nombre, value: p.id }))
-  );
+  productos.map((p) => ({ label: p.nombre, value: p.id })),
+);
 
-  const lotesOptions = computed(() =>
-    lotes.map((l) => ({ label: l.numeroLote, value: l.id }))
-  );
+const lotesOptions = computed(() =>
+  lotes.map((l) => ({ label: l.numeroLote, value: l.id })),
+);
 
-  const bodegasOptions = computed(() =>
-    bodegas.map((b) => ({ label: b.nombre, value: b.id }))
-  );
+const bodegasOptions = computed(() =>
+  bodegas.map((b) => ({ label: b.nombre, value: b.id })),
+);
 
-  const unidadesOptions = computed(() =>
-    unidades.map((u) => ({ label: u.nombre, value: u.id }))
-  );
+const unidadesOptions = computed(() =>
+  unidades.map((u) => ({ label: u.nombre, value: u.id })),
+);
 
 watch(open, (isOpen) => {
   if (isOpen && unidadesOptions.value.length === 0) {
     refetchResult();
   }
 });
-
 
 function resetForm() {
   Object.assign(state, InventarioLoteSchemaInitialState);
@@ -77,8 +82,8 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
     await mutate({ input: event.data });
 
     toast.add({
-      title: "Tipo de costo creado",
-      description: "El tipo de costo fue registrado correctamente",
+      title: "Inventario lote creado",
+      description: "El Inventario lote fue registrado correctamente",
       color: "success",
     });
 
@@ -95,14 +100,14 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de costo">
+  <UModal v-model:open="open" title="Crear Inventario lote">
     <template #description>
-      Completa el formulario para registrar un nuevo tipo de costo.
+      Completa el formulario para registrar un nuevo Inventario lote.
     </template>
 
     <UButton
       class="right-0"
-      label="Nuevo tipo de costo"
+      label="Nuevo Inventario lote"
       color="neutral"
       variant="subtle"
     />
@@ -116,7 +121,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-       <UFormField label="Producto" name="productoId">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
             v-model="state.productoId"
             :options="productosOptions"
@@ -128,7 +133,6 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         </UFormField>
 
         <UFormField label="Lote" name="loteId">
-          
           <UInputMenu
             v-model="state.loteId"
             :options="lotesOptions"
@@ -185,7 +189,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         "
       />
       <UButton
-        label="Crear tipo de costo"
+        label="Crear Inventario lote"
         type="submit"
         color="neutral"
         form="tipoCostoForm"

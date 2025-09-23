@@ -91,45 +91,46 @@ async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
     <template #description>
       Completa el formulario para registrar un nuevo lote de producción.
     </template>
-
     <UButton
-      class="right-0"
       label="Nuevo lote"
       color="neutral"
       variant="subtle"
+      @click="open = true"
     />
+    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
-    <UForm id="loteForm" :state="state" class="space-y-4" @submit="onSubmit">
-      <UFormField label="Número de Lote" name="numeroLote">
-        <UInput
-          v-model="state.numeroLote"
-          class="w-full"
-          placeholder="Número del lote"
-        />
-      </UFormField>
+    <template #body>
+      <UForm id="loteForm" :state="state" class="space-y-4" @submit="onSubmit">
+        <UFormField label="Número de Lote" name="numeroLote">
+          <UInput
+            v-model="state.numeroLote"
+            class="w-full"
+            placeholder="Número del lote"
+          />
+        </UFormField>
 
-      <UFormField label="Producto" name="idProducto">
-        <UInputMenu
-          v-model="state.idProducto"
-          :items="productosOptions"
-          value-key="id"
-          class="w-full"
-          placeholder="Seleccione un producto"
-          :loading="productosLoading"
-        />
-      </UFormField>
+        <UFormField label="Producto" name="idProducto">
+          <UInputMenu
+            v-model="state.idProducto"
+            :items="productosOptions"
+            value-key="id"
+            class="w-full"
+            placeholder="Seleccione un producto"
+            :loading="productosLoading"
+          />
+        </UFormField>
 
-      <UFormField label="Fabricado En" name="fabricadoEn">
-        <UInput v-model="state.fabricadoEn" class="w-full" type="date" />
-      </UFormField>
+        <UFormField label="Fabricado En" name="fabricadoEn">
+          <UInput v-model="state.fabricadoEn" class="w-full" type="date" />
+        </UFormField>
 
-      <UFormField label="Vence En" name="venceEn">
-        <UInput v-model="state.venceEn" class="w-full" type="date" />
-      </UFormField>
+        <UFormField label="Vence En" name="venceEn">
+          <UInput v-model="state.venceEn" class="w-full" type="date" />
+        </UFormField>
 
-      <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-    </UForm>
-
+        <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
+      </UForm>
+    </template>
     <template #footer="{ close }">
       <UButton
         label="Cancelar"

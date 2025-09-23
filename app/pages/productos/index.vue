@@ -3,6 +3,7 @@ import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import getProductos from "~/graphql/productos/get-productos.graphql";
+import NewProducto from "~/components/productos/NewProducto.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -125,7 +126,7 @@ const selectedProductoId = ref<string | null>(null);
           />
         </UDropdownMenu>
 
-        <UButton label="Nuevo Producto" @click="isNewOpen = true" />
+        <NewProducto />
       </div>
     </div>
 

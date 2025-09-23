@@ -34,8 +34,8 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
     await mutate({ input: event.data });
 
     toast.add({
-      title: "Tipo de costo creado",
-      description: "El tipo de costo fue registrado correctamente",
+      title: "movimiento Inventario creado",
+      description: "El movimiento Inventario fue registrado correctamente",
       color: "success",
     });
 
@@ -57,16 +57,16 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de costo">
+  <UModal v-model:open="open" title="Crear movimiento Inventario">
     <template #description>
-      Completa el formulario para registrar un nuevo tipo de costo.
+      Completa el formulario para registrar un nuevo movimiento Inventario.
     </template>
 
     <UButton
-      class="right-0"
-      label="Nuevo tipo de costo"
+      label="Nueva linea"
       color="neutral"
       variant="subtle"
+      @click="open = true"
     />
 
     <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
@@ -82,7 +82,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
           <UInput
             v-model="state.codigo"
             class="w-full"
-            placeholder="Código del tipo de costo"
+            placeholder="Código del movimiento Inventario"
           />
         </UFormField>
 
@@ -90,7 +90,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
           <UInput
             v-model="state.nombre"
             class="w-full"
-            placeholder="Nombre del tipo de costo"
+            placeholder="Nombre del movimiento Inventario"
           />
         </UFormField>
 
@@ -98,7 +98,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
           <UInput
             v-model="state.descripcion"
             class="w-full"
-            placeholder="Descripción del tipo de costo"
+            placeholder="Descripción del movimiento Inventario"
           />
         </UFormField>
       </UForm>
@@ -117,7 +117,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
         "
       />
       <UButton
-        label="Crear tipo de costo"
+        label="Crear movimiento Inventario"
         type="submit"
         color="neutral"
         form="tipoCostoForm"

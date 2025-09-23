@@ -96,7 +96,12 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
     <template #description>
       Completa la información para registrar un costo en la orden de producción.
     </template>
-
+    <UButton
+      label="Nuevo costo"
+      color="neutral"
+      variant="subtle"
+      @click="open = true"
+    />
     <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
 
     <template #body>
@@ -107,7 +112,7 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
         @submit="onSubmit"
       >
         <UFormField label="Orden de Producción" name="idOrden">
-          <USelectMenu
+          <UInputMenu
             v-model="state.idOrden"
             :items="ordenesOptions"
             value-key="id"
@@ -117,7 +122,7 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
         </UFormField>
 
         <UFormField label="Tipo de Costo" name="idTipoCosto">
-          <USelectMenu
+          <UInputMenu
             v-model="state.idTipoCosto"
             :items="tiposOptions"
             value-key="id"

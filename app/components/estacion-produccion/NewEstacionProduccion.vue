@@ -26,22 +26,22 @@ interface ProductosLotesBodegasUnidadesData {
   productos: { id: string; nombre: string }[];
 }
 
-  const { result, refetch: refetchResult } = useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
+const { result, refetch: refetchResult } =
+  useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
 
-  const {  unidadesMedida: unidades } = result.value ?? {
-    unidadesMedida: [],
-  };
+const { unidadesMedida: unidades } = result.value ?? {
+  unidadesMedida: [],
+};
 
-  const unidadesOptions = computed(() =>
-    unidades.map((u) => ({ label: u.nombre, value: u.id }))
-  );
+const unidadesOptions = computed(() =>
+  unidades.map((u) => ({ label: u.nombre, value: u.id })),
+);
 
 watch(open, (isOpen) => {
   if (isOpen && unidadesOptions.value.length === 0) {
     refetchResult();
   }
 });
-
 
 function resetForm() {
   Object.assign(state, EstacionProduccionSchemaInitialState);
