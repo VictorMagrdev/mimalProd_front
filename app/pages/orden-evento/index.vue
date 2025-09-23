@@ -47,7 +47,7 @@ const globalFilter = ref();
 </script>
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Orden evento</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"

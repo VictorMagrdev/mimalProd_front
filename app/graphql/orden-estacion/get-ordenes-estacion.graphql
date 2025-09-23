@@ -1,8 +1,8 @@
 query GetOrdenesEstacion {
   ordenesEstacion {
     id
-    fechaInicio
-    fechaFin
+    inicioReal
+    finReal
     orden {
       numeroOrden
     }

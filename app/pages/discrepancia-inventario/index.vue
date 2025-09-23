@@ -9,12 +9,18 @@ interface Producto {
   nombre: string;
 }
 
+export interface ConteoCiclico {
+  fecha: string;
+  producto: Producto;
+}
+
 export interface DiscrepanciaInventario {
   id: string;
-  producto: Producto;
-  cantidadEsperada: number;
-  cantidadReal: number;
-  fecha: string;
+  cantidadSistema: number;     // antes: cantidadEsperada
+  cantidadContada: number;     // antes: cantidadReal
+  diferencia: number;
+  resuelto: boolean;
+  conteo: ConteoCiclico;
 }
 
 interface DiscrepanciaInventarioResult {
@@ -31,25 +37,25 @@ const discrepanciasInventarios = computed(
 // columnas tipadas
 const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
-    accessorKey: "producto.nombre",
+    accessorKey: "conteo.producto.nombre",
     header: "Producto",
     cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
-      row.original.producto.nombre,
+      row.original.conteo.producto.nombre,
   },
   {
-    accessorKey: "cantidadEsperada",
+    accessorKey: "cantidadSistema",
     header: "Cantidad Esperada",
-    cell: ({ row }) => row.original.cantidadEsperada,
+    cell: ({ row }) => row.original.cantidadSistema,
   },
   {
-    accessorKey: "cantidadReal",
+    accessorKey: "cantidadContada",
     header: "Cantidad Real",
-    cell: ({ row }) => row.original.cantidadReal,
+    cell: ({ row }) => row.original.cantidadContada,
   },
   {
-    accessorKey: "fecha",
+    accessorKey: "conteo.fecha",
     header: "Fecha",
-    cell: ({ row }) => row.original.fecha,
+    cell: ({ row }) => row.original.conteo.fecha,
   },
 ];
 
@@ -58,9 +64,10 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
 
+
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Discrepacia inventario</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"

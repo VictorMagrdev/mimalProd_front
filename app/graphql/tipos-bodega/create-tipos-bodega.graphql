@@ -1,5 +1,5 @@
-mutation CreateTipoCosto($input: TipoCostoInput!) {
-  createTipoCosto(input: $input) {
+mutation createTipoBodega($input: TipoBodegaInput!) {
+  createTipoBodega(input: $input) {
     id
   }
 }

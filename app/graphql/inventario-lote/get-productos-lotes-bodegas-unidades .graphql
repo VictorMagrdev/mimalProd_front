@@ -1,0 +1,18 @@
+query ProductosLotesBodegasUnidades {
+  productos {
+    id
+    nombre
+  }
+  lotesProduccion {
+    id
+    numeroLote
+  }
+  bodegas {
+    id
+    nombre
+  }
+  unidadesMedida {
+    id
+    nombre
+  }
+}

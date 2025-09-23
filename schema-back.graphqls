@@ -294,7 +294,13 @@ input ReservaMaterialOrdenInput {
   cantidadReservada: Float!
   idUnidad: ID!
 }
-
+input InventarioLoteInput {
+  idProducto: ID!
+  idLote: ID
+  idBodega: ID!
+  cantidad: Float!
+  idUnidad: ID
+}
 input EstacionProduccionInput {
   codigo: String!
   nombre: String!
@@ -537,9 +543,6 @@ type Mutation {
   updateTipoProducto(id: ID!, input: TipoProductoInput!): TipoProducto
   deleteTipoProducto(id: ID!): Boolean
 
-  # --- Mutaciones de Producción e Inventario por Eventos ---
-
-  # Creación de entidades raíz que inician un flujo
   createOrdenProduccion(input: OrdenProduccionInput!): OrdenProduccion
   createLineaOrden(input: LineaOrdenInput!): LineaOrden
   createConteoCiclico(input: ConteoCiclicoInput!): ConteoCiclico
@@ -548,9 +551,16 @@ type Mutation {
     detalles: [MovimientoInventarioDetalleInput!]!
   ): MovimientoInventario
 
-  # Acciones que disparan eventos de ciclo de vida
   iniciarOrdenProduccion(id: ID!): OrdenProduccion
   avanzarEstacionProduccion(ordenEstacionId: ID!): OrdenEstacion
-  finalizarOrdenProduccion(id: ID!): OrdenProduccion # Forzada/manual
+  finalizarOrdenProduccion(id: ID!): OrdenProduccion 
   consumirLineaOrden(id: ID!): LineaOrden
+
+  createInventarioLote(input: InventarioLoteInput!): InventarioLote
+  updateInventarioLote(id: ID!, input: InventarioLoteInput!): InventarioLote
+  deleteInventarioLote(id: ID!): Boolean
+
+  createReservaMaterialOrden(input: ReservaMaterialOrdenInput!): ReservaMaterialOrden
+  updateReservaMaterialOrden(id: ID!, input: ReservaMaterialOrdenInput!): ReservaMaterialOrden
+  deleteReservaMaterialOrden(id: ID!): Boolean
 }

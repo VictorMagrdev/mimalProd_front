@@ -23,25 +23,21 @@ const ProductoSchemaInitialState: ProductoFormState = {
 const state = reactive({ ...ProductoSchemaInitialState });
 const error = ref<string | null>(null);
 
-// Interfaces de entidades
 interface UnidadMedida {
   id: string;
   nombre: string;
 }
 
-// Interfaces de resultados de queries
 interface UnidadesMedidaResult {
   unidadesMedida: UnidadMedida[];
 }
 
-// Query tipada
 const {
   result: unidadesResult,
   loading: unidadesLoading,
   refetch: refetchUnidades,
 } = useQuery<UnidadesMedidaResult>(getUnidadesMedida);
 
-// Options tipados
 const unidadesOptions = computed(
   () =>
     unidadesResult.value?.unidadesMedida.map((u) => ({
@@ -85,15 +81,10 @@ async function onSubmit(event: FormSubmitEvent<ProductoFormState>) {
 
     resetForm();
     open.value = false;
-  } catch (e: unknown) {
-    const message =
-      typeof e === "object" && e !== null && "message" in e
-        ? (e as { message: string }).message
-        : String(e);
-    error.value = message;
+  } catch (e) {
     toast.add({
       title: "Error",
-      description: message,
+      description: String(e),
       color: "error",
     });
   }

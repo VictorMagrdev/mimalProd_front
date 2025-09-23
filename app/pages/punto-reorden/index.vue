@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue";
+import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetPuntosReorden from "~/graphql/punto-reorden/get-puntos-reorden.graphql";
@@ -9,18 +9,28 @@ interface Producto {
   nombre: string;
 }
 
+interface Unidad {
+  id: string;
+  nombre: string;
+}
+
 export interface PuntoReorden {
   id: string;
   producto: Producto;
-  puntoMinimo: number;
-  puntoMaximo: number;
+  stockMinimo: number;
+  stockSeguridad?: number;
+  unidad?: Unidad;
 }
+
 interface PuntoReordenResult {
   puntosReorden: PuntoReorden[];
 }
-const { data, pending, error } =
-  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
+
+const { data, pending, error } = await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
+
 const puntosReorden = computed(() => data.value?.puntosReorden || []);
+
+// columnas tipadas
 const columns: TableColumn<PuntoReorden>[] = [
   {
     accessorKey: "producto.nombre",
@@ -28,14 +38,19 @@ const columns: TableColumn<PuntoReorden>[] = [
     cell: ({ row }: { row: Row<PuntoReorden> }) => row.original.producto.nombre,
   },
   {
-    accessorKey: "puntoMinimo",
-    header: "Punto Mínimo",
-    cell: ({ row }) => row.original.puntoMinimo,
+    accessorKey: "stockMinimo",
+    header: "Stock Mínimo",
+    cell: ({ row }) => row.original.stockMinimo,
   },
   {
-    accessorKey: "puntoMaximo",
-    header: "Punto Máximo",
-    cell: ({ row }) => row.original.puntoMaximo,
+    accessorKey: "stockSeguridad",
+    header: "Stock de Seguridad",
+    cell: ({ row }) => row.original.stockSeguridad ?? "-",
+  },
+  {
+    accessorKey: "unidad.nombre",
+    header: "Unidad",
+    cell: ({ row }) => row.original.unidad?.nombre ?? "-",
   },
 ];
 
@@ -44,9 +59,10 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
 
+
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Puntos de reorden</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"

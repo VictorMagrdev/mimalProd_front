@@ -1,9 +1,12 @@
 query GetPuntosReorden {
   puntosReorden {
     id
-    puntoMinimo
-    puntoMaximo
+    stockMinimo
+    stockSeguridad
     producto {
+      nombre
+    }
+    unidad {
       nombre
     }
   }

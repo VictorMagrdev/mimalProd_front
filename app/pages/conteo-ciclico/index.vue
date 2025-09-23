@@ -12,7 +12,7 @@ interface Producto {
 export interface ConteoCiclico {
   id: string;
   producto: Producto;
-  fechaConteo: string;
+  fecha: string;
   cantidadContada: number;
 }
 
@@ -35,7 +35,7 @@ const columns: TableColumn<ConteoCiclico>[] = [
   {
     accessorKey: "fechaConteo",
     header: "Fecha de Conteo",
-    cell: ({ row }) => row.original.fechaConteo,
+    cell: ({ row }) => row.original.fecha,
   },
   {
     accessorKey: "cantidadContada",
@@ -76,7 +76,7 @@ const globalFilter = ref();
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Conteo ciclico</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"

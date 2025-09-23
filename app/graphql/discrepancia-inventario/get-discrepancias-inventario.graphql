@@ -1,11 +1,15 @@
 query GetDiscrepanciasInventario {
   discrepanciasInventario {
     id
-    cantidadEsperada
-    cantidadReal
-    fecha
-    producto {
-      nombre
+    cantidadSistema
+    cantidadContada
+    diferencia
+    resuelto
+    conteo {
+      fecha
+      producto {
+        nombre
+      }
     }
   }
 }

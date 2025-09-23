@@ -4,6 +4,7 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetOrdenesEstacion from "~/graphql/orden-estacion/get-ordenes-estacion.graphql";
 
+// Interfaces
 interface Orden {
   id: string;
   numeroOrden: string;
@@ -14,26 +15,30 @@ interface Estacion {
   nombre: string;
 }
 
+// Interfaz actualizada según esquema GraphQL
 export interface OrdenEstacion {
   id: string;
   orden: Orden;
   estacion: Estacion;
-  fechaInicio: string;
-  fechaFin: string;
+  inicioReal?: string;
+  finReal?: string;
 }
+
 interface OrdenesEstacionResult {
   ordenesEstacion: OrdenEstacion[];
 }
+
 const { data, pending, error } =
   await useAsyncQuery<OrdenesEstacionResult>(GetOrdenesEstacion);
+
 const ordenesEstacion = computed(() => data.value?.ordenesEstacion || []);
+
 // columnas tipadas
 const columns: TableColumn<OrdenEstacion>[] = [
   {
     accessorKey: "orden.numeroOrden",
     header: "N° Orden",
-    cell: ({ row }: { row: Row<OrdenEstacion> }) =>
-      row.original.orden.numeroOrden,
+    cell: ({ row }: { row: Row<OrdenEstacion> }) => row.original.orden.numeroOrden,
   },
   {
     accessorKey: "estacion.nombre",
@@ -41,16 +46,17 @@ const columns: TableColumn<OrdenEstacion>[] = [
     cell: ({ row }) => row.original.estacion.nombre,
   },
   {
-    accessorKey: "fechaInicio",
+    accessorKey: "inicioReal",
     header: "Fecha de Inicio",
-    cell: ({ row }) => row.original.fechaInicio,
+    cell: ({ row }) => row.original.inicioReal || "-",
   },
   {
-    accessorKey: "fechaFin",
+    accessorKey: "finReal",
     header: "Fecha de Fin",
-    cell: ({ row }) => row.original.fechaFin,
+    cell: ({ row }) => row.original.finReal || "-",
   },
 ];
+
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
@@ -58,7 +64,7 @@ const globalFilter = ref();
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Orden estacion</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"

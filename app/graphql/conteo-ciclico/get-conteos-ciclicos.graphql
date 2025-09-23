@@ -1,7 +1,7 @@
 query GetConteosCiclicos {
   conteosCiclicos {
     id
-    fechaConteo
+    fecha
     cantidadContada
     producto {
       nombre

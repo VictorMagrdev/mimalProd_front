@@ -1,12 +1,21 @@
 query GetInventariosLote {
-  inventariosLote {
+  inventarioLotes {
     id
     cantidad
     lote {
       id
     }
-    inventario {
+    bodega {
       id
     }
+    producto {
+      id
+      nombre
+    }
+    unidad {
+      id
+      nombre
+    }
+    actualizadoEn
   }
 }

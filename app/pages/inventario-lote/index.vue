@@ -1,59 +1,92 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue";
+import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetInventariosLote from "~/graphql/inventario-lote/get-inventarios-lote.graphql";
 
+// Interfaces de los subcampos
 interface Lote {
   id: string;
 }
 
-interface Inventario {
+interface Producto {
   id: string;
+  nombre: string;
 }
 
+interface Bodega {
+  id: string;
+  nombre: string;
+}
+
+interface Unidad {
+  id: string;
+  nombre: string;
+}
+
+// InventarioLote real según esquema
 export interface InventarioLote {
   id: string;
-  lote: Lote;
-  inventario: Inventario;
+  lote?: Lote;
+  producto?: Producto;
+  bodega?: Bodega;
+  unidad?: Unidad;
   cantidad: number;
+  actualizadoEn?: string;
 }
 
 interface InventarioLoteResult {
-  inventariosLote: InventarioLote[];
+  inventarioLotes: InventarioLote[];
 }
 
 const { data, pending, error } =
   await useAsyncQuery<InventarioLoteResult>(GetInventariosLote);
 
-const inventariosLote = computed(() => data.value?.inventariosLote || []);
+const inventariosLote = computed(() => data.value?.inventarioLotes || []);
 
 // columnas tipadas
 const columns: TableColumn<InventarioLote>[] = [
   {
     accessorKey: "lote.id",
     header: "Lote",
-    cell: ({ row }: { row: Row<InventarioLote> }) => row.original.lote.id,
+    cell: ({ row }: { row: Row<InventarioLote> }) => row.original.lote?.id || "-",
   },
   {
-    accessorKey: "inventario.id",
-    header: "Inventario",
-    cell: ({ row }) => row.original.inventario.id,
+    accessorKey: "producto.nombre",
+    header: "Producto",
+    cell: ({ row }) => row.original.producto?.nombre || "-",
+  },
+  {
+    accessorKey: "bodega.nombre",
+    header: "Bodega",
+    cell: ({ row }) => row.original.bodega?.nombre || "-",
+  },
+  {
+    accessorKey: "unidad.nombre",
+    header: "Unidad",
+    cell: ({ row }) => row.original.unidad?.nombre || "-",
   },
   {
     accessorKey: "cantidad",
     header: "Cantidad",
     cell: ({ row }) => row.original.cantidad,
   },
+  {
+    accessorKey: "actualizadoEn",
+    header: "Actualizado en",
+    cell: ({ row }) => row.original.actualizadoEn || "-",
+  },
 ];
+
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 </script>
 
+
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Inventario de lotes</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
