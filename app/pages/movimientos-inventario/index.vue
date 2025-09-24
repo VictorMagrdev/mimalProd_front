@@ -53,18 +53,18 @@ const columns: TableColumn<MovimientoInventario>[] = [
   {
     accessorKey: "bodegaOrigen",
     header: "bodegaOrigen",
-    cell: ({ row }) => row.original.bodegaOrigen.nombre,
+    cell: ({ row }) => row.original.bodegaOrigen?.nombre || "Sin bodega",
   },
   {
     accessorKey: "bodegaDestino",
     header: "bodegaDestino",
     cell: ({ row }: { row: Row<MovimientoInventario> }) =>
-      row.original.bodegaDestino.nombre,
+      row.original.bodegaDestino?.nombre || "Sin sin destino",
   },
   {
     accessorKey: "tipo",
     header: "tipo",
-    cell: ({ row }) => row.original.tipo.nombre,
+    cell: ({ row }) => row.original.tipo?.nombre || "Sin tipo",
   },
   {
     accessorKey: "referencia",

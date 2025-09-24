@@ -3,6 +3,7 @@
     <aside
       class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
     >
+      <!-- Avatar dropdown -->
       <div class="flex flex-col items-center mb-6">
         <UDropdownMenu :items="dropdownItems">
           <UButton circle>
@@ -11,6 +12,7 @@
         </UDropdownMenu>
       </div>
 
+      <!-- Navigation -->
       <nav class="space-y-4 flex-1">
         <ULink
           v-for="link in mainLinks"
@@ -23,9 +25,15 @@
           <span>{{ link.label }}</span>
         </ULink>
 
-        <UTree :items="treeItems" />
+        <!-- Tree -->
+        <UTree
+          v-model:expanded="expandedKeys"
+          :items="treeItems"
+          :get-key="(i) => i.value"
+        />
       </nav>
     </aside>
+
     <main class="ml-64 p-4">
       <slot />
     </main>
@@ -33,217 +41,52 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { ref } from "vue";
+import avatarUrl from "@/assets/user_527489.png";
 
 const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 
-const avatarUrl = ref("app/assets/user_527489.png");
+const navigate = (path: string) => router.push(path);
 
 const mainLinks = [{ label: "Inicio", to: "/", icon: "i-heroicons-home" }];
 
-const treeItems = [
-  {
-    label: "Usuarios",
-    defaultExpanded: route.path.startsWith("/usuarios"),
-    children: [
-      {
-        label: "Listado",
-        icon: "i-heroicons-list-bullet",
-        value: "/usuarios",
-        onSelect: () => router.push("/usuarios"),
-      },
-      {
-        label: "Roles",
-        icon: "i-heroicons-user-group",
-        value: "/usuarios/roles",
-        onSelect: () => router.push("/usuarios/roles"),
-      },
-      {
-        label: "Políticas",
-        icon: "i-heroicons-shield-check",
-        value: "/usuarios/politicas",
-        onSelect: () => router.push("/usuarios/politicas"),
-      },
-    ],
-  },
-  {
-    label: "Producción",
-    defaultExpanded:
-      route.path.startsWith("/ordenes-produccion") ||
-      route.path.startsWith("/lineas-orden") ||
-      route.path.startsWith("/lotes-produccion") ||
-      route.path.startsWith("/costos-orden"),
-    children: [
-      {
-        label: "Órdenes",
-        icon: "i-heroicons-clipboard-document-list",
-        value: "/ordenes-produccion",
-        onSelect: () => router.push("/ordenes-produccion"),
-      },
-      {
-        label: "Líneas de Orden",
-        icon: "i-heroicons-bars-3",
-        value: "/lineas-orden",
-        onSelect: () => router.push("/lineas-orden"),
-      },
-      {
-        label: "Lotes",
-        icon: "i-heroicons-archive-box",
-        value: "/lotes-produccion",
-        onSelect: () => router.push("/lotes-produccion"),
-      },
-      {
-        label: "Costos",
-        icon: "i-heroicons-currency-dollar",
-        value: "/costos-orden",
-        onSelect: () => router.push("/costos-orden"),
-      },
-      {
-        label: "Bodegas",
-        icon: "i-heroicons-building-storefront",
-        value: "/bodegas",
-        onSelect: () => router.push("/bodegas"),
-      },
-      {
-        label: "Conteo Cíclico",
-        icon: "i-heroicons-check-circle",
-        value: "/conteo-ciclico",
-        onSelect: () => router.push("/conteo-ciclico"),
-      },
-      {
-        label: "Discrepancia Inventario",
-        icon: "i-heroicons-exclamation-triangle",
-        value: "/discrepancia-inventario",
-        onSelect: () => router.push("/discrepancia-inventario"),
-      },
-      {
-        label: "Inventario Lote",
-        icon: "i-heroicons-archive-box",
-        value: "/inventario-lote",
-        onSelect: () => router.push("/inventario-lote"),
-      },
-      {
-        label: "Movimientos Inventario",
-        icon: "i-heroicons-arrow-path",
-        value: "/movimientos-inventario",
-        onSelect: () => router.push("/movimientos-inventario"),
-      },
-      {
-        label: "Orden Estación",
-        icon: "i-heroicons-rectangle-stack",
-        value: "/orden-estacion",
-        onSelect: () => router.push("/orden-estacion"),
-      },
-      {
-        label: "Orden Evento",
-        icon: "i-heroicons-calendar",
-        value: "/orden-evento",
-        onSelect: () => router.push("/orden-evento"),
-      },
-      {
-        label: "Método de Valoración",
-        icon: "i-heroicons-scale",
-        value: "/metodo-valoracion",
-        onSelect: () => router.push("/metodo-valoracion"),
-      },
-      {
-        label: "Reserva Material Orden",
-        icon: "i-heroicons-inbox",
-        value: "/reserva-material-orden",
-        onSelect: () => router.push("/reserva-material-orden"),
-      },
-      {
-        label: "Punto Reorden",
-        icon: "i-heroicons-flag",
-        value: "/punto-reorden",
-        onSelect: () => router.push("/punto-reorden"),
-      },
-      {
-        label: "Estación Producción",
-        icon: "i-heroicons-cog-6-tooth",
-        value: "/estacion-produccion",
-        onSelect: () => router.push("/estacion-produccion"),
-      },
-    ],
-  },
-  {
-    label: "Catálogos",
-    defaultExpanded:
-      route.path.startsWith("/productos") ||
-      route.path.startsWith("/estados-orden") ||
-      route.path.startsWith("/tipos-costo"),
-    children: [
-      {
-        label: "Productos",
-        icon: "i-heroicons-cube",
-        value: "/productos",
-        onSelect: () => router.push("/productos"),
-      },
-      {
-        label: "Estados de Orden",
-        icon: "i-heroicons-tag",
-        value: "/estados-orden",
-        onSelect: () => router.push("/estados-orden"),
-      },
-      {
-        label: "Tipos de Costo",
-        icon: "i-heroicons-tag",
-        value: "/tipos-costo",
-        onSelect: () => router.push("/tipos-costo"),
-      },
-      {
-        label: "Tipos de Bodega",
-        icon: "i-heroicons-building-library",
-        value: "/tipos-bodega",
-        onSelect: () => router.push("/tipos-bodega"),
-      },
-      {
-        label: "Tipos de Movimientos",
-        icon: "i-heroicons-arrows-right-left",
-        value: "/tipos-movimientos",
-        onSelect: () => router.push("/tipos-movimientos"),
-      },
-      {
-        label: "Tipos de Producto",
-        icon: "i-heroicons-cube",
-        value: "/tipos-producto",
-        onSelect: () => router.push("/tipos-producto"),
-      },
-    ],
-  },
-  {
-    label: "Configuración",
-    defaultExpanded:
-      route.path.startsWith("/unidades-medida") ||
-      route.path.startsWith("/unidades-medida-tipo") ||
-      route.path.startsWith("/unidades-conversion"),
-    children: [
-      {
-        label: "Unidades de Medida",
-        icon: "i-heroicons-scale",
-        value: "/unidades-medida",
-        onSelect: () => router.push("/unidades-medida"),
-      },
-      {
-        label: "Tipos de Unidad",
-        icon: "i-heroicons-swatch",
-        value: "/unidades-medida-tipo",
-        onSelect: () => router.push("/unidades-medida-tipo"),
-      },
-      {
-        label: "Conversiones",
-        icon: "i-heroicons-arrows-right-left",
-        value: "/unidades-conversion",
-        onSelect: () => router.push("/unidades-conversion"),
-      },
-    ],
-  },
-];
+const expandedKeys = ref<string[]>([]);
 
+watchEffect(() => {
+  const keysToExpand: string[] = [];
+
+  if (route.path.startsWith("/usuarios")) keysToExpand.push("usuarios");
+  if (
+    route.path.startsWith("/ordenes-produccion") ||
+    route.path.startsWith("/lineas-orden") ||
+    route.path.startsWith("/lotes-produccion") ||
+    route.path.startsWith("/costos-orden")
+  )
+    keysToExpand.push("produccion");
+  if (
+    route.path.startsWith("/productos") ||
+    route.path.startsWith("/estados-orden") ||
+    route.path.startsWith("/tipos-costo")
+  )
+    keysToExpand.push("catalogos");
+  if (
+    route.path.startsWith("/unidades-medida") ||
+    route.path.startsWith("/unidades-medida-tipo") ||
+    route.path.startsWith("/unidades-conversion")
+  )
+    keysToExpand.push("configuracion");
+
+  // Combina con los previamente expandidos sin duplicados
+  expandedKeys.value = Array.from(
+    new Set([...expandedKeys.value, ...keysToExpand]),
+  );
+});
+
+// Dropdown
 const dropdownItems = ref([
   [
     {
@@ -255,5 +98,194 @@ const dropdownItems = ref([
       },
     },
   ],
+]);
+
+const treeItems = ref([
+  {
+    label: "Usuarios",
+    value: "usuarios",
+    children: [
+      {
+        label: "Listado",
+        value: "/usuarios",
+        onSelect: () => navigate("/usuarios"),
+        icon: "i-heroicons-list-bullet",
+      },
+      {
+        label: "Roles",
+        value: "/usuarios/roles",
+        onSelect: () => navigate("/usuarios/roles"),
+        icon: "i-heroicons-user-group",
+      },
+      {
+        label: "Políticas",
+        value: "/usuarios/politicas",
+        onSelect: () => navigate("/usuarios/politicas"),
+        icon: "i-heroicons-shield-check",
+      },
+    ],
+  },
+  {
+    label: "Producción",
+    value: "produccion",
+    children: [
+      {
+        label: "Órdenes",
+        value: "/ordenes-produccion",
+        onSelect: () => navigate("/ordenes-produccion"),
+        icon: "i-heroicons-clipboard-document-list",
+      },
+      {
+        label: "Líneas de Orden",
+        value: "/lineas-orden",
+        onSelect: () => navigate("/lineas-orden"),
+        icon: "i-heroicons-bars-3",
+      },
+      {
+        label: "Lotes",
+        value: "/lotes-produccion",
+        onSelect: () => navigate("/lotes-produccion"),
+        icon: "i-heroicons-archive-box",
+      },
+      {
+        label: "Costos",
+        value: "/costos-orden",
+        onSelect: () => navigate("/costos-orden"),
+        icon: "i-heroicons-currency-dollar",
+      },
+      {
+        label: "Bodegas",
+        value: "/bodegas",
+        onSelect: () => navigate("/bodegas"),
+        icon: "i-heroicons-building-storefront",
+      },
+      {
+        label: "Conteo Cíclico",
+        value: "/conteo-ciclico",
+        onSelect: () => navigate("/conteo-ciclico"),
+        icon: "i-heroicons-check-circle",
+      },
+      {
+        label: "Discrepancia Inventario",
+        value: "/discrepancia-inventario",
+        onSelect: () => navigate("/discrepancia-inventario"),
+        icon: "i-heroicons-exclamation-triangle",
+      },
+      {
+        label: "Inventario Lote",
+        value: "/inventario-lote",
+        onSelect: () => navigate("/inventario-lote"),
+        icon: "i-heroicons-archive-box",
+      },
+      {
+        label: "Movimientos Inventario",
+        value: "/movimientos-inventario",
+        onSelect: () => navigate("/movimientos-inventario"),
+        icon: "i-heroicons-arrow-path",
+      },
+      {
+        label: "Orden Estación",
+        value: "/orden-estacion",
+        onSelect: () => navigate("/orden-estacion"),
+        icon: "i-heroicons-rectangle-stack",
+      },
+      {
+        label: "Orden Evento",
+        value: "/orden-evento",
+        onSelect: () => navigate("/orden-evento"),
+        icon: "i-heroicons-calendar",
+      },
+      {
+        label: "Método de Valoración",
+        value: "/metodo-valoracion",
+        onSelect: () => navigate("/metodo-valoracion"),
+        icon: "i-heroicons-scale",
+      },
+      {
+        label: "Reserva Material Orden",
+        value: "/reserva-material-orden",
+        onSelect: () => navigate("/reserva-material-orden"),
+        icon: "i-heroicons-inbox",
+      },
+      {
+        label: "Punto Reorden",
+        value: "/punto-reorden",
+        onSelect: () => navigate("/punto-reorden"),
+        icon: "i-heroicons-flag",
+      },
+      {
+        label: "Estación Producción",
+        value: "/estacion-produccion",
+        onSelect: () => navigate("/estacion-produccion"),
+        icon: "i-heroicons-cog-6-tooth",
+      },
+    ],
+  },
+  {
+    label: "Catálogos",
+    value: "catalogos",
+    children: [
+      {
+        label: "Productos",
+        value: "/productos",
+        onSelect: () => navigate("/productos"),
+        icon: "i-heroicons-cube",
+      },
+      {
+        label: "Estados de Orden",
+        value: "/estados-orden",
+        onSelect: () => navigate("/estados-orden"),
+        icon: "i-heroicons-tag",
+      },
+      {
+        label: "Tipos de Costo",
+        value: "/tipos-costo",
+        onSelect: () => navigate("/tipos-costo"),
+        icon: "i-heroicons-tag",
+      },
+      {
+        label: "Tipos de Bodega",
+        value: "/tipos-bodega",
+        onSelect: () => navigate("/tipos-bodega"),
+        icon: "i-heroicons-building-library",
+      },
+      {
+        label: "Tipos de Movimientos",
+        value: "/tipos-movimientos",
+        onSelect: () => navigate("/tipos-movimientos"),
+        icon: "i-heroicons-arrows-right-left",
+      },
+      {
+        label: "Tipos de Producto",
+        value: "/tipos-producto",
+        onSelect: () => navigate("/tipos-producto"),
+        icon: "i-heroicons-cube",
+      },
+    ],
+  },
+  {
+    label: "Configuración",
+    value: "configuracion",
+    children: [
+      {
+        label: "Unidades de Medida",
+        value: "/unidades-medida",
+        onSelect: () => navigate("/unidades-medida"),
+        icon: "i-heroicons-scale",
+      },
+      {
+        label: "Tipos de Unidad",
+        value: "/unidades-medida-tipo",
+        onSelect: () => navigate("/unidades-medida-tipo"),
+        icon: "i-heroicons-swatch",
+      },
+      {
+        label: "Conversiones",
+        value: "/unidades-conversion",
+        onSelect: () => navigate("/unidades-conversion"),
+        icon: "i-heroicons-arrows-right-left",
+      },
+    ],
+  },
 ]);
 </script>

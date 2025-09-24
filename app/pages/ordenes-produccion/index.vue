@@ -55,7 +55,7 @@ const columns: TableColumn<OrdenProduccionUI>[] = [
   {
     accessorKey: "estado.nombre",
     header: "Estado",
-    cell: ({ row }) => row.original.estado.nombre,
+    cell: ({ row }) => row.original.estado?.nombre || "Sin estado",
   },
   {
     accessorKey: "inicioPlanificado",
