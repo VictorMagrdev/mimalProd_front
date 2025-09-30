@@ -184,7 +184,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoUpdateState>) {
         <UFormField label="Unidad Base" name="idUnidadBase">
           <UInputMenu
             v-model="state.idUnidadBase"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"

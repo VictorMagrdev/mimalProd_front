@@ -6,6 +6,8 @@ import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produ
 import GetProductos from "~/graphql/productos/get-productos.graphql";
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
+
 interface OrdenProduccion {
   id: string;
   numeroOrden: string;
@@ -136,7 +138,7 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
         <UFormField label="Orden de Producción" name="idOrden">
           <UInputMenu
             v-model="state.idOrden"
-            :options="ordenesOptions"
+            :items="ordenesOptions"
             value-attribute="id"
             option-attribute="label"
             :loading="ordenesLoading"
@@ -155,7 +157,7 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
         <UFormField label="Producto Componente" name="idProductoComponente">
           <UInputMenu
             v-model="state.idProductoComponente"
-            :options="productosOptions"
+            :items="productosOptions"
             value-attribute="id"
             option-attribute="label"
             :loading="productosLoading"
@@ -174,7 +176,7 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
         <UFormField label="Unidad Componente" name="idUnidadComponente">
           <UInputMenu
             v-model="state.idUnidadComponente"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-attribute="id"
             option-attribute="label"
             :loading="unidadesLoading"

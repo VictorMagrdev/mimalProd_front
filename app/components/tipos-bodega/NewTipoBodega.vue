@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import CreateTipoBodega from "~/graphql/tipos-costo/create-tipo-costo.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 interface TipoBodegaFormState {

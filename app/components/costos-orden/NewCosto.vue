@@ -7,6 +7,8 @@ import CreateCostoOrden from "~/graphql/costos-orden/create-costo-orden.graphql"
 import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
 import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
+
 const open = ref(false);
 
 type ID = string;
@@ -125,7 +127,7 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
           <UInputMenu
             v-model="state.idTipoCosto"
             :items="tiposOptions"
-            value-key="id"
+            value-key="label"
             placeholder="Selecciona un tipo de costo"
             class="w-full"
           />

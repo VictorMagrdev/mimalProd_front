@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 import CreateTipoProducto from "~/graphql/tipos-producto/create-tipos-producto.graphql";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface TipoProductoFormState {
   codigo: string;

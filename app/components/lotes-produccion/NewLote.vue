@@ -4,10 +4,10 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import CreateLoteProduccion from "~/graphql/lotes-produccion/create-lote-produccion.graphql";
 import GetProductos from "~/graphql/productos/get-productos.graphql";
 
-// Estado modal
+const emit = defineEmits<{ (e: "create"): void }>();
+
 const open = ref(false);
 
-// Tipados
 interface Producto {
   id: string;
   nombre: string;
@@ -20,7 +20,6 @@ interface LoteProduccionFormState {
   venceEn: string;
 }
 
-// Estado inicial
 const LoteSchemaInitialState: LoteProduccionFormState = {
   numeroLote: "",
   idProducto: undefined,

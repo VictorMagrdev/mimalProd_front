@@ -139,7 +139,7 @@ async function onSubmit() {
         <UFormField label="Tipo" name="idTipo">
           <USelectMenu
             v-model="state.idTipo"
-            :options="tiposOptions"
+            :items="tiposOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="tiposLoading"

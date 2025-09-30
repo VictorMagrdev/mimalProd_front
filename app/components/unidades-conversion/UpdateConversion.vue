@@ -112,7 +112,7 @@ async function onSubmit() {
         <UFormField label="Unidad Origen" name="idOrigen">
           <USelectMenu
             v-model="state.idOrigen"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="unidadesLoading"
@@ -122,7 +122,7 @@ async function onSubmit() {
         <UFormField label="Unidad Destino" name="idDestino">
           <USelectMenu
             v-model="state.idDestino"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="unidadesLoading"

@@ -14,36 +14,36 @@
     "check:format": "prettier --check ."
   },
   "dependencies": {
-    "@apollo/client": "^3.13.9",
-    "@nuxt/content": "^3.6.3",
+    "@apollo/client": "^3.14.0",
+    "@nuxt/content": "^3.7.1",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/image": "^1.11.0",
     "@nuxt/test-utils": "^3.19.2",
-    "@nuxt/ui": "^3.3.2",
+    "@nuxt/ui": "^4.0.0",
     "@pinia/nuxt": "^0.11.2",
     "@tanstack/vue-table": "^8.21.3",
-    "eslint": "^9.33.0",
+    "eslint": "^9.36.0",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
     "nuxt": "4.1.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "typescript": "^5.9.2",
-    "vue": "^3.5.18",
+    "vue": "^3.5.22",
     "vue-router": "^4.5.1",
-    "zod": "^4.1.5"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@iconify-json/heroicons": "^1.2.2",
-    "@iconify-json/lucide": "^1.2.66",
+    "@iconify-json/heroicons": "^1.2.3",
+    "@iconify-json/lucide": "^1.2.68",
     "@nuxtjs/apollo": "5.0.0-alpha.15",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.5.2",
     "autoprefixer": "^10.4.21",
-    "cypress": "^15.1.0",
-    "oxlint": "^1.12.0",
+    "cypress": "^15.3.0",
+    "oxlint": "^1.18.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.12"
+    "tailwindcss": "^4.1.13"
   },
   "lint-staged": {
     "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue}": "oxlint"

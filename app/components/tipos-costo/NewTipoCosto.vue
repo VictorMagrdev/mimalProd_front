@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 import CreateTipoCosto from "~/graphql/tipos-costo/create-tipo-costo.graphql";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface TipoCostoFormState {
   codigo: string;

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
-import CreateEstacionProduccion from "~/graphql/inventario-lote/create-inventario-lote.graphql";
-import ProductosLotesBodegasUnidades from "~/graphql/inventario-lote/get-productos-lotes-bodegas-unidades .graphql";
+import CreateEstacionProduccion from "~/graphql/estacion-produccion/create-estacion-produccion.graphql";
+import OrdenesOptions from "~/graphql/estacion-produccion/get-ordenes.graphql";
 const open = ref(false);
+
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface EstacionProduccionFormState {
   codigo: string;
@@ -21,24 +23,27 @@ const EstacionProduccionSchemaInitialState: EstacionProduccionFormState = {
 
 const state = reactive({ ...EstacionProduccionSchemaInitialState });
 const error = ref<string | null>(null);
-
-interface ProductosLotesBodegasUnidadesData {
-  productos: { id: string; nombre: string }[];
+interface Orden {
+  id: string;
+  numeroOrden: string;
 }
 
 const { result, refetch: refetchResult } =
-  useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
+  useQuery<OrdenesProduccionResult>(OrdenesOptions);
 
-const { unidadesMedida: unidades } = result.value ?? {
-  unidadesMedida: [],
-};
-
-const unidadesOptions = computed(() =>
-  unidades.map((u) => ({ label: u.nombre, value: u.id })),
+interface OrdenesProduccionResult {
+  ordenesProduccion: Orden[];
+}
+const ordenesOptions = computed(
+  () =>
+    result.value?.ordenesProduccion.map((o) => ({
+      id: o.id,
+      label: o.numeroOrden,
+    })) ?? [],
 );
 
 watch(open, (isOpen) => {
-  if (isOpen && unidadesOptions.value.length === 0) {
+  if (isOpen && ordenesOptions.value.length === 0) {
     refetchResult();
   }
 });
@@ -123,9 +128,8 @@ async function onSubmit(event: FormSubmitEvent<EstacionProduccionFormState>) {
         <UFormField label="Orden" name="orden">
           <UInputMenu
             v-model="state.orden"
-            :options="ordenOptions"
+            :items="ordenesOptions"
             value-key="value"
-            label-key="label"
             class="w-full"
             placeholder="Seleccione el orden"
           />

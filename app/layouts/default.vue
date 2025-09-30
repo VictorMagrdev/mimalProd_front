@@ -12,7 +12,6 @@
         </UDropdownMenu>
       </div>
 
-      <!-- Navigation -->
       <nav class="space-y-4 flex-1">
         <ULink
           v-for="link in mainLinks"
@@ -29,7 +28,7 @@
         <UTree
           v-model:expanded="expandedKeys"
           :items="treeItems"
-          :get-key="(i) => i.value"
+          :get-key="(i:any) => i.value"
         />
       </nav>
     </aside>

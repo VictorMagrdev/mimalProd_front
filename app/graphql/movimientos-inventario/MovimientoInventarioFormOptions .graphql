@@ -1,0 +1,10 @@
+query MovimientoInventarioFormOptions {
+  bodegas {
+    id
+    nombre
+  }
+  tiposMovimiento {
+    id
+    nombre
+  }
+}

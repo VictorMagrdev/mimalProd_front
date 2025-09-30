@@ -1,5 +1,5 @@
-mutation createMovimientoInventarioAjuste($input: MovimientoInventarioInput!) {
-  createMovimientoInventarioAjuste(input: $input) {
+mutation CreateMovimientoInventario($input: MovimientoInventarioInput!) {
+  createMovimientoInventario(input: $input) {
     id
   }
 }

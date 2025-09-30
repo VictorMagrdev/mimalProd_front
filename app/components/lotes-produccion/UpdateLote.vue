@@ -105,7 +105,7 @@ async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
         <UFormField label="Producto" name="idProducto">
           <USelectMenu
             v-model="state.idProducto"
-            :options="productosOptions"
+            :items="productosOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="productosLoading"

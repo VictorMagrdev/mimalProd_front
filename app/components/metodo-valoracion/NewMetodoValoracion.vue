@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import CreateMetodoValoracion from "~/graphql/metodos-valoracion/create-metodos-valoracion.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 interface MetodoValoracionFormState {

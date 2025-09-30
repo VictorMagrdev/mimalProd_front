@@ -4,6 +4,7 @@ import CreateUnidadConversion from "~/graphql/unidades-conversion/create-unidad-
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface UnidadMedida {
   id: string;
@@ -70,7 +71,7 @@ async function onSubmit() {
         <UFormGroup label="Unidad Origen" name="idOrigen">
           <USelectMenu
             v-model="state.idOrigen"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="unidadesLoading"
@@ -81,7 +82,7 @@ async function onSubmit() {
         <UFormGroup label="Unidad Destino" name="idDestino">
           <USelectMenu
             v-model="state.idDestino"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-attribute="value"
             option-attribute="label"
             :loading="unidadesLoading"

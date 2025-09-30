@@ -7,6 +7,7 @@ import GetProductos from "~/graphql/productos/get-productos.graphql";
 import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 import GetEstadosOrden from "~/graphql/estados-orden/get-estados-orden.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 // Tipados

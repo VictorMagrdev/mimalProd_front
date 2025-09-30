@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 const RoleSchemaInitialState = {
   name: "",

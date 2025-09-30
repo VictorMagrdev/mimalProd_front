@@ -3,6 +3,8 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import CreateInventarioLote from "~/graphql/inventario-lote/create-inventario-lote.graphql";
 import ProductosLotesBodegasUnidades from "~/graphql/inventario-lote/get-productos-lotes-bodegas-unidades .graphql";
+
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 interface InventarioLoteFormState {
@@ -124,7 +126,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         <UFormField label="Producto" name="productoId">
           <UInputMenu
             v-model="state.productoId"
-            :options="productosOptions"
+            :items="productosOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"
@@ -135,7 +137,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         <UFormField label="Lote" name="loteId">
           <UInputMenu
             v-model="state.loteId"
-            :options="lotesOptions"
+            :items="lotesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"
@@ -146,7 +148,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         <UFormField label="Bodega" name="bodegaId">
           <UInputMenu
             v-model="state.bodegaId"
-            :options="bodegasOptions"
+            :items="bodegasOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"
@@ -166,7 +168,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         <UFormField label="Unidad de Medida" name="unidadId">
           <UInputMenu
             v-model="state.unidadId"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"

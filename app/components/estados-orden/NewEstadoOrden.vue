@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 import CreateEstadoOrden from "~/graphql/estados-orden/create-estado-orden.graphql";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface EstadoOrdenFormState {
   codigo: string;

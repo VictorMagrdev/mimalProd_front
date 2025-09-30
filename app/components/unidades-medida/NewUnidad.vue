@@ -5,6 +5,7 @@ import CreateUnidadMedida from "~/graphql/unidades-medida/create-unidad-medida.g
 import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
 
 const open = ref(false);
+const emit = defineEmits<{ (e: "create"): void }>();
 
 interface UnidadMedidaFormState {
   codigo: string;
@@ -144,7 +145,7 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaFormState>) {
         <UFormField label="Tipo" name="idTipo">
           <UInputMenu
             v-model="state.idTipo"
-            :options="tiposOptions"
+            :items="tiposOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione un tipo"

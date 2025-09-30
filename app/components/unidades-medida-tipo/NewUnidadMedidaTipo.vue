@@ -3,7 +3,9 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive } from "vue";
 import CreateUnidadMedidaTipo from "~/graphql/unidades-medida-tipo/create-unidad-medida-tipo.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
+
 interface UnidadMedidaTipoFormState {
   codigo: string;
   nombre: string;

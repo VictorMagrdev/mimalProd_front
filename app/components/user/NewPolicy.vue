@@ -3,6 +3,8 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
+const emit = defineEmits<{ (e: "create"): void }>();
+
 interface Role {
   id: number;
   name: string;

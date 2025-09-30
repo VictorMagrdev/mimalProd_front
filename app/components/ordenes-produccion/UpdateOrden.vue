@@ -242,7 +242,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenUpdateState>) {
         <UFormField label="Producto" name="idProducto">
           <UInputMenu
             v-model="state.idProducto"
-            :options="productosOptions"
+            :items="productosOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione un producto"
@@ -253,7 +253,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenUpdateState>) {
         <UFormField label="Lote" name="idLote">
           <UInputMenu
             v-model="state.idLote"
-            :options="lotesOptions"
+            :items="lotesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione un lote"
@@ -273,7 +273,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenUpdateState>) {
         <UFormField label="Unidad" name="idUnidad">
           <UInputMenu
             v-model="state.idUnidad"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"
@@ -284,7 +284,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenUpdateState>) {
         <UFormField label="Estado" name="idEstado">
           <UInputMenu
             v-model="state.idEstado"
-            :options="estadosOptions"
+            :items="estadosOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione un estado"

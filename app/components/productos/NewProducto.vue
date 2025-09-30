@@ -4,6 +4,7 @@ import { reactive, ref, computed, watch } from "vue";
 import createProducto from "~/graphql/productos/create-producto.graphql";
 import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 interface ProductoFormState {
@@ -141,7 +142,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoFormState>) {
         <UFormField label="Unidad Base" name="idUnidadBase">
           <UInputMenu
             v-model="state.idUnidadBase"
-            :options="unidadesOptions"
+            :items="unidadesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una unidad"

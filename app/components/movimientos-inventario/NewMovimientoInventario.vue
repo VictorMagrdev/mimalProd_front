@@ -1,20 +1,72 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
-import CreateMovimientoInventario from "~/graphql/metodos-valoracion/create-metodos-valoracion.graphql";
+import CreateMovimientoInventario from "~/graphql/movimientos-inventario/create-movimientos-inventario.graphql";
+import MovimientoInventarioFormOptions from "~/graphql/movimientos-inventario/MovimientoInventarioFormOptions .graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
+interface tiposMovimiento {
+  id: string;
+  nombre: string;
+}
+interface bodega {
+  id: string;
+  nombre: string;
+}
+
+interface MovimientoInventarioFormOptionsResult {
+  bodegas: bodega[];
+  tiposMovimiento: tiposMovimiento[];
+}
+
+const { result, refetch } = useQuery<MovimientoInventarioFormOptionsResult>(
+  MovimientoInventarioFormOptions,
+  {},
+);
+watch(open, (isOpen) => {
+  if (isOpen) {
+    refetch()?.catch((err) => {
+      console.error("Error cargando opciones para movimiento inventario:", err);
+    });
+  }
+});
+
+
+// Mapear bodegas a opciones para selects
+const bodegaOptions = computed(
+  () =>
+    result.value?.bodegas?.map((b) => ({
+      label: b.nombre,
+      value: b.id,
+    })) ?? [],
+);
+
+// Mapear tipos de movimiento a opciones
+const tipoMovimientoOptions = computed(
+  () =>
+    result.value?.tiposMovimiento?.map((tm) => ({
+      label: tm.nombre,
+      value: tm.id,
+    })) ?? [],
+);
 
 interface MovimientoInventarioFormState {
-  codigo: string;
-  nombre: string;
-  descripcion: string;
+  idBodegaOrigen: string | null;
+  idBodegaDestino: string | null;
+  idTipoMovimiento: string;
+  referencia: string;
+  observaciones: string;
+  creadoPor: number | null;
 }
 
 const MovimientoInventarioSchemaInitialState: MovimientoInventarioFormState = {
-  codigo: "",
-  nombre: "",
-  descripcion: "",
+  idBodegaOrigen: null,
+  idBodegaDestino: null,
+  idTipoMovimiento: "",
+  referencia: "",
+  observaciones: "",
+  creadoPor: null,
 };
 
 const state = reactive({ ...MovimientoInventarioSchemaInitialState });
@@ -29,27 +81,21 @@ const { mutate, loading } = useMutation(CreateMovimientoInventario);
 
 async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
   error.value = null;
-
   try {
     await mutate({ input: event.data });
-
+    emit("create");
     toast.add({
-      title: "movimiento Inventario creado",
+      title: "Movimiento Inventario creado",
       description: "El movimiento Inventario fue registrado correctamente",
       color: "success",
     });
 
     resetForm();
     open.value = false;
-  } catch (e: unknown) {
-    const message =
-      typeof e === "object" && e !== null && "message" in e
-        ? (e as { message: string }).message
-        : String(e);
-    error.value = message;
+  } catch (e) {
     toast.add({
       title: "Error",
-      description: message,
+      description: String(e),
       color: "error",
     });
   }
@@ -63,42 +109,83 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
     </template>
 
     <UButton
-      label="Nueva linea"
+      label="Nuevo movimiento"
       color="neutral"
       variant="subtle"
-      @click="open = true"
+      @click="
+        () => {
+          open = true;
+          refetch()?.catch((err) => {
+            console.error(
+              'Error cargando opciones para movimiento inventario:',
+              err,
+            );
+          });
+        }
+      "
     />
 
     <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
 
     <template #body>
       <UForm
-        id="tipoCostoForm"
+        id="movimientoInventarioForm"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
+        <UFormField label="Bodega Origen" name="idBodegaOrigen">
+          <UInputMenu
+            v-model="state.idBodegaOrigen"
+            value-key="value"
+            :items="bodegaOptions"
             class="w-full"
-            placeholder="Código del movimiento Inventario"
+            placeholder="Seleccione una bodega"
           />
         </UFormField>
 
-        <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
+        <UFormField label="Bodega Destino" name="idBodegaDestino">
+          <UInputMenu
+            v-model="state.idBodegaDestino"
+            value-key="value"
+            :items="bodegaOptions"
             class="w-full"
-            placeholder="Nombre del movimiento Inventario"
+            placeholder="Seleccione una bodega"
           />
         </UFormField>
 
-        <UFormField label="Descripción" name="descripcion">
-          <UInput
-            v-model="state.descripcion"
+        <UFormField label="Tipo Movimiento" name="idTipoMovimiento">
+          <UInputMenu
+            v-model="state.idTipoMovimiento"
+            :items="tipoMovimientoOptions"
+            value-key="value"
             class="w-full"
-            placeholder="Descripción del movimiento Inventario"
+            placeholder="Seleccione un tipo de movimiento"
+          />
+        </UFormField>
+
+        <UFormField label="Referencia" name="referencia">
+          <UInput
+            v-model="state.referencia"
+            class="w-full"
+            placeholder="Referencia del movimiento"
+          />
+        </UFormField>
+
+        <UFormField label="Observaciones" name="observaciones">
+          <UInput
+            v-model="state.observaciones"
+            class="w-full"
+            placeholder="Observaciones"
+          />
+        </UFormField>
+
+        <UFormField label="Creado por (ID usuario)" name="creadoPor">
+          <UInput
+            v-model="state.creadoPor"
+            type="number"
+            class="w-full"
+            placeholder="ID del usuario que crea el movimiento"
           />
         </UFormField>
       </UForm>
@@ -120,7 +207,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInventarioFormState>) {
         label="Crear movimiento Inventario"
         type="submit"
         color="neutral"
-        form="tipoCostoForm"
+        form="movimientoInventarioForm"
         :loading="loading"
       />
     </template>

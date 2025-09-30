@@ -4,6 +4,7 @@ import { reactive, ref, computed, watch } from "vue";
 import CreateReservaMaterialOrden from "~/graphql/reserva-material-orden/create-reserva-material-orden.graphql";
 import OrdenesConDetalles from "~/graphql/reserva-material-orden/get-ordenes-detalladas.graphql";
 
+const emit = defineEmits<{ (e: "create"): void }>();
 const open = ref(false);
 
 interface ReservaMaterialOrdenFormState {
@@ -119,7 +120,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaMaterialOrdenFormState>) {
         <UFormField label="Orden de Producción" name="ordenId">
           <UInputMenu
             v-model="state.ordenId"
-            :options="ordenesOptions"
+            :items="ordenesOptions"
             value-key="value"
             class="w-full"
             placeholder="Seleccione una orden"

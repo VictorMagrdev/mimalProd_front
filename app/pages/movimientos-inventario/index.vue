@@ -32,7 +32,7 @@ interface MovimientoInventarioResult {
   movimientosInventario: MovimientoInventario[];
 }
 
-const { data, pending, error } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
 
 const movimientosInventario = computed(
@@ -109,7 +109,10 @@ function getRowItems(tipo: MovimientoInventario) {
     ],
   ];
 }
-
+function onCreated() {
+  refreshNuxtData();
+  refresh?.().catch((err: any) => console.error("Error refrescando:", err));
+}
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
@@ -163,7 +166,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewMovimientoInventario />
+        <NewMovimientoInventario @create="onCreated" />
       </div>
     </div>
 
