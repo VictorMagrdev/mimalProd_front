@@ -94,7 +94,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -118,8 +117,8 @@ function openUpdateModal(id: string) {
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

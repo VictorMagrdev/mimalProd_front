@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue";
+import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import GetMovimientosInventarioDetalle from "~/graphql/movimiento-inventario-detalle/get-movimientos-inventario-detalle.graphql";
@@ -77,8 +77,8 @@ const globalFilter = ref();
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

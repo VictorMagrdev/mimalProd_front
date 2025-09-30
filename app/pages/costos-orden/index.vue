@@ -83,7 +83,6 @@ const columns: TableColumn<CostoOrden>[] = [
   },
 ];
 
-const createModalOpen = ref(false);
 const updateModalOpen = ref(false);
 
 const selectedId = ref<string | null>(null);

@@ -1,5 +1,0 @@
-mutation UpdateLineaOrden($id: ID!, $input: LineaOrdenInput!) {
-  updateLineaOrden(id: $id, input: $input) {
-    id
-  }
-}

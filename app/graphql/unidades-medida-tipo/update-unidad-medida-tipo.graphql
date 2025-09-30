@@ -1,5 +1,0 @@
-mutation UpdateUnidadMedidaTipo($id: ID!, $input: UnidadMedidaTipoInput!) {
-  updateUnidadMedidaTipo(id: $id, input: $input) {
-    id
-  }
-}

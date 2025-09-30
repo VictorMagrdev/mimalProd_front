@@ -1,9 +1,0 @@
-query GetEstadoOrdenById($id: ID!) {
-  estadoOrden(id: $id) {
-    id
-    codigo
-    nombre
-    descripcion
-    activo
-  }
-}

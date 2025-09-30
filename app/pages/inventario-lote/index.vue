@@ -24,7 +24,6 @@ interface Unidad {
   nombre: string;
 }
 
-// InventarioLote real según esquema
 export interface InventarioLote {
   id: string;
   lote?: Lote;
@@ -102,8 +101,8 @@ const globalFilter = ref();
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

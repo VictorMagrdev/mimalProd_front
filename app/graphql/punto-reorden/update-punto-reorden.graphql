@@ -1,5 +1,0 @@
-mutation UpdatePuntoReorden($id: ID!, $input: PuntoReordenInput!) {
-  updatePuntoReorden(id: $id, input: $input) {
-    id
-  }
-}

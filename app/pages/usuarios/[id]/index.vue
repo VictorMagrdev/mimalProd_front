@@ -9,7 +9,7 @@ interface User {
 }
 
 const route = useRoute();
-const userId = route.params.id;
+const userId = route.params.id as string;
 const auth = useAuthStore();
 
 const {
@@ -23,7 +23,6 @@ const {
     },
   }),
 );
-console.log(user);
 </script>
 
 <template>

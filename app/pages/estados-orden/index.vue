@@ -16,7 +16,6 @@ export interface EstadoOrdenUI {
   activo: boolean;
 }
 
-// Tipo de entidad
 interface EstadoOrden {
   id: string;
   codigo: string;
@@ -25,16 +24,13 @@ interface EstadoOrden {
   activo: boolean;
 }
 
-// Tipo del resultado del query
 interface EstadosOrdenResult {
   estadosOrden: EstadoOrden[];
 }
 
-// Query tipada
 const { data, pending, error } =
   await useAsyncQuery<EstadosOrdenResult>(GetEstadosOrden);
 
-// Ahora TS sabe que data.value?.estadosOrden existe
 const rows = computed<EstadoOrdenUI[]>(() => data.value?.estadosOrden || []);
 
 const columns: TableColumn<EstadoOrdenUI>[] = [
@@ -116,8 +112,8 @@ function openUpdateModal(id: string) {
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

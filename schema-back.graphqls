@@ -697,7 +697,6 @@ type Query {
     ordenesProduccion: [OrdenProduccion]
 }
 
-
 type Mutation {
     createEstadoOrden(input: EstadoOrdenRequest!): EstadoOrden
     updateEstadoOrden(id: ID!, input: EstadoOrdenRequest!): EstadoOrden

@@ -1,5 +1,0 @@
-mutation UpdateConteoCiclico($id: ID!, $input: ConteoCiclicoInput!) {
-  updateConteoCiclico(id: $id, input: $input) {
-    id
-  }
-}

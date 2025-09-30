@@ -78,7 +78,6 @@ const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
-const isNewOpen = ref(false);
 const isUpdateOpen = ref(false);
 const selectedProductoId = ref<string | null>(null);
 </script>
@@ -101,8 +100,8 @@ const selectedProductoId = ref<string | null>(null);
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

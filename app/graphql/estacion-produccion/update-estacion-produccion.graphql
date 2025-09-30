@@ -1,5 +1,0 @@
-mutation UpdateEstacionProduccion($id: ID!, $input: EstacionProduccionInput!) {
-  updateEstacionProduccion(id: $id, input: $input) {
-    id
-  }
-}

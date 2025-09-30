@@ -1,6 +1,0 @@
-query OrdenesOptions {
-  ordenesProduccion {
-    id
-    nombre
-  }
-}

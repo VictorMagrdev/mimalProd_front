@@ -111,7 +111,7 @@ function getRowItems(tipo: MovimientoInventario) {
 }
 function onCreated() {
   refreshNuxtData();
-  refresh?.().catch((err: any) => console.error("Error refrescando:", err));
+  refresh?.().catch((err) => console.error("Error refrescando:", err));
 }
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
@@ -142,8 +142,8 @@ function openUpdateModal(id: string) {
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

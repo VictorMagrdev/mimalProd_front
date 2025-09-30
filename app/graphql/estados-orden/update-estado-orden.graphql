@@ -1,5 +1,0 @@
-mutation UpdateEstadoOrden($id: ID!, $input: EstadoOrdenInput!) {
-  updateEstadoOrden(id: $id, input: $input) {
-    id
-  }
-}

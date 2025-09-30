@@ -1,7 +1,0 @@
-query GetEstacionProduccionById($id: ID!) {
-  estacionProduccion(id: $id) {
-    id
-    nombre
-    descripcion
-  }
-}

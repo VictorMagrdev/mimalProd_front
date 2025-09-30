@@ -14,12 +14,10 @@ export interface UnidadMedidaTipo {
   descripcion: string;
 }
 
-// Tipo del resultado del query
 interface UnidadesMedidaTipoResult {
   unidadesMedidaTipo: UnidadMedidaTipo[];
 }
 
-// Query tipada
 const { data, pending, error } = await useAsyncQuery<UnidadesMedidaTipoResult>(
   GetUnidadesMedidaTipo,
 );
@@ -100,8 +98,8 @@ function openUpdateModal(id: string) {
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => ({
+              .filter((column:any) => column.getCanHide())
+              .map((column:any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

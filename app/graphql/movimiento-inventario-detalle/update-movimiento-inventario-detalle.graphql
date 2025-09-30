@@ -1,8 +1,0 @@
-mutation UpdateMovimientoInventarioDetalle(
-  $id: ID!
-  $input: MovimientoInventarioDetalleInput!
-) {
-  updateMovimientoInventarioDetalle(id: $id, input: $input) {
-    id
-  }
-}

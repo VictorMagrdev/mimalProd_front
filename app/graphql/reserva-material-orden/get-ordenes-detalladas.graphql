@@ -1,9 +1,0 @@
-query OrdenesConDetalles {
-  ordenesProduccion {
-    id
-    numeroOrden
-    idProducto
-    idLote
-    idUnidad
-  }
-}

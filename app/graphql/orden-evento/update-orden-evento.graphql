@@ -1,5 +1,0 @@
-mutation UpdateOrdenEvento($id: ID!, $input: OrdenEventoInput!) {
-  updateOrdenEvento(id: $id, input: $input) {
-    id
-  }
-}
