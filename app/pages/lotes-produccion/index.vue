@@ -37,9 +37,8 @@ interface LotesProduccionResult {
   lotesProduccion: LoteProduccion[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<LotesProduccionResult>(
-  GetLotesProduccion
-);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
 
 const lotesProduccion = computed(() => data.value?.lotesProduccion || []);
 
@@ -125,8 +124,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Lotes de Producción</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -139,7 +144,9 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked);
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
                   e?.preventDefault();
@@ -148,7 +155,12 @@ function openUpdateModal(id: string) {
           "
           :content="{ align: 'end' }"
         >
-          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
         </UDropdownMenu>
 
         <NewLoteProduccion v-model="isNewModalOpen" @creado="refresh()" />
@@ -165,7 +177,11 @@ function openUpdateModal(id: string) {
         :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
-        <UPagination v-model="pagination.pageIndex" :page-count="pagination.pageSize" :total="lotesProduccion?.length || 0" />
+        <UPagination
+          v-model="pagination.pageIndex"
+          :page-count="pagination.pageSize"
+          :total="lotesProduccion?.length || 0"
+        />
       </div>
     </div>
 

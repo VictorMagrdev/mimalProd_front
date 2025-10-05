@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, computed } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const GetReservasMaterialOrden = gql`
   query GetReservasMaterialOrden {
@@ -15,32 +15,35 @@ const GetReservasMaterialOrden = gql`
       fecha_reserva
     }
   }
-`
+`;
 
 export interface ReservaMaterialOrden {
-  id: string
-  orden_id: string | null
-  producto_id: string | null
-  lote_id: string | null
-  cantidad_reservada: number
-  unidad_id: string | null
-  fecha_reserva: string | null
+  id: string;
+  orden_id: string | null;
+  producto_id: string | null;
+  lote_id: string | null;
+  cantidad_reservada: number;
+  unidad_id: string | null;
+  fecha_reserva: string | null;
 }
 
 interface ReservaMaterialOrdenResult {
-  reservasMaterialOrden: ReservaMaterialOrden[]
+  reservasMaterialOrden: ReservaMaterialOrden[];
 }
 
 const { data, pending, error } =
-  await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden)
+  await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden);
 
-const reservasMaterialOrden = computed(() => data.value?.reservasMaterialOrden || [])
+const reservasMaterialOrden = computed(
+  () => data.value?.reservasMaterialOrden || [],
+);
 
 const columns: TableColumn<ReservaMaterialOrden>[] = [
   {
     accessorKey: "orden_id",
     header: "ID Orden",
-    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) => row.original.orden_id || "-",
+    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) =>
+      row.original.orden_id || "-",
   },
   {
     accessorKey: "producto_id",
@@ -67,11 +70,11 @@ const columns: TableColumn<ReservaMaterialOrden>[] = [
     header: "Fecha Reserva",
     cell: ({ row }) => row.original.fecha_reserva || "-",
   },
-]
+];
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
 </script>
 
 <template>

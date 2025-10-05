@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, computed, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const GetMetodosValoracion = gql`
   query GetMetodosValoracion {
@@ -16,32 +16,32 @@ const GetMetodosValoracion = gql`
       }
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface Producto {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 export interface MetodoValoracion {
-  id: string
-  codigo: string
-  nombre: string
-  descripcion?: string | null
-  productos?: Producto[] | null
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion?: string | null;
+  productos?: Producto[] | null;
 }
 
 interface MetodoValoracionResult {
-  metodosValoracion: MetodoValoracion[]
+  metodosValoracion: MetodoValoracion[];
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<MetodoValoracionResult>(GetMetodosValoracion)
+  await useAsyncQuery<MetodoValoracionResult>(GetMetodosValoracion);
 
-const metodosValoracion = computed(() => data.value?.metodosValoracion || [])
+const metodosValoracion = computed(() => data.value?.metodosValoracion || []);
 
 const columns: TableColumn<MetodoValoracion>[] = [
   {
@@ -86,7 +86,7 @@ const columns: TableColumn<MetodoValoracion>[] = [
         ),
       ),
   },
-]
+];
 
 function getRowItems(tipo: MetodoValoracion) {
   return [
@@ -97,20 +97,20 @@ function getRowItems(tipo: MetodoValoracion) {
         onSelect: () => openUpdateModal(tipo.id),
       },
     ],
-  ]
+  ];
 }
 
 function onCreated() {
-  refresh?.().catch((err) => console.error("Error refrescando:", err))
+  refresh?.().catch((err) => console.error("Error refrescando:", err));
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -140,10 +140,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "

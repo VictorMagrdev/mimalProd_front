@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, computed } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const GetPuntosReorden = gql`
   query GetPuntosReorden {
@@ -13,30 +13,31 @@ const GetPuntosReorden = gql`
       unidad_id
     }
   }
-`
+`;
 
 export interface PuntoReorden {
-  id: string
-  producto_id: string | null
-  stock_minimo: number
-  stock_seguridad: number | null
-  unidad_id: string | null
+  id: string;
+  producto_id: string | null;
+  stock_minimo: number;
+  stock_seguridad: number | null;
+  unidad_id: string | null;
 }
 
 interface PuntoReordenResult {
-  puntosReorden: PuntoReorden[]
+  puntosReorden: PuntoReorden[];
 }
 
 const { data, pending, error } =
-  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden)
+  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
 
-const puntosReorden = computed(() => data.value?.puntosReorden || [])
+const puntosReorden = computed(() => data.value?.puntosReorden || []);
 
 const columns: TableColumn<PuntoReorden>[] = [
   {
     accessorKey: "producto_id",
     header: "ID Producto",
-    cell: ({ row }: { row: Row<PuntoReorden> }) => row.original.producto_id || "-",
+    cell: ({ row }: { row: Row<PuntoReorden> }) =>
+      row.original.producto_id || "-",
   },
   {
     accessorKey: "stock_minimo",
@@ -53,18 +54,20 @@ const columns: TableColumn<PuntoReorden>[] = [
     header: "Unidad ID",
     cell: ({ row }) => row.original.unidad_id || "-",
   },
-]
+];
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Puntos de Reorden</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput
         v-model="globalFilter"
         class="max-w-sm"
@@ -84,10 +87,10 @@ const globalFilter = ref()
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "

@@ -66,7 +66,7 @@ const columns: TableColumn<EstadoOrden>[] = [
           variant: "subtle",
           class: "capitalize",
         },
-        () => (row.original.activo ? "Activo" : "Inactivo")
+        () => (row.original.activo ? "Activo" : "Inactivo"),
       ),
   },
   {
@@ -82,8 +82,8 @@ const columns: TableColumn<EstadoOrden>[] = [
             class: "text-primary hover:underline",
             onClick: () => openUpdateModal(row.original.id),
           },
-          "Actualizar"
-        )
+          "Actualizar",
+        ),
       ),
   },
 ];

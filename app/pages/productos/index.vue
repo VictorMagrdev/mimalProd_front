@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, resolveComponent, computed } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const GetProductos = gql`
   query GetProductos {
@@ -28,44 +28,45 @@ const GetProductos = gql`
       }
     }
   }
-`
+`;
 
 export interface TipoProducto {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 export interface MetodoValoracion {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 export interface UnidadMedida {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 export interface Producto {
-  id: string
-  codigo: string | null
-  nombre: string
-  costo_base: number | null
-  creado_en: string
-  tipo: TipoProducto | null
-  metodo_valoracion: MetodoValoracion | null
-  unidad_base: UnidadMedida | null
+  id: string;
+  codigo: string | null;
+  nombre: string;
+  costo_base: number | null;
+  creado_en: string;
+  tipo: TipoProducto | null;
+  metodo_valoracion: MetodoValoracion | null;
+  unidad_base: UnidadMedida | null;
 }
 
 interface ProductosResult {
-  productos: Producto[]
+  productos: Producto[];
 }
 
-const { data, pending, error } = await useAsyncQuery<ProductosResult>(GetProductos)
-const productos = computed(() => data.value?.productos ?? [])
+const { data, pending, error } =
+  await useAsyncQuery<ProductosResult>(GetProductos);
+const productos = computed(() => data.value?.productos ?? []);
 
 function openUpdateModal(id: string) {
-  selectedProductoId.value = id
-  isUpdateOpen.value = true
+  selectedProductoId.value = id;
+  isUpdateOpen.value = true;
 }
 
 function getRowItems(producto: Producto) {
@@ -77,7 +78,7 @@ function getRowItems(producto: Producto) {
         onSelect: () => openUpdateModal(producto.id),
       },
     ],
-  ]
+  ];
 }
 
 const columns: TableColumn<Producto>[] = [
@@ -132,21 +133,27 @@ const columns: TableColumn<Producto>[] = [
         ),
       ),
   },
-]
+];
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const isUpdateOpen = ref(false)
-const selectedProductoId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const isUpdateOpen = ref(false);
+const selectedProductoId = ref<string | null>(null);
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Productos</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -161,10 +168,10 @@ const selectedProductoId = ref<string | null>(null)
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "

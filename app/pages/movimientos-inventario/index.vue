@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
-import { gql } from "graphql-tag"
+import { ref, h, computed, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
+import { gql } from "graphql-tag";
 
 const GetMovimientosInventario = gql`
   query GetMovimientosInventario {
@@ -33,39 +33,41 @@ const GetMovimientosInventario = gql`
       }
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface MovimientoInventarioDetalle {
-  id: string
-  producto_id?: string | null
-  cantidad?: number | null
-  unidad_id?: string | null
+  id: string;
+  producto_id?: string | null;
+  cantidad?: number | null;
+  unidad_id?: string | null;
 }
 
 export interface MovimientoInventario {
-  id: string
-  fecha?: string | null
-  bodega_origen?: { id: string; nombre?: string } | null
-  bodega_destino?: { id: string; nombre?: string } | null
-  tipo_movimiento?: { id: string; nombre?: string } | null
-  referencia?: string | null
-  observaciones?: string | null
-  creado_por?: string | null
-  creado_en?: string | null
-  detalles?: MovimientoInventarioDetalle[] | null
+  id: string;
+  fecha?: string | null;
+  bodega_origen?: { id: string; nombre?: string } | null;
+  bodega_destino?: { id: string; nombre?: string } | null;
+  tipo_movimiento?: { id: string; nombre?: string } | null;
+  referencia?: string | null;
+  observaciones?: string | null;
+  creado_por?: string | null;
+  creado_en?: string | null;
+  detalles?: MovimientoInventarioDetalle[] | null;
 }
 
 interface MovimientoInventarioResult {
-  movimientosInventario: MovimientoInventario[]
+  movimientosInventario: MovimientoInventario[];
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario)
+  await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
 
-const movimientosInventario = computed(() => data.value?.movimientosInventario || [])
+const movimientosInventario = computed(
+  () => data.value?.movimientosInventario || [],
+);
 
 const columns: TableColumn<MovimientoInventario>[] = [
   {
@@ -108,7 +110,9 @@ const columns: TableColumn<MovimientoInventario>[] = [
     accessorKey: "creado_en",
     header: "Creado En",
     cell: ({ row }) =>
-      row.original.creado_en ? new Date(row.original.creado_en).toLocaleString() : "-",
+      row.original.creado_en
+        ? new Date(row.original.creado_en).toLocaleString()
+        : "-",
   },
   {
     id: "actions",
@@ -129,7 +133,7 @@ const columns: TableColumn<MovimientoInventario>[] = [
         ),
       ),
   },
-]
+];
 
 function getRowItems(m: MovimientoInventario) {
   return [
@@ -140,16 +144,16 @@ function getRowItems(m: MovimientoInventario) {
         onSelect: () => openUpdateModal(m.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -157,8 +161,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Movimientos de Inventario</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -171,16 +181,23 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
           :content="{ align: 'end' }"
         >
-          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
         </UDropdownMenu>
         <NewMovimientoInventario @creado="refresh()" />
       </div>
@@ -198,7 +215,14 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((movimientosInventario?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(
+              1,
+              Math.ceil(
+                (movimientosInventario?.length || 0) / pagination.pageSize,
+              ),
+            )
+          "
           :total="movimientosInventario?.length || 0"
         />
       </div>

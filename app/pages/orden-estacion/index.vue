@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, h, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
-import { gql } from "graphql-tag"
+import { ref, computed, h, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
+import { gql } from "graphql-tag";
 
 const GetOrdenesEstacion = gql`
   query GetOrdenesEstacion {
@@ -26,39 +26,40 @@ const GetOrdenesEstacion = gql`
       }
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface OrdenEstacion {
-  id: string
-  orden_id?: string | null
-  estacion_id?: string | null
-  inicio_planificado?: string | null
-  fin_planificado?: string | null
-  inicio_real?: string | null
-  fin_real?: string | null
-  estado_orden_estacion_id?: string | null
-  observaciones?: string | null
-  estacion?: { id: string; nombre?: string } | null
-  estado?: { id: string; nombre?: string } | null
+  id: string;
+  orden_id?: string | null;
+  estacion_id?: string | null;
+  inicio_planificado?: string | null;
+  fin_planificado?: string | null;
+  inicio_real?: string | null;
+  fin_real?: string | null;
+  estado_orden_estacion_id?: string | null;
+  observaciones?: string | null;
+  estacion?: { id: string; nombre?: string } | null;
+  estado?: { id: string; nombre?: string } | null;
 }
 
 interface OrdenesEstacionResult {
-  ordenesEstacion: OrdenEstacion[]
+  ordenesEstacion: OrdenEstacion[];
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<OrdenesEstacionResult>(GetOrdenesEstacion)
+  await useAsyncQuery<OrdenesEstacionResult>(GetOrdenesEstacion);
 
-const ordenesEstacion = computed(() => data.value?.ordenesEstacion || [])
+const ordenesEstacion = computed(() => data.value?.ordenesEstacion || []);
 
 const columns: TableColumn<OrdenEstacion>[] = [
   {
     accessorKey: "orden_id",
     header: "ID Orden",
-    cell: ({ row }: { row: Row<OrdenEstacion> }) => row.original.orden_id ?? "-",
+    cell: ({ row }: { row: Row<OrdenEstacion> }) =>
+      row.original.orden_id ?? "-",
   },
   {
     accessorKey: "estacion.nombre",
@@ -69,13 +70,17 @@ const columns: TableColumn<OrdenEstacion>[] = [
     accessorKey: "inicio_real",
     header: "Inicio Real",
     cell: ({ row }) =>
-      row.original.inicio_real ? new Date(row.original.inicio_real).toLocaleString() : "-",
+      row.original.inicio_real
+        ? new Date(row.original.inicio_real).toLocaleString()
+        : "-",
   },
   {
     accessorKey: "fin_real",
     header: "Fin Real",
     cell: ({ row }) =>
-      row.original.fin_real ? new Date(row.original.fin_real).toLocaleString() : "-",
+      row.original.fin_real
+        ? new Date(row.original.fin_real).toLocaleString()
+        : "-",
   },
   {
     accessorKey: "estado.nombre",
@@ -89,19 +94,16 @@ const columns: TableColumn<OrdenEstacion>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(
-          UDropdownMenu,
-          { items: getRowItems(row.original) },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-            }),
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
         ),
       ),
   },
-]
+];
 
 function getRowItems(oe: OrdenEstacion) {
   return [
@@ -112,16 +114,16 @@ function getRowItems(oe: OrdenEstacion) {
         onSelect: () => openUpdateModal(oe.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -129,8 +131,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Orden Estación</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -143,10 +151,12 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
@@ -159,7 +169,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <OrdenEstacionNewOrdenEstacion @creado="refresh()"/>
+        <OrdenEstacionNewOrdenEstacion @creado="refresh()" />
       </div>
     </div>
 
@@ -175,7 +185,12 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((ordenesEstacion?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(
+              1,
+              Math.ceil((ordenesEstacion?.length || 0) / pagination.pageSize),
+            )
+          "
           :total="ordenesEstacion?.length || 0"
         />
       </div>

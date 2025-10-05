@@ -37,7 +37,9 @@ interface QueryResult {
 
 const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
 
-const estacionesProduccion = computed(() => data.value?.estacionesProduccion || []);
+const estacionesProduccion = computed(
+  () => data.value?.estacionesProduccion || [],
+);
 
 const columns: TableColumn<EstacionProduccion>[] = [
   {
@@ -59,7 +61,7 @@ const columns: TableColumn<EstacionProduccion>[] = [
       h(
         UBadge,
         { variant: "outline", color: "primary", class: "font-mono" },
-        () => `#${row.original.orden}`
+        () => `#${row.original.orden}`,
       ),
   },
   {
@@ -80,7 +82,7 @@ const columns: TableColumn<EstacionProduccion>[] = [
           day: "numeric",
           month: "short",
           year: "numeric",
-        })
+        }),
       ),
   },
   {
@@ -100,8 +102,8 @@ const columns: TableColumn<EstacionProduccion>[] = [
               variant: "ghost",
               class: "ml-auto",
               "aria-label": "Acciones",
-            })
-        )
+            }),
+        ),
       ),
   },
 ];
@@ -128,7 +130,6 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
 }
 </script>
-
 
 <template>
   <div class="w-full space-y-4 pb-4">
@@ -185,7 +186,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <EstacionProduccionNewEstacionProduccion/>
+      <EstacionProduccionNewEstacionProduccion />
     </div>
 
     <UTable

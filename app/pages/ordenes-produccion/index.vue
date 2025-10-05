@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, resolveComponent, computed } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const GetOrdenesProduccion = gql`
   query GetOrdenesProduccion {
@@ -27,37 +27,37 @@ const GetOrdenesProduccion = gql`
       actualizado_en
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface OrdenProduccion {
-  id: string
-  numero_orden: string
-  cantidad?: number | null
-  unidad?: { id: string; abreviatura?: string } | null
-  estado?: { id: string; nombre?: string } | null
-  inicio_planificado?: string | null
-  fin_planificado?: string | null
-  inicio_real?: string | null
-  fin_real?: string | null
-  cantidad_desperdicio?: number | null
-  cantidad_producida?: number | null
-  creado_en?: string | null
-  actualizado_en?: string | null
+  id: string;
+  numero_orden: string;
+  cantidad?: number | null;
+  unidad?: { id: string; abreviatura?: string } | null;
+  estado?: { id: string; nombre?: string } | null;
+  inicio_planificado?: string | null;
+  fin_planificado?: string | null;
+  inicio_real?: string | null;
+  fin_real?: string | null;
+  cantidad_desperdicio?: number | null;
+  cantidad_producida?: number | null;
+  creado_en?: string | null;
+  actualizado_en?: string | null;
 }
 
 interface OrdenesProduccionResult {
-  ordenesProduccion: OrdenProduccion[]
+  ordenesProduccion: OrdenProduccion[];
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion)
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
 const rows = computed<OrdenProduccion[]>(
-  () => data.value?.ordenesProduccion || []
-)
+  () => data.value?.ordenesProduccion || [],
+);
 
 const columns: TableColumn<OrdenProduccion>[] = [
   {
@@ -108,11 +108,11 @@ const columns: TableColumn<OrdenProduccion>[] = [
             icon: "i-lucide-ellipsis-vertical",
             color: "neutral",
             variant: "ghost",
-          })
-        )
+          }),
+        ),
       ),
   },
-]
+];
 
 function getRowItems(orden: OrdenProduccion) {
   return [
@@ -123,16 +123,16 @@ function getRowItems(orden: OrdenProduccion) {
         onSelect: () => openUpdateModal(orden.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -140,8 +140,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Órdenes de Producción</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -156,10 +162,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "

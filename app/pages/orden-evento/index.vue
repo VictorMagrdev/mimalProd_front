@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
-import { gql } from "graphql-tag"
+import { ref, computed, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
+import { gql } from "graphql-tag";
 
 const GetOrdenesEvento = gql`
   query GetOrdenesEvento {
@@ -14,27 +14,27 @@ const GetOrdenesEvento = gql`
       fecha
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface OrdenEvento {
-  id: string
-  orden_id?: string | null
-  evento: string
-  descripcion?: string | null
-  fecha?: string | null
+  id: string;
+  orden_id?: string | null;
+  evento: string;
+  descripcion?: string | null;
+  fecha?: string | null;
 }
 
 interface OrdenEventoResult {
-  ordenesEvento: OrdenEvento[]
+  ordenesEvento: OrdenEvento[];
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<OrdenEventoResult>(GetOrdenesEvento)
+  await useAsyncQuery<OrdenEventoResult>(GetOrdenesEvento);
 
-const ordenesEvento = computed(() => data.value?.ordenesEvento || [])
+const ordenesEvento = computed(() => data.value?.ordenesEvento || []);
 
 const columns: TableColumn<OrdenEvento>[] = [
   {
@@ -69,11 +69,11 @@ const columns: TableColumn<OrdenEvento>[] = [
             icon: "i-lucide-ellipsis-vertical",
             color: "neutral",
             variant: "ghost",
-          })
-        )
+          }),
+        ),
       ),
   },
-]
+];
 
 function getRowItems(ev: OrdenEvento) {
   return [
@@ -84,16 +84,16 @@ function getRowItems(ev: OrdenEvento) {
         onSelect: () => openUpdateModal(ev.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref()
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref();
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -101,8 +101,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Ordenes Evento</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -117,10 +123,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
@@ -149,7 +155,12 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((ordenesEvento?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(
+              1,
+              Math.ceil((ordenesEvento?.length || 0) / pagination.pageSize),
+            )
+          "
           :total="ordenesEvento?.length || 0"
         />
       </div>

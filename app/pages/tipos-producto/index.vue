@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, computed, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const GetTiposProducto = gql`
   query GetTiposProducto {
@@ -15,24 +15,23 @@ const GetTiposProducto = gql`
       descripcion
     }
   }
-`
+`;
 
 export interface TipoProducto {
-  id: string
-  codigo: string
-  nombre: string
-  descripcion: string
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
 }
 
 interface TipoProductoResult {
-  tiposProducto: TipoProducto[]
+  tiposProducto: TipoProducto[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<TipoProductoResult>(
-  GetTiposProducto
-)
+const { data, pending, error, refresh } =
+  await useAsyncQuery<TipoProductoResult>(GetTiposProducto);
 
-const tiposProducto = computed(() => data.value?.tiposProducto || [])
+const tiposProducto = computed(() => data.value?.tiposProducto || []);
 
 const columns: TableColumn<TipoProducto>[] = [
   {
@@ -56,19 +55,16 @@ const columns: TableColumn<TipoProducto>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(
-          UDropdownMenu,
-          { items: getRowItems(row.original) },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-            })
-        )
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
+        ),
       ),
   },
-]
+];
 
 function getRowItems(tipo: TipoProducto) {
   return [
@@ -79,16 +75,16 @@ function getRowItems(tipo: TipoProducto) {
         onSelect: () => openUpdateModal(tipo.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref("")
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref("");
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -96,8 +92,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Tipos de Producto</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -110,10 +112,12 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
@@ -143,7 +147,12 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((tiposProducto?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(
+              1,
+              Math.ceil((tiposProducto?.length || 0) / pagination.pageSize),
+            )
+          "
           :total="tiposProducto?.length || 0"
         />
       </div>

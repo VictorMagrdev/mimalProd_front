@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, resolveComponent, computed } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const GetLineasOrden = gql`
   query GetLineasOrden {
@@ -25,44 +25,45 @@ const GetLineasOrden = gql`
       creado_en
     }
   }
-`
+`;
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface LineaOrdenRaw {
-  id: string
-  orden_id?: string | null
-  numero_linea?: number | null
-  producto_componente?: { id: string; nombre?: string } | null
-  cantidad_requerida?: number | null
-  unidad_componente?: { id: string; abreviatura?: string } | null
-  cantidad_usada?: number | null
-  costo_unitario?: number | null
-  costo_total?: number | null
-  observaciones?: string | null
-  creado_en?: string | null
+  id: string;
+  orden_id?: string | null;
+  numero_linea?: number | null;
+  producto_componente?: { id: string; nombre?: string } | null;
+  cantidad_requerida?: number | null;
+  unidad_componente?: { id: string; abreviatura?: string } | null;
+  cantidad_usada?: number | null;
+  costo_unitario?: number | null;
+  costo_total?: number | null;
+  observaciones?: string | null;
+  creado_en?: string | null;
 }
 
 export interface LineaOrdenUI {
-  id: string
-  ordenId?: string | null
-  numeroLinea?: number | null
-  productoComponente?: { id: string; nombre?: string } | null
-  cantidadRequerida?: number | null
-  unidadComponente?: { id: string; abreviatura?: string } | null
-  cantidadUsada?: number | null
-  costoUnitario?: number | null
-  costoTotal?: number | null
-  observaciones?: string | null
-  creadoEn?: string | null
+  id: string;
+  ordenId?: string | null;
+  numeroLinea?: number | null;
+  productoComponente?: { id: string; nombre?: string } | null;
+  cantidadRequerida?: number | null;
+  unidadComponente?: { id: string; abreviatura?: string } | null;
+  cantidadUsada?: number | null;
+  costoUnitario?: number | null;
+  costoTotal?: number | null;
+  observaciones?: string | null;
+  creadoEn?: string | null;
 }
 
 interface LineasOrdenResult {
-  lineasOrden: LineaOrdenRaw[]
+  lineasOrden: LineaOrdenRaw[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<LineasOrdenResult>(GetLineasOrden)
+const { data, pending, error, refresh } =
+  await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
 
 const rows = computed<LineaOrdenUI[]>(() =>
   (data.value?.lineasOrden || []).map((l) => ({
@@ -78,7 +79,7 @@ const rows = computed<LineaOrdenUI[]>(() =>
     observaciones: l.observaciones ?? null,
     creadoEn: l.creado_en ?? null,
   })),
-)
+);
 
 const columns: TableColumn<LineaOrdenUI>[] = [
   {
@@ -114,12 +115,12 @@ const columns: TableColumn<LineaOrdenUI>[] = [
   {
     accessorKey: "costoUnitario",
     header: "Costo Unitario",
-    cell: ({ row }) => (row.original.costoUnitario ?? "-"),
+    cell: ({ row }) => row.original.costoUnitario ?? "-",
   },
   {
     accessorKey: "costoTotal",
     header: "Costo Total",
-    cell: ({ row }) => (row.original.costoTotal ?? "-"),
+    cell: ({ row }) => row.original.costoTotal ?? "-",
   },
   {
     accessorKey: "observaciones",
@@ -130,7 +131,9 @@ const columns: TableColumn<LineaOrdenUI>[] = [
     accessorKey: "creadoEn",
     header: "Creado En",
     cell: ({ row }) =>
-      row.original.creadoEn ? new Date(row.original.creadoEn).toLocaleString() : "-",
+      row.original.creadoEn
+        ? new Date(row.original.creadoEn).toLocaleString()
+        : "-",
   },
   {
     id: "actions",
@@ -151,7 +154,7 @@ const columns: TableColumn<LineaOrdenUI>[] = [
         ),
       ),
   },
-]
+];
 
 function getRowItems(linea: LineaOrdenUI) {
   return [
@@ -162,16 +165,16 @@ function getRowItems(linea: LineaOrdenUI) {
         onSelect: () => openUpdateModal(linea.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref("")
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref("");
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -179,8 +182,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Líneas de Orden</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -193,16 +202,23 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
           :content="{ align: 'end' }"
         >
-          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
         </UDropdownMenu>
 
         <NewLinea @creado="refresh()" />
@@ -221,7 +237,9 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((rows?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(1, Math.ceil((rows?.length || 0) / pagination.pageSize))
+          "
           :total="rows?.length || 0"
         />
       </div>

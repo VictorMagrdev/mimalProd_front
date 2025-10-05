@@ -149,7 +149,10 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton label="Nuevo Tipo de Movimiento" @click="isNewModalOpen = true" />
+        <UButton
+          label="Nuevo Tipo de Movimiento"
+          @click="isNewModalOpen = true"
+        />
       </div>
     </div>
 

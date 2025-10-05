@@ -192,7 +192,9 @@ const filteredData = computed(() => {
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200"
+      >
         <UInput
           v-model="globalFilter"
           class="max-w-sm"
@@ -267,7 +269,9 @@ const filteredData = computed(() => {
         }"
       />
 
-      <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+      <div
+        class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50"
+      >
         <div class="text-sm text-gray-600">
           Mostrando
           <span class="font-medium">{{
@@ -295,7 +299,13 @@ const filteredData = computed(() => {
         <span class="font-medium">Error al cargar los tipos de costo</span>
       </div>
       <p class="text-red-600 text-sm mt-1">{{ error.message }}</p>
-      <UButton color="red" variant="outline" size="sm" class="mt-2" @click="refresh()">
+      <UButton
+        color="red"
+        variant="outline"
+        size="sm"
+        class="mt-2"
+        @click="refresh()"
+      >
         Reintentar
       </UButton>
     </div>

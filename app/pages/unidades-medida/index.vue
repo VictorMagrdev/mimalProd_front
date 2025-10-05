@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue"
-import type { TableColumn } from "@nuxt/ui"
-import type { Row } from "@tanstack/vue-table"
+import { ref, h, computed, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
-const UButton = resolveComponent("UButton")
-const UDropdownMenu = resolveComponent("UDropdownMenu")
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const GetUnidadesMedida = gql`
   query GetUnidadesMedida {
@@ -13,34 +13,36 @@ const GetUnidadesMedida = gql`
       codigo
       nombre
       abreviatura
-      tipo { id nombre }
+      tipo {
+        id
+        nombre
+      }
       activa
       base
       creado_en
     }
   }
-`
+`;
 
 export interface UnidadMedida {
-  id: string
-  codigo: string
-  nombre: string
-  abreviatura?: string
-  tipo?: { id: string; nombre: string }
-  activa?: boolean
-  base?: boolean
-  creado_en?: string
+  id: string;
+  codigo: string;
+  nombre: string;
+  abreviatura?: string;
+  tipo?: { id: string; nombre: string };
+  activa?: boolean;
+  base?: boolean;
+  creado_en?: string;
 }
 
 interface UnidadesMedidaResult {
-  unidadesMedida: UnidadMedida[]
+  unidadesMedida: UnidadMedida[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<UnidadesMedidaResult>(
-  GetUnidadesMedida
-)
+const { data, pending, error, refresh } =
+  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
 
-const unidades = computed(() => data.value?.unidadesMedida || [])
+const unidades = computed(() => data.value?.unidadesMedida || []);
 
 const columns: TableColumn<UnidadMedida>[] = [
   {
@@ -79,19 +81,16 @@ const columns: TableColumn<UnidadMedida>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(
-          UDropdownMenu,
-          { items: getRowItems(row.original) },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-            })
-        )
+        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          }),
+        ),
       ),
   },
-]
+];
 
 function getRowItems(unidad: UnidadMedida) {
   return [
@@ -102,16 +101,16 @@ function getRowItems(unidad: UnidadMedida) {
         onSelect: () => openUpdateModal(unidad.id),
       },
     ],
-  ]
+  ];
 }
 
-const table = useTemplateRef("table")
-const pagination = ref({ pageIndex: 1, pageSize: 10 })
-const globalFilter = ref("")
-const selectedId = ref<string | null>(null)
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 1, pageSize: 10 });
+const globalFilter = ref("");
+const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
-  selectedId.value = id
+  selectedId.value = id;
 }
 </script>
 
@@ -119,8 +118,14 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Unidades de Medida</h1>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Filtrar..."
+      />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -133,10 +138,12 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault()
+                  e?.preventDefault();
                 },
               }))
           "
@@ -166,7 +173,12 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="Math.max(1, Math.ceil((unidades?.length || 0) / pagination.pageSize))"
+          :page-count="
+            Math.max(
+              1,
+              Math.ceil((unidades?.length || 0) / pagination.pageSize),
+            )
+          "
           :total="unidades?.length || 0"
         />
       </div>
