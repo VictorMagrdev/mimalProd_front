@@ -1,27 +1,47 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetMetodoValoracion from "~/graphql/metodos-valoracion/get-metodos-valoracion.graphql";
-import NewMetodoValoracion from "~/components/metodo-valoracion/NewMetodoValoracion.vue";
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+import { ref, h, computed, resolveComponent } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
+
+const GetMetodosValoracion = gql`
+  query GetMetodosValoracion {
+    metodosValoracion {
+      id
+      codigo
+      nombre
+      descripcion
+      productos {
+        id
+        nombre
+      }
+    }
+  }
+`
+
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
+
+export interface Producto {
+  id: string
+  nombre: string
+}
 
 export interface MetodoValoracion {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion: string;
+  id: string
+  codigo: string
+  nombre: string
+  descripcion?: string | null
+  productos?: Producto[] | null
 }
 
 interface MetodoValoracionResult {
-  metodosValoracion: MetodoValoracion[];
+  metodosValoracion: MetodoValoracion[]
 }
 
-const { data, pending, error } =
-  await useAsyncQuery<MetodoValoracionResult>(GetMetodoValoracion);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<MetodoValoracionResult>(GetMetodosValoracion)
 
-const metodosValoracion = computed(() => data.value?.metodosValoracion || []);
+const metodosValoracion = computed(() => data.value?.metodosValoracion || [])
 
 const columns: TableColumn<MetodoValoracion>[] = [
   {
@@ -37,25 +57,36 @@ const columns: TableColumn<MetodoValoracion>[] = [
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    cell: ({ row }) => row.original.descripcion,
+    cell: ({ row }) => row.original.descripcion || "-",
   },
-
+  {
+    accessorKey: "productos",
+    header: "Productos Asociados",
+    cell: ({ row }) =>
+      row.original.productos?.length
+        ? row.original.productos.map((p) => p.nombre).join(", ")
+        : "Sin productos",
+  },
   {
     id: "actions",
+    header: "Acciones",
     cell: ({ row }) =>
       h(
         "div",
         { class: "text-right" },
-        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          }),
+        h(
+          UDropdownMenu,
+          { items: getRowItems(row.original), content: { align: "end" } },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+            }),
         ),
       ),
   },
-];
+]
 
 function getRowItems(tipo: MetodoValoracion) {
   return [
@@ -66,23 +97,26 @@ function getRowItems(tipo: MetodoValoracion) {
         onSelect: () => openUpdateModal(tipo.id),
       },
     ],
-  ];
+  ]
 }
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
+function onCreated() {
+  refresh?.().catch((err) => console.error("Error refrescando:", err))
+}
 
-const selectedId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
+const selectedId = ref<string | null>(null)
 
 function openUpdateModal(id: string) {
-  selectedId.value = id;
+  selectedId.value = id
 }
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Metodo valoracion</h1>
+    <h1 class="text-2xl font-bold">Métodos de valoración</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
@@ -106,10 +140,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                    ?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
@@ -122,7 +156,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewMetodoValoracion />
+        <NewMetodoValoracion @creado="onCreated" />
       </div>
     </div>
 

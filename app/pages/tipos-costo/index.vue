@@ -2,18 +2,29 @@
 import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row, Column } from "@tanstack/vue-table";
-import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
-import NewTipoCosto from "~/components/tipos-costo/NewTipoCosto.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
+const GetTiposCosto = gql`
+  query GetTiposCosto {
+    tiposCosto {
+      id
+      codigo
+      nombre
+      descripcion
+      activo
+      creado_en
+    }
+  }
+`;
+
 interface TipoCosto {
   id: string;
   codigo: string;
   nombre: string;
-  descripcion: string;
+  descripcion: string | null;
   activo: boolean;
   creado_en?: string;
 }
@@ -81,6 +92,18 @@ const columns: TableColumn<TipoCosto>[] = [
     },
   },
   {
+    accessorKey: "creado_en",
+    header: "Creado en",
+    cell: ({ row }: { row: Row<TipoCosto> }) =>
+      h(
+        "span",
+        { class: "text-gray-500 text-sm" },
+        row.original.creado_en
+          ? new Date(row.original.creado_en).toLocaleDateString("es-CO")
+          : "-",
+      ),
+  },
+  {
     id: "actions",
     header: "Acciones",
     enableHiding: false,
@@ -139,7 +162,6 @@ const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
-  console.log("Editar tipo de costo:", id);
 }
 
 function toggleEstado(tipo: TipoCosto) {
@@ -148,7 +170,6 @@ function toggleEstado(tipo: TipoCosto) {
 
 const filteredData = computed(() => {
   if (!globalFilter.value) return tiposCosto.value;
-
   const filter = globalFilter.value.toLowerCase();
   return tiposCosto.value.filter(
     (tipo) =>
@@ -171,9 +192,7 @@ const filteredData = computed(() => {
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-      <div
-        class="flex items-center justify-between p-4 border-b border-gray-200"
-      >
+      <div class="flex items-center justify-between p-4 border-b border-gray-200">
         <UInput
           v-model="globalFilter"
           class="max-w-sm"
@@ -183,7 +202,6 @@ const filteredData = computed(() => {
         />
 
         <div class="flex items-center gap-2">
-          <!-- Selector de columnas -->
           <UDropdownMenu
             v-if="table?.tableApi"
             :items="
@@ -200,12 +218,13 @@ const filteredData = computed(() => {
                           ? 'Descripción'
                           : column.id === 'activo'
                             ? 'Estado'
-                            : column.id,
+                            : column.id === 'creado_en'
+                              ? 'Creado en'
+                              : column.id,
                   type: 'checkbox' as const,
                   checked: column.getIsVisible(),
-                  onUpdateChecked: (checked: boolean) => {
-                    column.toggleVisibility(checked);
-                  },
+                  onUpdateChecked: (checked: boolean) =>
+                    column.toggleVisibility(checked),
                   onSelect: (e?: Event) => e?.preventDefault(),
                 }))
             "
@@ -220,7 +239,6 @@ const filteredData = computed(() => {
             />
           </UDropdownMenu>
 
-          <!-- Botón de refresh -->
           <UButton
             icon="i-lucide-refresh-cw"
             color="neutral"
@@ -230,7 +248,7 @@ const filteredData = computed(() => {
             @click="refresh()"
           />
 
-          <NewTipoCosto v-model="isNewModalOpen" />
+          <NewTipoCosto v-model="isNewModalOpen" @creado="refresh()" />
         </div>
       </div>
 
@@ -249,10 +267,7 @@ const filteredData = computed(() => {
         }"
       />
 
-      <!-- Pie de tabla con paginación -->
-      <div
-        class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50"
-      >
+      <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
         <div class="text-sm text-gray-600">
           Mostrando
           <span class="font-medium">{{
@@ -280,13 +295,7 @@ const filteredData = computed(() => {
         <span class="font-medium">Error al cargar los tipos de costo</span>
       </div>
       <p class="text-red-600 text-sm mt-1">{{ error.message }}</p>
-      <UButton
-        color="red"
-        variant="outline"
-        size="sm"
-        class="mt-2"
-        @click="refresh()"
-      >
+      <UButton color="red" variant="outline" size="sm" class="mt-2" @click="refresh()">
         Reintentar
       </UButton>
     </div>

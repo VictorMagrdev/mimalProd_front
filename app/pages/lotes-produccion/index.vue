@@ -1,73 +1,104 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
+import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import GetLotesProduccion from "~/graphql/lotes-produccion/get-lotes-produccion.graphql";
-import NewLote from "~/components/lotes-produccion/NewLote.vue";
+
+const GetLotesProduccion = gql`
+  query GetLotesProduccion {
+    lotesProduccion {
+      id
+      numero_lote
+      producto_id
+      fabricado_en
+      vence_en
+      creado_en
+      producto {
+        id
+        nombre
+      }
+    }
+  }
+`;
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-// Tipo de cada lote (ya lo definiste)
-export interface LoteProduccionUI {
+export interface LoteProduccion {
   id: string;
-  numeroLote: string;
-  producto: { nombre: string };
-  fabricadoEn: string;
-  venceEn: string;
+  numero_lote: string;
+  producto_id?: string | null;
+  fabricado_en?: string | null;
+  vence_en?: string | null;
+  creado_en?: string | null;
+  producto?: { id: string; nombre?: string } | null;
 }
 
 interface LotesProduccionResult {
-  lotesProduccion: LoteProduccionUI[];
+  lotesProduccion: LoteProduccion[];
 }
 
-const { data, pending, error } =
-  await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
-
-const rows = computed<LoteProduccionUI[]>(
-  () => data.value?.lotesProduccion || [],
+const { data, pending, error, refresh } = await useAsyncQuery<LotesProduccionResult>(
+  GetLotesProduccion
 );
 
-const columns: TableColumn<LoteProduccionUI>[] = [
+const lotesProduccion = computed(() => data.value?.lotesProduccion || []);
+
+const columns: TableColumn<LoteProduccion>[] = [
   {
-    accessorKey: "numeroLote",
+    accessorKey: "numero_lote",
     header: "Número de Lote",
-    cell: ({ row }: { row: Row<LoteProduccionUI> }) => row.original.numeroLote,
+    cell: ({ row }: { row: Row<LoteProduccion> }) => row.original.numero_lote,
   },
   {
     accessorKey: "producto.nombre",
     header: "Producto",
-    cell: ({ row }) => row.original.producto.nombre,
+    cell: ({ row }) => row.original.producto?.nombre ?? "-",
   },
   {
-    accessorKey: "fabricadoEn",
-    header: "Fabricado",
-    cell: ({ row }) => new Date(row.original.fabricadoEn).toLocaleDateString(),
+    accessorKey: "fabricado_en",
+    header: "Fabricado en",
+    cell: ({ row }) =>
+      row.original.fabricado_en
+        ? new Date(row.original.fabricado_en).toLocaleDateString("es-CO")
+        : "-",
   },
   {
-    accessorKey: "venceEn",
-    header: "Vence",
-    cell: ({ row }) => new Date(row.original.venceEn).toLocaleDateString(),
+    accessorKey: "vence_en",
+    header: "Vence en",
+    cell: ({ row }) =>
+      row.original.vence_en
+        ? new Date(row.original.vence_en).toLocaleDateString("es-CO")
+        : "-",
+  },
+  {
+    accessorKey: "creado_en",
+    header: "Creado en",
+    cell: ({ row }) =>
+      row.original.creado_en
+        ? new Date(row.original.creado_en).toLocaleDateString("es-CO")
+        : "-",
   },
   {
     id: "actions",
-    header: "Acciones",
     cell: ({ row }) =>
       h(
         "div",
         { class: "text-right" },
-        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          }),
+        h(
+          UDropdownMenu,
+          { items: getRowItems(row.original), content: { align: "end" } },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+            }),
         ),
       ),
   },
 ];
 
-function getRowItems(lote: LoteProduccionUI) {
+function getRowItems(lote: LoteProduccion) {
   return [
     [
       {
@@ -82,8 +113,8 @@ function getRowItems(lote: LoteProduccionUI) {
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
-
 const selectedId = ref<string | null>(null);
+const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -92,15 +123,10 @@ function openUpdateModal(id: string) {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Lotes de Producción</h1>
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <h1 class="text-2xl font-bold">Lotes de Producción</h1>
+
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -113,9 +139,7 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked);
                 },
                 onSelect(e?: Event) {
                   e?.preventDefault();
@@ -124,15 +148,10 @@ function openUpdateModal(id: string) {
           "
           :content="{ align: 'end' }"
         >
-          <UButton
-            label="Columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
+          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
         </UDropdownMenu>
 
-        <NewLote />
+        <NewLoteProduccion v-model="isNewModalOpen" @creado="refresh()" />
       </div>
     </div>
 
@@ -141,16 +160,12 @@ function openUpdateModal(id: string) {
         ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        :data="rows"
+        :data="lotesProduccion || []"
         :columns="columns"
         :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
-        <UPagination
-          v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
-          :total="rows.length"
-        />
+        <UPagination v-model="pagination.pageIndex" :page-count="pagination.pageSize" :total="lotesProduccion?.length || 0" />
       </div>
     </div>
 

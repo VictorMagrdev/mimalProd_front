@@ -1,73 +1,100 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
-import NewOrden from "~/components/ordenes-produccion/NewOrden.vue";
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+import { ref, h, resolveComponent, computed } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
 
-export interface OrdenProduccionUI {
-  id: string;
-  numeroOrden: string;
-  producto: { nombre: string };
-  cantidad: number;
-  unidad: { abreviatura: string };
-  estado: { nombre: string };
-  inicioPlanificado: string;
-  finPlanificado: string;
+const GetOrdenesProduccion = gql`
+  query GetOrdenesProduccion {
+    ordenesProduccion {
+      id
+      numero_orden
+      cantidad
+      unidad {
+        id
+        abreviatura
+      }
+      estado {
+        id
+        nombre
+      }
+      inicio_planificado
+      fin_planificado
+      inicio_real
+      fin_real
+      cantidad_desperdicio
+      cantidad_producida
+      creado_en
+      actualizado_en
+    }
+  }
+`
+
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
+
+export interface OrdenProduccion {
+  id: string
+  numero_orden: string
+  cantidad?: number | null
+  unidad?: { id: string; abreviatura?: string } | null
+  estado?: { id: string; nombre?: string } | null
+  inicio_planificado?: string | null
+  fin_planificado?: string | null
+  inicio_real?: string | null
+  fin_real?: string | null
+  cantidad_desperdicio?: number | null
+  cantidad_producida?: number | null
+  creado_en?: string | null
+  actualizado_en?: string | null
 }
 
-// Tipo del resultado del query
 interface OrdenesProduccionResult {
-  ordenesProduccion: OrdenProduccionUI[];
+  ordenesProduccion: OrdenProduccion[]
 }
 
-// Query tipada
-const { data, pending, error } =
-  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion)
 
-// Ahora TS sabe que existe "ordenesProduccion"
-const rows = computed<OrdenProduccionUI[]>(
-  () => data.value?.ordenesProduccion || [],
-);
+const rows = computed<OrdenProduccion[]>(
+  () => data.value?.ordenesProduccion || []
+)
 
-const columns: TableColumn<OrdenProduccionUI>[] = [
+const columns: TableColumn<OrdenProduccion>[] = [
   {
-    accessorKey: "numeroOrden",
+    accessorKey: "numero_orden",
     header: "N° Orden",
-    cell: ({ row }) => row.original.numeroOrden,
-  },
-  {
-    accessorKey: "producto.nombre",
-    header: "Producto",
-    cell: ({ row }) => row.original.producto.nombre,
+    cell: ({ row }: { row: Row<OrdenProduccion> }) => row.original.numero_orden,
   },
   {
     accessorKey: "cantidad",
     header: "Cantidad",
-    cell: ({ row }) => row.original.cantidad,
+    cell: ({ row }) => row.original.cantidad ?? "-",
   },
   {
     accessorKey: "unidad.abreviatura",
     header: "Unidad",
-    cell: ({ row }) => row.original.unidad.abreviatura,
+    cell: ({ row }) => row.original.unidad?.abreviatura ?? "-",
   },
   {
     accessorKey: "estado.nombre",
     header: "Estado",
-    cell: ({ row }) => row.original.estado?.nombre || "Sin estado",
+    cell: ({ row }) => row.original.estado?.nombre ?? "-",
   },
   {
-    accessorKey: "inicioPlanificado",
+    accessorKey: "inicio_planificado",
     header: "Inicio Plan.",
     cell: ({ row }) =>
-      new Date(row.original.inicioPlanificado).toLocaleDateString(),
+      row.original.inicio_planificado
+        ? new Date(row.original.inicio_planificado).toLocaleDateString()
+        : "-",
   },
   {
-    accessorKey: "finPlanificado",
+    accessorKey: "fin_planificado",
     header: "Fin Plan.",
     cell: ({ row }) =>
-      new Date(row.original.finPlanificado).toLocaleDateString(),
+      row.original.fin_planificado
+        ? new Date(row.original.fin_planificado).toLocaleDateString()
+        : "-",
   },
   {
     id: "actions",
@@ -81,13 +108,13 @@ const columns: TableColumn<OrdenProduccionUI>[] = [
             icon: "i-lucide-ellipsis-vertical",
             color: "neutral",
             variant: "ghost",
-          }),
-        ),
+          })
+        )
       ),
   },
-];
+]
 
-function getRowItems(orden: OrdenProduccionUI) {
+function getRowItems(orden: OrdenProduccion) {
   return [
     [
       {
@@ -96,31 +123,25 @@ function getRowItems(orden: OrdenProduccionUI) {
         onSelect: () => openUpdateModal(orden.id),
       },
     ],
-  ];
+  ]
 }
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
-
-const selectedId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
+const selectedId = ref<string | null>(null)
 
 function openUpdateModal(id: string) {
-  selectedId.value = id;
+  selectedId.value = id
 }
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Órdenes de Producción</h1>
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <h1 class="text-2xl font-bold">Órdenes de Producción</h1>
+
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -135,10 +156,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                    ?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
@@ -151,7 +172,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewOrden />
+        <NewOrdenProduccion @creado="refresh()" />
       </div>
     </div>
 
@@ -168,7 +189,7 @@ function openUpdateModal(id: string) {
         <UPagination
           v-model="pagination.pageIndex"
           :page-count="pagination.pageSize"
-          :total="rows.length"
+          :total="rows?.length || 0"
         />
       </div>
     </div>

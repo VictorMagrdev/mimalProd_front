@@ -1,63 +1,136 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetLineasOrden from "~/graphql/lineas-orden/get-lineas-orden.graphql";
-import NewLinea from "~/components/lineas-orden/NewLinea.vue";
+import { ref, h, resolveComponent, computed } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
 
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+const GetLineasOrden = gql`
+  query GetLineasOrden {
+    lineasOrden {
+      id
+      orden_id
+      numero_linea
+      producto_componente {
+        id
+        nombre
+      }
+      cantidad_requerida
+      unidad_componente {
+        id
+        abreviatura
+      }
+      cantidad_usada
+      costo_unitario
+      costo_total
+      observaciones
+      creado_en
+    }
+  }
+`
+
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
+
+export interface LineaOrdenRaw {
+  id: string
+  orden_id?: string | null
+  numero_linea?: number | null
+  producto_componente?: { id: string; nombre?: string } | null
+  cantidad_requerida?: number | null
+  unidad_componente?: { id: string; abreviatura?: string } | null
+  cantidad_usada?: number | null
+  costo_unitario?: number | null
+  costo_total?: number | null
+  observaciones?: string | null
+  creado_en?: string | null
+}
 
 export interface LineaOrdenUI {
-  id: string;
-  orden: { numeroOrden: string };
-  numeroLinea: number;
-  productoComponente: { nombre: string };
-  cantidadRequerida: number;
-  unidadComponente: { abreviatura: string };
-  cantidadUsada: number;
+  id: string
+  ordenId?: string | null
+  numeroLinea?: number | null
+  productoComponente?: { id: string; nombre?: string } | null
+  cantidadRequerida?: number | null
+  unidadComponente?: { id: string; abreviatura?: string } | null
+  cantidadUsada?: number | null
+  costoUnitario?: number | null
+  costoTotal?: number | null
+  observaciones?: string | null
+  creadoEn?: string | null
 }
 
 interface LineasOrdenResult {
-  lineasOrden: LineaOrdenUI[];
+  lineasOrden: LineaOrdenRaw[]
 }
 
-const { data, pending, error } =
-  await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
+const { data, pending, error, refresh } = await useAsyncQuery<LineasOrdenResult>(GetLineasOrden)
 
-const rows = computed<LineaOrdenUI[]>(() => data.value?.lineasOrden || []);
+const rows = computed<LineaOrdenUI[]>(() =>
+  (data.value?.lineasOrden || []).map((l) => ({
+    id: l.id,
+    ordenId: l.orden_id ?? null,
+    numeroLinea: l.numero_linea ?? null,
+    productoComponente: l.producto_componente ?? null,
+    cantidadRequerida: l.cantidad_requerida ?? null,
+    unidadComponente: l.unidad_componente ?? null,
+    cantidadUsada: l.cantidad_usada ?? null,
+    costoUnitario: l.costo_unitario ?? null,
+    costoTotal: l.costo_total ?? null,
+    observaciones: l.observaciones ?? null,
+    creadoEn: l.creado_en ?? null,
+  })),
+)
 
 const columns: TableColumn<LineaOrdenUI>[] = [
   {
-    accessorKey: "orden.numeroOrden",
-    header: "N° Orden",
-    cell: ({ row }: { row: Row<LineaOrdenUI> }) =>
-      row.original.orden.numeroOrden,
+    accessorKey: "ordenId",
+    header: "Orden ID",
+    cell: ({ row }: { row: Row<LineaOrdenUI> }) => row.original.ordenId ?? "-",
   },
   {
     accessorKey: "numeroLinea",
     header: "N° Línea",
-    cell: ({ row }) => row.original.numeroLinea,
+    cell: ({ row }) => row.original.numeroLinea ?? "-",
   },
   {
     accessorKey: "productoComponente.nombre",
     header: "Componente",
-    cell: ({ row }) => row.original.productoComponente.nombre,
+    cell: ({ row }) => row.original.productoComponente?.nombre ?? "-",
   },
   {
     accessorKey: "cantidadRequerida",
     header: "Cant. Requerida",
-    cell: ({ row }) => row.original.cantidadRequerida,
+    cell: ({ row }) => row.original.cantidadRequerida ?? "-",
   },
   {
     accessorKey: "unidadComponente.abreviatura",
     header: "Unidad",
-    cell: ({ row }) => row.original.unidadComponente.abreviatura,
+    cell: ({ row }) => row.original.unidadComponente?.abreviatura ?? "-",
   },
   {
     accessorKey: "cantidadUsada",
     header: "Cant. Usada",
-    cell: ({ row }) => row.original.cantidadUsada,
+    cell: ({ row }) => row.original.cantidadUsada ?? "-",
+  },
+  {
+    accessorKey: "costoUnitario",
+    header: "Costo Unitario",
+    cell: ({ row }) => (row.original.costoUnitario ?? "-"),
+  },
+  {
+    accessorKey: "costoTotal",
+    header: "Costo Total",
+    cell: ({ row }) => (row.original.costoTotal ?? "-"),
+  },
+  {
+    accessorKey: "observaciones",
+    header: "Observaciones",
+    cell: ({ row }) => row.original.observaciones ?? "-",
+  },
+  {
+    accessorKey: "creadoEn",
+    header: "Creado En",
+    cell: ({ row }) =>
+      row.original.creadoEn ? new Date(row.original.creadoEn).toLocaleString() : "-",
   },
   {
     id: "actions",
@@ -66,16 +139,19 @@ const columns: TableColumn<LineaOrdenUI>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          }),
+        h(
+          UDropdownMenu,
+          { items: getRowItems(row.original), content: { align: "end" } },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+            }),
         ),
       ),
   },
-];
+]
 
 function getRowItems(linea: LineaOrdenUI) {
   return [
@@ -86,31 +162,25 @@ function getRowItems(linea: LineaOrdenUI) {
         onSelect: () => openUpdateModal(linea.id),
       },
     ],
-  ];
+  ]
 }
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
-
-const selectedId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref("")
+const selectedId = ref<string | null>(null)
 
 function openUpdateModal(id: string) {
-  selectedId.value = id;
+  selectedId.value = id
 }
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1>Líneas de Orden</h1>
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <h1 class="text-2xl font-bold">Líneas de Orden</h1>
+
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -123,26 +193,19 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
           :content="{ align: 'end' }"
         >
-          <UButton
-            label="Columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
+          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
         </UDropdownMenu>
 
-        <NewLinea />
+        <NewLinea @creado="refresh()" />
       </div>
     </div>
 
@@ -158,8 +221,8 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
-          :total="rows.length"
+          :page-count="Math.max(1, Math.ceil((rows?.length || 0) / pagination.pageSize))"
+          :total="rows?.length || 0"
         />
       </div>
     </div>

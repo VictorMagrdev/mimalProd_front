@@ -1,141 +1,164 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetMovimientosInventario from "~/graphql/movimientos-inventario/get-movimientos-inventario.graphql";
-import NewMovimientoInventario from "~/components/movimientos-inventario/NewMovimientoInventario.vue";
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+import { ref, h, computed, resolveComponent } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
+import { gql } from "graphql-tag"
 
-export interface TipoMovimiento {
-  id: string;
-  nombre: string;
-}
-export interface Bodega {
-  id: string;
-  nombre: string;
+const GetMovimientosInventario = gql`
+  query GetMovimientosInventario {
+    movimientosInventario {
+      id
+      fecha
+      bodega_origen {
+        id
+        nombre
+      }
+      bodega_destino {
+        id
+        nombre
+      }
+      tipo_movimiento {
+        id
+        nombre
+      }
+      referencia
+      observaciones
+      creado_por
+      creado_en
+      detalles {
+        id
+        producto_id
+        cantidad
+        unidad_id
+      }
+    }
+  }
+`
+
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
+
+export interface MovimientoInventarioDetalle {
+  id: string
+  producto_id?: string | null
+  cantidad?: number | null
+  unidad_id?: string | null
 }
 
 export interface MovimientoInventario {
-  id: string;
-  fecha: string;
-  bodegaOrigen: Bodega;
-  bodegaDestino: Bodega;
-  tipo: TipoMovimiento;
-  referencia: string;
-  observaciones: string;
-  creadoPor: number;
-  creadoEn: string;
+  id: string
+  fecha?: string | null
+  bodega_origen?: { id: string; nombre?: string } | null
+  bodega_destino?: { id: string; nombre?: string } | null
+  tipo_movimiento?: { id: string; nombre?: string } | null
+  referencia?: string | null
+  observaciones?: string | null
+  creado_por?: string | null
+  creado_en?: string | null
+  detalles?: MovimientoInventarioDetalle[] | null
 }
 
 interface MovimientoInventarioResult {
-  movimientosInventario: MovimientoInventario[];
+  movimientosInventario: MovimientoInventario[]
 }
 
 const { data, pending, error, refresh } =
-  await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
+  await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario)
 
-const movimientosInventario = computed(
-  () => data.value?.movimientosInventario || [],
-);
+const movimientosInventario = computed(() => data.value?.movimientosInventario || [])
 
 const columns: TableColumn<MovimientoInventario>[] = [
   {
     accessorKey: "id",
-    header: "id",
+    header: "ID",
     cell: ({ row }: { row: Row<MovimientoInventario> }) => row.original.id,
   },
   {
     accessorKey: "fecha",
-    header: "fecha",
-    cell: ({ row }) => row.original.fecha,
+    header: "Fecha",
+    cell: ({ row }) =>
+      row.original.fecha ? new Date(row.original.fecha).toLocaleString() : "-",
   },
   {
-    accessorKey: "bodegaOrigen",
-    header: "bodegaOrigen",
-    cell: ({ row }) => row.original.bodegaOrigen?.nombre || "Sin bodega",
+    accessorKey: "bodega_origen.nombre",
+    header: "Bodega Origen",
+    cell: ({ row }) => row.original.bodega_origen?.nombre ?? "-",
   },
   {
-    accessorKey: "bodegaDestino",
-    header: "bodegaDestino",
-    cell: ({ row }: { row: Row<MovimientoInventario> }) =>
-      row.original.bodegaDestino?.nombre || "Sin sin destino",
+    accessorKey: "bodega_destino.nombre",
+    header: "Bodega Destino",
+    cell: ({ row }) => row.original.bodega_destino?.nombre ?? "-",
   },
   {
-    accessorKey: "tipo",
-    header: "tipo",
-    cell: ({ row }) => row.original.tipo?.nombre || "Sin tipo",
+    accessorKey: "tipo_movimiento.nombre",
+    header: "Tipo Movimiento",
+    cell: ({ row }) => row.original.tipo_movimiento?.nombre ?? "-",
   },
   {
     accessorKey: "referencia",
-    header: "referencia",
-    cell: ({ row }) => row.original.referencia,
+    header: "Referencia",
+    cell: ({ row }) => row.original.referencia ?? "-",
   },
   {
     accessorKey: "observaciones",
-    header: "observaciones",
-    cell: ({ row }) => row.original.observaciones,
+    header: "Observaciones",
+    cell: ({ row }) => row.original.observaciones ?? "-",
   },
   {
-    accessorKey: "creadoEn",
-    header: "creadoEn",
-    cell: ({ row }) => row.original.creadoEn,
+    accessorKey: "creado_en",
+    header: "Creado En",
+    cell: ({ row }) =>
+      row.original.creado_en ? new Date(row.original.creado_en).toLocaleString() : "-",
   },
   {
     id: "actions",
+    header: "Acciones",
     cell: ({ row }) =>
       h(
         "div",
         { class: "text-right" },
-        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          }),
+        h(
+          UDropdownMenu,
+          { items: getRowItems(row.original), content: { align: "end" } },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+            }),
         ),
       ),
   },
-];
+]
 
-function getRowItems(tipo: MovimientoInventario) {
+function getRowItems(m: MovimientoInventario) {
   return [
     [
       {
         label: "Actualizar",
         icon: "i-heroicons-pencil-20-solid",
-        onSelect: () => openUpdateModal(tipo.id),
+        onSelect: () => openUpdateModal(m.id),
       },
     ],
-  ];
+  ]
 }
-function onCreated() {
-  refreshNuxtData();
-  refresh?.().catch((err) => console.error("Error refrescando:", err));
-}
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
 
-const selectedId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
+const selectedId = ref<string | null>(null)
 
 function openUpdateModal(id: string) {
-  selectedId.value = id;
+  selectedId.value = id
 }
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Movimientos de inventario</h1>
+    <h1 class="text-2xl font-bold">Movimientos de Inventario</h1>
 
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -148,25 +171,18 @@ function openUpdateModal(id: string) {
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                  table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
           :content="{ align: 'end' }"
         >
-          <UButton
-            label="Columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
+          <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-chevron-down" />
         </UDropdownMenu>
-        <NewMovimientoInventario @create="onCreated" />
+        <NewMovimientoInventario @creado="refresh()" />
       </div>
     </div>
 
@@ -182,7 +198,7 @@ function openUpdateModal(id: string) {
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination
           v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
+          :page-count="Math.max(1, Math.ceil((movimientosInventario?.length || 0) / pagination.pageSize))"
           :total="movimientosInventario?.length || 0"
         />
       </div>

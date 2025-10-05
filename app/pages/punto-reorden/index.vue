@@ -1,72 +1,70 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetPuntosReorden from "~/graphql/punto-reorden/get-puntos-reorden.graphql";
+import { ref, computed } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
 
-interface Producto {
-  id: string;
-  nombre: string;
-}
-
-interface Unidad {
-  id: string;
-  nombre: string;
-}
+const GetPuntosReorden = gql`
+  query GetPuntosReorden {
+    puntosReorden {
+      id
+      producto_id
+      stock_minimo
+      stock_seguridad
+      unidad_id
+    }
+  }
+`
 
 export interface PuntoReorden {
-  id: string;
-  producto: Producto;
-  stockMinimo: number;
-  stockSeguridad?: number;
-  unidad?: Unidad;
+  id: string
+  producto_id: string | null
+  stock_minimo: number
+  stock_seguridad: number | null
+  unidad_id: string | null
 }
 
 interface PuntoReordenResult {
-  puntosReorden: PuntoReorden[];
+  puntosReorden: PuntoReorden[]
 }
 
 const { data, pending, error } =
-  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
+  await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden)
 
-const puntosReorden = computed(() => data.value?.puntosReorden || []);
+const puntosReorden = computed(() => data.value?.puntosReorden || [])
 
-// columnas tipadas
 const columns: TableColumn<PuntoReorden>[] = [
   {
-    accessorKey: "producto.nombre",
-    header: "Producto",
-    cell: ({ row }: { row: Row<PuntoReorden> }) => row.original.producto.nombre,
+    accessorKey: "producto_id",
+    header: "ID Producto",
+    cell: ({ row }: { row: Row<PuntoReorden> }) => row.original.producto_id || "-",
   },
   {
-    accessorKey: "stockMinimo",
+    accessorKey: "stock_minimo",
     header: "Stock Mínimo",
-    cell: ({ row }) => row.original.stockMinimo,
+    cell: ({ row }) => row.original.stock_minimo,
   },
   {
-    accessorKey: "stockSeguridad",
+    accessorKey: "stock_seguridad",
     header: "Stock de Seguridad",
-    cell: ({ row }) => row.original.stockSeguridad ?? "-",
+    cell: ({ row }) => row.original.stock_seguridad ?? "-",
   },
   {
-    accessorKey: "unidad.nombre",
-    header: "Unidad",
-    cell: ({ row }) => row.original.unidad?.nombre ?? "-",
+    accessorKey: "unidad_id",
+    header: "Unidad ID",
+    cell: ({ row }) => row.original.unidad_id || "-",
   },
-];
+]
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Puntos de reorden</h1>
+    <h1 class="text-2xl font-bold">Puntos de Reorden</h1>
 
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
       <UInput
         v-model="globalFilter"
         class="max-w-sm"
@@ -86,10 +84,10 @@ const globalFilter = ref();
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                    ?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "

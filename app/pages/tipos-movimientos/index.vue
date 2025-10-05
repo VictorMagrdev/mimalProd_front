@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import { ref, h, computed, resolveComponent } from "vue";
+import { gql } from "graphql-tag";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import GetTiposMovimiento from "~/graphql/tipos-movientos/get-tipos-movientos.graphql";
+
+const GetTiposMovimiento = gql`
+  query GetTiposMovimiento {
+    tiposMovimiento {
+      id
+      codigo
+      nombre
+      descripcion
+      afecta_wip
+      creado_en
+    }
+  }
+`;
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -11,8 +24,9 @@ export interface TipoMovimiento {
   id: string;
   codigo: string;
   nombre: string;
-  afectaWip: boolean;
-  creadoEn: string;
+  descripcion: string;
+  afecta_wip: boolean;
+  creado_en: string;
 }
 
 interface TipoMovimientoResult {
@@ -36,25 +50,20 @@ const columns: TableColumn<TipoMovimiento>[] = [
     cell: ({ row }) => row.original.nombre,
   },
   {
-    accessorKey: "afectaWip",
-    header: "afectaWip",
-    cell: ({ row }: { row: Row<TipoMovimiento> }) => {
-      const activo = row.getValue("afectaWip");
-      return h(
-        "span",
-        {
-          class: activo
-            ? "text-green-600 font-semibold"
-            : "text-red-600 font-semibold",
-        },
-        activo ? "Sí" : "No",
-      );
-    },
+    accessorKey: "descripcion",
+    header: "Descripción",
+    cell: ({ row }) => row.original.descripcion,
   },
   {
-    accessorKey: "creadoEn",
-    header: "creadoEn",
-    cell: ({ row }) => row.original.creadoEn,
+    accessorKey: "afecta_wip",
+    header: "Afecta WIP",
+    cell: ({ row }: { row: Row<TipoMovimiento> }) =>
+      row.original.afecta_wip ? "Sí" : "No",
+  },
+  {
+    accessorKey: "creado_en",
+    header: "Creado en",
+    cell: ({ row }) => row.original.creado_en,
   },
   {
     id: "actions",
@@ -99,7 +108,7 @@ function openUpdateModal(id: string) {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Costo</h1>
+    <h1 class="text-2xl font-bold">Tipos de Movimiento</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
@@ -140,7 +149,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UButton label="Nuevo Tipo de Costo" @click="isNewModalOpen = true" />
+        <UButton label="Nuevo Tipo de Movimiento" @click="isNewModalOpen = true" />
       </div>
     </div>
 

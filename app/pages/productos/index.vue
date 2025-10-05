@@ -1,34 +1,90 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import getProductos from "~/graphql/productos/get-productos.graphql";
-import NewProducto from "~/components/productos/NewProducto.vue";
+import { ref, h, resolveComponent, computed } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
 
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
 
-export interface Producto {
-  id: string;
-  codigo: string;
-  nombre: string;
-  costoBase: number;
-  unidadBase: { id: string; nombre: string };
+const GetProductos = gql`
+  query GetProductos {
+    productos {
+      id
+      codigo
+      nombre
+      costo_base
+      creado_en
+      tipo {
+        id
+        nombre
+      }
+      metodo_valoracion {
+        id
+        nombre
+      }
+      unidad_base {
+        id
+        nombre
+      }
+    }
+  }
+`
+
+export interface TipoProducto {
+  id: string
+  nombre: string
 }
 
-const { result, loading, error } = useQuery(getProductos);
-const productos = computed(() => result.value?.productos ?? []);
+export interface MetodoValoracion {
+  id: string
+  nombre: string
+}
+
+export interface UnidadMedida {
+  id: string
+  nombre: string
+}
+
+export interface Producto {
+  id: string
+  codigo: string | null
+  nombre: string
+  costo_base: number | null
+  creado_en: string
+  tipo: TipoProducto | null
+  metodo_valoracion: MetodoValoracion | null
+  unidad_base: UnidadMedida | null
+}
+
+interface ProductosResult {
+  productos: Producto[]
+}
+
+const { data, pending, error } = await useAsyncQuery<ProductosResult>(GetProductos)
+const productos = computed(() => data.value?.productos ?? [])
 
 function openUpdateModal(id: string) {
-  selectedProductoId.value = id;
-  isUpdateOpen.value = true;
+  selectedProductoId.value = id
+  isUpdateOpen.value = true
+}
+
+function getRowItems(producto: Producto) {
+  return [
+    [
+      {
+        label: "Editar",
+        icon: "i-heroicons-pencil-20-solid",
+        onSelect: () => openUpdateModal(producto.id),
+      },
+    ],
+  ]
 }
 
 const columns: TableColumn<Producto>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }: { row: Row<Producto> }) => row.original.codigo,
+    cell: ({ row }: { row: Row<Producto> }) => row.original.codigo ?? "-",
   },
   {
     accessorKey: "nombre",
@@ -36,14 +92,30 @@ const columns: TableColumn<Producto>[] = [
     cell: ({ row }) => row.original.nombre,
   },
   {
-    accessorKey: "costoBase",
-    header: "Costo Base",
-    cell: ({ row }) => row.original.costoBase,
+    accessorKey: "tipo.nombre",
+    header: "Tipo",
+    cell: ({ row }) => row.original.tipo?.nombre ?? "-",
   },
   {
-    accessorKey: "unidadBase.nombre",
+    accessorKey: "metodo_valoracion.nombre",
+    header: "Método de Valoración",
+    cell: ({ row }) => row.original.metodo_valoracion?.nombre ?? "-",
+  },
+  {
+    accessorKey: "unidad_base.nombre",
     header: "Unidad Base",
-    cell: ({ row }) => row.original.unidadBase.nombre,
+    cell: ({ row }) => row.original.unidad_base?.nombre ?? "-",
+  },
+  {
+    accessorKey: "costo_base",
+    header: "Costo Base",
+    cell: ({ row }) => row.original.costo_base ?? "-",
+  },
+  {
+    accessorKey: "creado_en",
+    header: "Creado En",
+    cell: ({ row }) =>
+      new Date(row.original.creado_en).toLocaleDateString("es-CO"),
   },
   {
     id: "actions",
@@ -60,40 +132,21 @@ const columns: TableColumn<Producto>[] = [
         ),
       ),
   },
-];
+]
 
-function getRowItems(producto: Producto) {
-  return [
-    [
-      {
-        label: "Editar",
-        icon: "i-heroicons-pencil-20-solid",
-        onSelect: () => openUpdateModal(producto.id),
-      },
-    ],
-  ];
-}
-
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
-
-const isUpdateOpen = ref(false);
-const selectedProductoId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
+const isUpdateOpen = ref(false)
+const selectedProductoId = ref<string | null>(null)
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Productos</h1>
 
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -108,10 +161,10 @@ const selectedProductoId = ref<string | null>(null);
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                    ?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
@@ -136,7 +189,7 @@ const selectedProductoId = ref<string | null>(null);
         v-model:global-filter="globalFilter"
         :data="productos || []"
         :columns="columns"
-        :loading="loading"
+        :loading="pending"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination

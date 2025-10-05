@@ -1,28 +1,42 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
-import NewUnidadMedidaTipo from "~/components/unidades-medida-tipo/NewUnidadMedidaTipo.vue";
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
+import { ref, h, computed, resolveComponent } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
+import { gql } from "graphql-tag"
 
-export interface UnidadMedidaTipo {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion: string;
+const UButton = resolveComponent("UButton")
+const UDropdownMenu = resolveComponent("UDropdownMenu")
+
+const GetUnidadesMedidaTipo = gql`
+  query GetUnidadesMedidaTipo {
+    unidadesMedidaTipo {
+      id
+      codigo
+      nombre
+      descripcion
+    }
+  }
+`
+
+interface UnidadMedidaTipo {
+  id: string
+  codigo: string
+  nombre: string
+  descripcion: string
 }
 
 interface UnidadesMedidaTipoResult {
-  unidadesMedidaTipo: UnidadMedidaTipo[];
+  unidadesMedidaTipo: UnidadMedidaTipo[]
 }
 
-const { data, pending, error } = await useAsyncQuery<UnidadesMedidaTipoResult>(
-  GetUnidadesMedidaTipo,
-);
+const {
+  data,
+  pending,
+  error,
+  refresh
+} = await useAsyncQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo)
 
-const tipos = computed(() => data.value?.unidadesMedidaTipo || []);
+const tipos = computed(() => data.value?.unidadesMedidaTipo || [])
 
 const columns: TableColumn<UnidadMedidaTipo>[] = [
   {
@@ -38,7 +52,7 @@ const columns: TableColumn<UnidadMedidaTipo>[] = [
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    cell: ({ row }) => row.original.descripcion,
+    cell: ({ row }) => row.original.descripcion || "-",
   },
   {
     id: "actions",
@@ -46,16 +60,19 @@ const columns: TableColumn<UnidadMedidaTipo>[] = [
       h(
         "div",
         { class: "text-right" },
-        h(UDropdownMenu, { items: getRowItems(row.original) }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          }),
-        ),
+        h(
+          UDropdownMenu,
+          { items: getRowItems(row.original) },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+            })
+        )
       ),
   },
-];
+]
 
 function getRowItems(tipo: UnidadMedidaTipo) {
   return [
@@ -66,17 +83,16 @@ function getRowItems(tipo: UnidadMedidaTipo) {
         onSelect: () => openUpdateModal(tipo.id),
       },
     ],
-  ];
+  ]
 }
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
-
-const selectedId = ref<string | null>(null);
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref("")
+const selectedId = ref<string | null>(null)
 
 function openUpdateModal(id: string) {
-  selectedId.value = id;
+  selectedId.value = id
 }
 </script>
 
@@ -84,14 +100,8 @@ function openUpdateModal(id: string) {
   <div class="w-full space-y-4 pb-4">
     <h1 class="text-2xl font-bold">Tipos de Unidad de Medida</h1>
 
-    <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
-    >
-      <UInput
-        v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
-      />
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filtrar..." />
 
       <div class="flex items-center space-x-2">
         <UDropdownMenu
@@ -106,10 +116,10 @@ function openUpdateModal(id: string) {
                 onUpdateChecked(checked: boolean) {
                   table?.tableApi
                     ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
+                    ?.toggleVisibility(checked)
                 },
                 onSelect(e?: Event) {
-                  e?.preventDefault();
+                  e?.preventDefault()
                 },
               }))
           "
@@ -122,8 +132,9 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
+
+        <NewUnidadMedidaTipo @creado="refresh()" />
       </div>
-      <NewUnidadMedidaTipo />
     </div>
 
     <div class="relative z-0 w-full">

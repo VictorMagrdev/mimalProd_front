@@ -2,9 +2,35 @@
 import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import GetInventariosLote from "~/graphql/inventario-lote/get-inventarios-lote.graphql";
+import { gql } from "@apollo/client/core"; // opcional si usas gql
 
-// Interfaces de los subcampos
+// Query como const
+const query = gql`
+  query getInventariosLote {
+    inventariosLote {
+      id
+      producto {
+        id
+        nombre
+      }
+      lote {
+        id
+      }
+      bodega {
+        id
+        nombre
+      }
+      unidad {
+        id
+        nombre
+      }
+      cantidad
+      actualizadoEn
+    }
+  }
+`;
+
+// Interfaces según esquema
 interface Lote {
   id: string;
 }
@@ -35,15 +61,16 @@ export interface InventarioLote {
 }
 
 interface InventarioLoteResult {
-  inventarioLotes: InventarioLote[];
+  inventariosLote: InventarioLote[];
 }
 
+// Data fetching (ejemplo con useAsyncQuery)
 const { data, pending, error } =
-  await useAsyncQuery<InventarioLoteResult>(GetInventariosLote);
+  await useAsyncQuery<InventarioLoteResult>(query);
 
-const inventariosLote = computed(() => data.value?.inventarioLotes || []);
+const inventariosLote = computed(() => data.value?.inventariosLote || []);
 
-// columnas tipadas
+// Columnas tipadas
 const columns: TableColumn<InventarioLote>[] = [
   {
     accessorKey: "lote.id",

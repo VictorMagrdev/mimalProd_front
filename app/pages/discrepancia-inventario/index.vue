@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -13,11 +14,11 @@ export interface DiscrepanciaInventario {
   resuelto: boolean;
   conteo: {
     fecha: string;
+    cantidad_contada: number;
     producto: {
       nombre: string;
       codigo: string;
     };
-    cantidad_contada: number;
     unidad?: {
       abreviatura: string;
     };
@@ -60,7 +61,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
     accessorKey: "producto",
     header: "Producto",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h("div", [
         h(
           "div",
@@ -77,7 +78,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
     accessorKey: "cantidad_sistema",
     header: "Cant. Sistema",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h("div", { class: "text-right font-mono" }, [
         h("span", row.original.cantidad_sistema.toString()),
         row.original.conteo.unidad &&
@@ -91,7 +92,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
     accessorKey: "conteo.cantidad_contada",
     header: "Cant. Contada",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h("div", { class: "text-right font-mono" }, [
         h("span", row.original.conteo.cantidad_contada.toString()),
         row.original.conteo.unidad &&
@@ -103,9 +104,9 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
       ]),
   },
   {
-    accessorKey: "diferencia",
+    id: "diferencia",
     header: "Diferencia",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) => {
       const diferencia =
         row.original.conteo.cantidad_contada - row.original.cantidad_sistema;
       const color =
@@ -118,7 +119,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
           UBadge,
           {
             variant: "subtle",
-            color: color,
+            color,
             class: "font-mono",
           },
           () => `${diferencia > 0 ? "+" : ""}${diferencia}`,
@@ -129,7 +130,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
     accessorKey: "resuelto",
     header: "Estado",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h(
         UBadge,
         {
@@ -141,9 +142,9 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
       ),
   },
   {
-    accessorKey: "fecha",
+    accessorKey: "conteo.fecha",
     header: "Fecha Conteo",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h(
         "div",
         { class: "text-sm text-muted" },
@@ -154,52 +155,16 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
         }),
       ),
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) =>
-      h(
-        "div",
-        { class: "text-right" },
-        h(
-          UDropdownMenu,
-          {
-            items: getRowItems(row.original),
-            content: { align: "end" },
-          },
-          () =>
-            h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
-              "aria-label": "Acciones",
-            }),
-        ),
-      ),
-  },
 ];
 
-function getRowItems(discrepancia: DiscrepanciaInventario) {
-  return [
-    [
-      {
-        label: discrepancia.resuelto ? "Reabrir" : "Marcar como resuelto",
-        icon: discrepancia.resuelto ? "i-lucide-rotate-ccw" : "i-lucide-check",
-        onSelect: () => toggleResuelto(discrepancia.id),
-      },
-    ],
-  ];
-}
+
 
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const globalFilter = ref("");
 
-function toggleResuelto(id: string) {
-  console.log("Cambiar estado de discrepancia:", id);
-}
 </script>
+
 
 <template>
   <div class="w-full space-y-4 pb-4">

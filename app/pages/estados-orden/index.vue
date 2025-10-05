@@ -2,23 +2,24 @@
 import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import NewEstadoOrden from "~/components/estados-orden/NewEstadoOrden.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
+// Interface según esquema
 interface EstadoOrden {
   id: string;
   codigo: string;
   nombre: string;
-  descripcion: string;
+  descripcion?: string;
   activo: boolean;
   creado_en?: string;
 }
 
+// Query como const
 const query = gql`
-  query estadosOrden {
+  query getEstadosOrden {
     estadosOrden {
       id
       codigo
@@ -30,12 +31,14 @@ const query = gql`
   }
 `;
 
+// Fetching data
 const { data, pending, error } = await useAsyncQuery<{
   estadosOrden: EstadoOrden[];
 }>(query);
 
 const rows = computed<EstadoOrden[]>(() => data.value?.estadosOrden || []);
 
+// Columnas tipadas usando Row explícitamente
 const columns: TableColumn<EstadoOrden>[] = [
   {
     accessorKey: "codigo",
@@ -45,17 +48,17 @@ const columns: TableColumn<EstadoOrden>[] = [
   {
     accessorKey: "nombre",
     header: "Nombre",
-    cell: ({ row }) => row.original.nombre,
+    cell: ({ row }: { row: Row<EstadoOrden> }) => row.original.nombre,
   },
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    cell: ({ row }) => row.original.descripcion,
+    cell: ({ row }: { row: Row<EstadoOrden> }) => row.original.descripcion,
   },
   {
     accessorKey: "activo",
     header: "Estado",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstadoOrden> }) =>
       h(
         UBadge,
         {
@@ -63,13 +66,13 @@ const columns: TableColumn<EstadoOrden>[] = [
           variant: "subtle",
           class: "capitalize",
         },
-        () => (row.original.activo ? "Activo" : "Inactivo"),
+        () => (row.original.activo ? "Activo" : "Inactivo")
       ),
   },
   {
     id: "actions",
     header: "Acciones",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstadoOrden> }) =>
       h(
         "div",
         { class: "text-right" },
@@ -79,14 +82,13 @@ const columns: TableColumn<EstadoOrden>[] = [
             class: "text-primary hover:underline",
             onClick: () => openUpdateModal(row.original.id),
           },
-          "Actualizar",
-        ),
+          "Actualizar"
+        )
       ),
   },
 ];
 
 const updateModalOpen = ref(false);
-
 const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {

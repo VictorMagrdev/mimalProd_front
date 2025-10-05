@@ -1,61 +1,82 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetReservasMaterialOrden from "~/graphql/reserva-material-orden/get-reservas-material-orden.graphql";
-import NewReservaMaterialOrden from "~/components/reserva-material-orden/NewReservaMaterialOrden.vue";
-interface Orden {
-  id: string;
-  numeroOrden: string;
-}
+import { ref, computed } from "vue"
+import type { TableColumn } from "@nuxt/ui"
+import type { Row } from "@tanstack/vue-table"
 
-interface Material {
-  id: string;
-  nombre: string;
-}
+const GetReservasMaterialOrden = gql`
+  query GetReservasMaterialOrden {
+    reservasMaterialOrden {
+      id
+      orden_id
+      producto_id
+      lote_id
+      cantidad_reservada
+      unidad_id
+      fecha_reserva
+    }
+  }
+`
 
 export interface ReservaMaterialOrden {
-  id: string;
-  orden: Orden;
-  material: Material;
-  cantidadReservada: number;
+  id: string
+  orden_id: string | null
+  producto_id: string | null
+  lote_id: string | null
+  cantidad_reservada: number
+  unidad_id: string | null
+  fecha_reserva: string | null
 }
-interface ReservaMaterialOrdenResult {
-  reservasMaterialOrden: ReservaMaterialOrden[];
-}
-const { data, pending, error } =
-  await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden);
-const reservasMaterialOrden = computed(
-  () => data.value?.reservasMaterialOrden || [],
-);
 
-// columnas tipadas
+interface ReservaMaterialOrdenResult {
+  reservasMaterialOrden: ReservaMaterialOrden[]
+}
+
+const { data, pending, error } =
+  await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden)
+
+const reservasMaterialOrden = computed(() => data.value?.reservasMaterialOrden || [])
+
 const columns: TableColumn<ReservaMaterialOrden>[] = [
   {
-    accessorKey: "orden.numeroOrden",
-    header: "N° Orden",
-    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) =>
-      row.original.orden.numeroOrden,
+    accessorKey: "orden_id",
+    header: "ID Orden",
+    cell: ({ row }: { row: Row<ReservaMaterialOrden> }) => row.original.orden_id || "-",
   },
   {
-    accessorKey: "material.nombre",
-    header: "Material",
-    cell: ({ row }) => row.original.material.nombre,
+    accessorKey: "producto_id",
+    header: "ID Producto",
+    cell: ({ row }) => row.original.producto_id || "-",
   },
   {
-    accessorKey: "cantidadReservada",
+    accessorKey: "lote_id",
+    header: "ID Lote",
+    cell: ({ row }) => row.original.lote_id || "-",
+  },
+  {
+    accessorKey: "cantidad_reservada",
     header: "Cantidad Reservada",
-    cell: ({ row }) => row.original.cantidadReservada,
+    cell: ({ row }) => row.original.cantidad_reservada,
   },
-];
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
+  {
+    accessorKey: "unidad_id",
+    header: "Unidad",
+    cell: ({ row }) => row.original.unidad_id || "-",
+  },
+  {
+    accessorKey: "fecha_reserva",
+    header: "Fecha Reserva",
+    cell: ({ row }) => row.original.fecha_reserva || "-",
+  },
+]
+
+const table = useTemplateRef("table")
+const pagination = ref({ pageIndex: 1, pageSize: 10 })
+const globalFilter = ref()
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Ordenes de reserva de material</h1>
+    <h1 class="text-2xl font-bold">Órdenes de Reserva de Material</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
@@ -95,6 +116,7 @@ const globalFilter = ref();
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
+
         <NewReservaMaterialOrden />
       </div>
     </div>

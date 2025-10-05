@@ -1,26 +1,25 @@
 <script setup lang="ts">
 import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import type { Row } from "@tanstack/vue-table"; // <-- usamos Row
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
+// Interface según esquema
 export interface EstacionProduccion {
   id: string;
   codigo: string;
   nombre: string;
-  descripcion: string;
+  descripcion?: string;
   orden: number;
   creado_en: string;
 }
 
-interface QueryResult {
-  estacionesProduccion: EstacionProduccion[];
-}
-
+// Query
 const query = gql`
-  query estacionesProduccion {
+  query getEstacionesProduccion {
     estacionesProduccion {
       id
       codigo
@@ -32,50 +31,48 @@ const query = gql`
   }
 `;
 
+interface QueryResult {
+  estacionesProduccion: EstacionProduccion[];
+}
+
 const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
 
-const estacionesProduccion = computed(
-  () => data.value?.estacionesProduccion || [],
-);
+const estacionesProduccion = computed(() => data.value?.estacionesProduccion || []);
 
 const columns: TableColumn<EstacionProduccion>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h("div", { class: "font-mono text-sm" }, row.original.codigo),
   },
   {
     accessorKey: "nombre",
     header: "Nombre",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h("div", { class: "font-medium text-highlighted" }, row.original.nombre),
   },
   {
     accessorKey: "orden",
     header: "Orden",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h(
         UBadge,
-        {
-          variant: "outline",
-          color: "primary",
-          class: "font-mono",
-        },
-        () => `#${row.original.orden}`,
+        { variant: "outline", color: "primary", class: "font-mono" },
+        () => `#${row.original.orden}`
       ),
   },
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       row.original.descripcion ||
       h("span", { class: "text-muted italic" }, "Sin descripción"),
   },
   {
     accessorKey: "creado_en",
     header: "Creado",
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h(
         "div",
         { class: "text-sm text-muted" },
@@ -83,22 +80,19 @@ const columns: TableColumn<EstacionProduccion>[] = [
           day: "numeric",
           month: "short",
           year: "numeric",
-        }),
+        })
       ),
   },
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) =>
+    cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h(
         "div",
         { class: "text-right" },
         h(
           UDropdownMenu,
-          {
-            items: getRowItems(row.original),
-            content: { align: "end" },
-          },
+          { items: getRowItems(row.original), content: { align: "end" } },
           () =>
             h(UButton, {
               icon: "i-lucide-ellipsis-vertical",
@@ -106,8 +100,8 @@ const columns: TableColumn<EstacionProduccion>[] = [
               variant: "ghost",
               class: "ml-auto",
               "aria-label": "Acciones",
-            }),
-        ),
+            })
+        )
       ),
   },
 ];
@@ -134,6 +128,7 @@ function openUpdateModal(id: string) {
   selectedId.value = id;
 }
 </script>
+
 
 <template>
   <div class="w-full space-y-4 pb-4">
@@ -190,6 +185,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
+      <EstacionProduccionNewEstacionProduccion/>
     </div>
 
     <UTable
