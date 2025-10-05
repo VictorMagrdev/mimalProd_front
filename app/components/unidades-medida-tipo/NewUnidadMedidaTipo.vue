@@ -1,100 +1,94 @@
 <script setup lang="ts">
+import { reactive, ref } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive } from "vue";
-import CreateUnidadMedidaTipo from "~/graphql/unidades-medida-tipo/create-unidad-medida-tipo.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-interface UnidadMedidaTipoFormState {
-  codigo: string;
-  nombre: string;
-  descripcion: string;
-}
+const TipoSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  descripcion: z.string().optional(),
+});
+type TipoInput = z.infer<typeof TipoSchema>;
 
-const initialState: UnidadMedidaTipoFormState = {
+const state = reactive<TipoInput>({
   codigo: "",
   nombre: "",
-  descripcion: "",
-};
+  descripcion: undefined,
+});
 
-const state = reactive({ ...initialState });
-
-const { mutate, loading } = useMutation(CreateUnidadMedidaTipo);
-const toast = useToast();
+const CreateTipoMutation = gql`
+  mutation createUnidadMedidaTipo($input: UnidadMedidaTipoInput!) {
+    createUnidadMedidaTipo(input: $input) {
+      id
+    }
+  }
+`;
+type CreateTipoResult = { createUnidadMedidaTipo: { id: string } };
+type CreateTipoVars = { input: TipoInput };
+const { mutate } = useMutation<CreateTipoResult, CreateTipoVars>(
+  CreateTipoMutation,
+);
 
 function resetForm() {
-  Object.assign(state, initialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.descripcion = undefined;
 }
 
-function closeModal() {
-  resetForm();
-}
-
-async function onSubmit(event: FormSubmitEvent<UnidadMedidaTipoFormState>) {
+async function onSubmit(event: FormSubmitEvent<TipoInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Éxito",
-      description: "El tipo de unidad de medida fue creado correctamente.",
-      color: "success",
-    });
-
-    closeModal();
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    toast.add({ title: "Error", description: message, color: "error" });
+    toast.add({ title: "Tipo unidad creada", color: "success" });
+    emit("creado");
+    resetForm();
+    open.value = false;
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de unidad de medida">
-    <template #header>
-      <h2 class="text-lg font-semibold">Crear Tipo de Unidad de Medida</h2>
-    </template>
-    <UButton
-      label="Nueva linea"
-      color="neutral"
-      variant="subtle"
-      @click="open = true"
-    />
+  <UModal v-model:open="open" title="Crear tipo unidad de medida">
+    <UButton label="Nuevo tipo unidad" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="unidadMedidaTipoForm"
+        id="form-tipo-unidad"
+        :schema="TipoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" placeholder="Ej. KG" />
+          <UInput v-model="state.codigo" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" placeholder="Ej. Kilogramos" />
+          <UInput v-model="state.nombre" />
         </UFormField>
-
         <UFormField label="Descripción" name="descripcion">
-          <UInput
-            v-model="state.descripcion"
-            placeholder="Descripción opcional"
-          />
+          <UInput v-model="state.descripcion" />
         </UFormField>
       </UForm>
     </template>
-    <template #footer>
+    <template #footer="{ close }">
       <UButton
         label="Cancelar"
-        variant="outline"
         color="neutral"
-        @click="closeModal"
+        variant="outline"
+        @click="
+          () => {
+            close();
+            resetForm();
+          }
+        "
       />
       <UButton
-        label="Crear"
+        label="Crear tipo unidad"
         type="submit"
-        form="unidadMedidaTipoForm"
-        :loading="loading"
+        form="form-tipo-unidad"
         color="neutral"
       />
     </template>

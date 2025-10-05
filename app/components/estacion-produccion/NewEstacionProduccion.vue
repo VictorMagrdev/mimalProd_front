@@ -1,142 +1,84 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
-import CreateEstacionProduccion from "~/graphql/estacion-produccion/create-estacion-produccion.graphql";
-import OrdenesOptions from "~/graphql/estacion-produccion/get-ordenes.graphql";
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-const emit = defineEmits<{ (e: "create"): void }>();
+const EstacionSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  descripcion: z.string().optional(),
+  orden: z.number().optional(),
+});
+type EstacionInput = z.infer<typeof EstacionSchema>;
 
-interface EstacionProduccionFormState {
-  codigo: string;
-  nombre: string;
-  descripcion?: string;
-  orden: number;
-}
-
-const EstacionProduccionSchemaInitialState: EstacionProduccionFormState = {
+const state = reactive<EstacionInput>({
   codigo: "",
   nombre: "",
-  descripcion: "",
-  orden: null!,
-};
-
-const state = reactive({ ...EstacionProduccionSchemaInitialState });
-const error = ref<string | null>(null);
-interface Orden {
-  id: string;
-  numeroOrden: string;
-}
-
-const { result, refetch: refetchResult } =
-  useQuery<OrdenesProduccionResult>(OrdenesOptions);
-
-interface OrdenesProduccionResult {
-  ordenesProduccion: Orden[];
-}
-const ordenesOptions = computed(
-  () =>
-    result.value?.ordenesProduccion.map((o) => ({
-      id: o.id,
-      label: o.numeroOrden,
-    })) ?? [],
-);
-
-watch(open, (isOpen) => {
-  if (isOpen && ordenesOptions.value.length === 0) {
-    refetchResult();
-  }
+  descripcion: undefined,
+  orden: undefined,
 });
 
+const CreateEstacionMutation = gql`
+  mutation createEstacionProduccion($input: EstacionProduccionInput!) {
+    createEstacionProduccion(input: $input) {
+      id
+    }
+  }
+`;
+type CreateEstacionResult = { createEstacionProduccion: { id: string } };
+type CreateEstacionVars = { input: EstacionInput };
+const { mutate } = useMutation<CreateEstacionResult, CreateEstacionVars>(
+  CreateEstacionMutation,
+);
+
 function resetForm() {
-  Object.assign(state, EstacionProduccionSchemaInitialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.descripcion = undefined;
+  state.orden = undefined;
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(CreateEstacionProduccion);
-
-async function onSubmit(event: FormSubmitEvent<EstacionProduccionFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<EstacionInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Tipo de costo creado",
-      description: "El tipo de costo fue registrado correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Estación creada", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
   } catch (e) {
-    toast.add({
-      title: "Error",
-      description: String(e),
-      color: "error",
-    });
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de costo">
-    <template #description>
-      Completa el formulario para registrar un nuevo tipo de costo.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nuevo tipo de costo"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear estación de producción">
+    <UButton label="Nueva estación" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="estacionProduccionForm"
+        id="form-estacion"
+        :schema="EstacionSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
-            class="w-full"
-            placeholder="Código de la estación"
-          />
+          <UInput v-model="state.codigo" placeholder="Código" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
-            class="w-full"
-            placeholder="Nombre de la estación"
-          />
+          <UInput v-model="state.nombre" placeholder="Nombre" />
         </UFormField>
-
         <UFormField label="Descripción" name="descripcion">
-          <UInput
-            v-model="state.descripcion"
-            class="w-full"
-            placeholder="Descripción (opcional)"
-          />
+          <UInput v-model="state.descripcion" placeholder="Descripción" />
         </UFormField>
-
         <UFormField label="Orden" name="orden">
-          <UInputMenu
-            v-model="state.orden"
-            :items="ordenesOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione el orden"
-          />
+          <UInputNumber v-model="state.orden" />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -150,11 +92,10 @@ async function onSubmit(event: FormSubmitEvent<EstacionProduccionFormState>) {
         "
       />
       <UButton
-        label="Crear tipo de costo"
+        label="Crear estación"
         type="submit"
+        form="form-estacion"
         color="neutral"
-        form="tipoCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

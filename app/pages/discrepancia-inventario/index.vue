@@ -1,132 +1,282 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetDiscrepanciasInventario from "~/graphql/discrepancia-inventario/get-discrepancias-inventario.graphql";
 
-interface Producto {
-  id: string;
-  nombre: string;
-}
-
-export interface ConteoCiclico {
-  fecha: string;
-  producto: Producto;
-}
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UBadge = resolveComponent("UBadge");
 
 export interface DiscrepanciaInventario {
   id: string;
-  cantidadSistema: number; // antes: cantidadEsperada
-  cantidadContada: number; // antes: cantidadReal
-  diferencia: number;
+  conteo_id: string;
+  cantidad_sistema: number;
   resuelto: boolean;
-  conteo: ConteoCiclico;
+  conteo: {
+    fecha: string;
+    producto: {
+      nombre: string;
+      codigo: string;
+    };
+    cantidad_contada: number;
+    unidad?: {
+      abreviatura: string;
+    };
+  };
 }
 
-interface DiscrepanciaInventarioResult {
+interface QueryResult {
   discrepanciasInventario: DiscrepanciaInventario[];
 }
 
-const { data, pending, error } =
-  await useAsyncQuery<DiscrepanciaInventarioResult>(GetDiscrepanciasInventario);
+const query = gql`
+  query discrepanciasInventario {
+    discrepanciasInventario {
+      id
+      conteo_id
+      cantidad_sistema
+      resuelto
+      conteo {
+        fecha
+        cantidad_contada
+        producto {
+          nombre
+          codigo
+        }
+        unidad {
+          abreviatura
+        }
+      }
+    }
+  }
+`;
 
-const discrepanciasInventarios = computed(
+const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+
+const discrepanciasInventario = computed(
   () => data.value?.discrepanciasInventario || [],
 );
 
-// columnas tipadas
 const columns: TableColumn<DiscrepanciaInventario>[] = [
   {
-    accessorKey: "conteo.producto.nombre",
+    accessorKey: "producto",
     header: "Producto",
-    cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
-      row.original.conteo.producto.nombre,
+    cell: ({ row }) =>
+      h("div", [
+        h(
+          "div",
+          { class: "font-medium text-highlighted" },
+          row.original.conteo.producto.nombre,
+        ),
+        h(
+          "div",
+          { class: "text-sm text-muted" },
+          row.original.conteo.producto.codigo,
+        ),
+      ]),
   },
   {
-    accessorKey: "cantidadSistema",
-    header: "Cantidad Esperada",
-    cell: ({ row }) => row.original.cantidadSistema,
+    accessorKey: "cantidad_sistema",
+    header: "Cant. Sistema",
+    cell: ({ row }) =>
+      h("div", { class: "text-right font-mono" }, [
+        h("span", row.original.cantidad_sistema.toString()),
+        row.original.conteo.unidad &&
+          h(
+            "span",
+            { class: "text-sm text-muted ml-1" },
+            row.original.conteo.unidad.abreviatura,
+          ),
+      ]),
   },
   {
-    accessorKey: "cantidadContada",
-    header: "Cantidad Real",
-    cell: ({ row }) => row.original.cantidadContada,
+    accessorKey: "conteo.cantidad_contada",
+    header: "Cant. Contada",
+    cell: ({ row }) =>
+      h("div", { class: "text-right font-mono" }, [
+        h("span", row.original.conteo.cantidad_contada.toString()),
+        row.original.conteo.unidad &&
+          h(
+            "span",
+            { class: "text-sm text-muted ml-1" },
+            row.original.conteo.unidad.abreviatura,
+          ),
+      ]),
   },
   {
-    accessorKey: "conteo.fecha",
-    header: "Fecha",
-    cell: ({ row }) => row.original.conteo.fecha,
+    accessorKey: "diferencia",
+    header: "Diferencia",
+    cell: ({ row }) => {
+      const diferencia =
+        row.original.conteo.cantidad_contada - row.original.cantidad_sistema;
+      const color =
+        diferencia === 0 ? "neutral" : diferencia > 0 ? "success" : "error";
+
+      return h(
+        "div",
+        { class: "text-right" },
+        h(
+          UBadge,
+          {
+            variant: "subtle",
+            color: color,
+            class: "font-mono",
+          },
+          () => `${diferencia > 0 ? "+" : ""}${diferencia}`,
+        ),
+      );
+    },
+  },
+  {
+    accessorKey: "resuelto",
+    header: "Estado",
+    cell: ({ row }) =>
+      h(
+        UBadge,
+        {
+          variant: "subtle",
+          color: row.original.resuelto ? "success" : "warning",
+          class: "capitalize",
+        },
+        () => (row.original.resuelto ? "Resuelto" : "Pendiente"),
+      ),
+  },
+  {
+    accessorKey: "fecha",
+    header: "Fecha Conteo",
+    cell: ({ row }) =>
+      h(
+        "div",
+        { class: "text-sm text-muted" },
+        new Date(row.original.conteo.fecha).toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+      ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) =>
+      h(
+        "div",
+        { class: "text-right" },
+        h(
+          UDropdownMenu,
+          {
+            items: getRowItems(row.original),
+            content: { align: "end" },
+          },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+              class: "ml-auto",
+              "aria-label": "Acciones",
+            }),
+        ),
+      ),
   },
 ];
 
+function getRowItems(discrepancia: DiscrepanciaInventario) {
+  return [
+    [
+      {
+        label: discrepancia.resuelto ? "Reabrir" : "Marcar como resuelto",
+        icon: discrepancia.resuelto ? "i-lucide-rotate-ccw" : "i-lucide-check",
+        onSelect: () => toggleResuelto(discrepancia.id),
+      },
+    ],
+  ];
+}
+
 const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
+const pagination = ref({ pageIndex: 0, pageSize: 10 });
+const globalFilter = ref("");
+
+function toggleResuelto(id: string) {
+  console.log("Cambiar estado de discrepancia:", id);
+}
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Discrepacia inventario</h1>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Discrepancias de Inventario</h1>
+    </div>
 
     <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+      class="flex items-center gap-2 px-4 py-3.5 border-b border-accented overflow-x-auto"
     >
       <UInput
         v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
+        class="max-w-sm min-w-[12ch]"
+        placeholder="Filtrar discrepancias..."
+        @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
 
-      <div class="flex items-center space-x-2">
-        <UDropdownMenu
-          :items="
-            table?.tableApi
-              ?.getAllColumns()
-              .filter((column:any) => column.getCanHide())
-              .map((column:any) => ({
-                label: column.id,
-                type: 'checkbox' as const,
-                checked: column.getIsVisible(),
-                onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
-                },
-                onSelect(e?: Event) {
-                  e?.preventDefault();
-                },
-              }))
-          "
-          :content="{ align: 'end' }"
-        >
-          <UButton
-            label="Columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
-      </div>
-    </div>
-
-    <div class="relative z-0 w-full">
-      <UTable
-        ref="table"
-        v-model:pagination="pagination"
-        v-model:global-filter="globalFilter"
-        :data="discrepanciasInventarios || []"
-        :columns="columns"
-        :loading="pending"
-      />
-      <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
-        <UPagination
-          v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
-          :total="discrepanciasInventarios?.length || 0"
+      <UDropdownMenu
+        :items="
+          table?.tableApi
+            ?.getAllColumns()
+            .filter((column: any) => column.getCanHide())
+            .map((column: any) => ({
+              label:
+                column.id === 'producto'
+                  ? 'Producto'
+                  : column.id === 'cantidad_sistema'
+                    ? 'Cant. Sistema'
+                    : column.id === 'conteo.cantidad_contada'
+                      ? 'Cant. Contada'
+                      : column.id === 'diferencia'
+                        ? 'Diferencia'
+                        : column.id === 'resuelto'
+                          ? 'Estado'
+                          : 'Fecha',
+              type: 'checkbox' as const,
+              checked: column.getIsVisible(),
+              onUpdateChecked(checked: boolean) {
+                table?.tableApi
+                  ?.getColumn(column.id)
+                  ?.toggleVisibility(!!checked);
+              },
+              onSelect(e?: Event) {
+                e?.preventDefault();
+              },
+            }))
+        "
+        :content="{ align: 'end' }"
+      >
+        <UButton
+          label="Columnas"
+          color="neutral"
+          variant="outline"
+          trailing-icon="i-lucide-chevron-down"
+          class="ml-auto"
+          aria-label="Columns select dropdown"
         />
-      </div>
+      </UDropdownMenu>
     </div>
 
-    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
+    <UTable
+      ref="table"
+      v-model:pagination="pagination"
+      v-model:global-filter="globalFilter"
+      :data="discrepanciasInventario"
+      :columns="columns"
+      :loading="pending"
+      class="flex-1"
+    />
+
+    <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
+      Mostrando {{ table?.tableApi?.getRowModel().rows.length || 0 }} de
+      {{ discrepanciasInventario.length }} discrepancias
+    </div>
+
+    <div v-if="error" class="text-red-600 bg-red-50 p-4 rounded-lg">
+      Error al cargar discrepancias de inventario: {{ error.message }}
+    </div>
   </div>
 </template>

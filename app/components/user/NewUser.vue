@@ -6,7 +6,6 @@ interface Role {
   id: number;
   name: string;
 }
-const emit = defineEmits<{ (e: "create"): void }>();
 const auth = useAuthStore();
 const open = ref(false);
 const roles = ref<Role[]>([]);

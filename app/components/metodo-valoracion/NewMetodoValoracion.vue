@@ -1,110 +1,78 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
-import CreateMetodoValoracion from "~/graphql/metodos-valoracion/create-metodos-valoracion.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-interface MetodoValoracionFormState {
-  codigo: string;
-  nombre: string;
-  descripcion: string;
-}
+const MetodoSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  descripcion: z.string().optional(),
+});
+type MetodoInput = z.infer<typeof MetodoSchema>;
 
-const MetodoValoracionSchemaInitialState: MetodoValoracionFormState = {
+const state = reactive<MetodoInput>({
   codigo: "",
   nombre: "",
-  descripcion: "",
-};
+  descripcion: undefined,
+});
 
-const state = reactive({ ...MetodoValoracionSchemaInitialState });
-const error = ref<string | null>(null);
+const CreateMetodoMutation = gql`
+  mutation createMetodoValoracion($input: MetodoValoracionInput!) {
+    createMetodoValoracion(input: $input) {
+      id
+    }
+  }
+`;
+type CreateMetodoResult = { createMetodoValoracion: { id: string } };
+type CreateMetodoVars = { input: MetodoInput };
+const { mutate } = useMutation<CreateMetodoResult, CreateMetodoVars>(
+  CreateMetodoMutation,
+);
 
 function resetForm() {
-  Object.assign(state, MetodoValoracionSchemaInitialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.descripcion = undefined;
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(CreateMetodoValoracion);
-
-async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<MetodoInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "metodo de valoracion creado",
-      description: "El metodo de valoracion fue registrado correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Método creado", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
-  } catch (e: unknown) {
-    const message =
-      typeof e === "object" && e !== null && "message" in e
-        ? (e as { message: string }).message
-        : String(e);
-    error.value = message;
-    toast.add({
-      title: "Error",
-      description: message,
-      color: "error",
-    });
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear metodo de valoracion">
-    <template #description>
-      Completa el formulario para registrar un nuevo metodo de valoracion.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nuevo metodo de valoracion"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear método de valoración">
+    <UButton label="Nuevo método" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="tipoCostoForm"
+        id="form-metodo"
+        :schema="MetodoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
-            class="w-full"
-            placeholder="Código del metodo de valoracion"
-          />
+          <UInput v-model="state.codigo" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
-            class="w-full"
-            placeholder="Nombre del metodo de valoracion"
-          />
+          <UInput v-model="state.nombre" />
         </UFormField>
-
         <UFormField label="Descripción" name="descripcion">
-          <UInput
-            v-model="state.descripcion"
-            class="w-full"
-            placeholder="Descripción del metodo de valoracion"
-          />
+          <UInput v-model="state.descripcion" />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -118,11 +86,10 @@ async function onSubmit(event: FormSubmitEvent<MetodoValoracionFormState>) {
         "
       />
       <UButton
-        label="Crear metodo de valoracion"
+        label="Crear método"
         type="submit"
+        form="form-metodo"
         color="neutral"
-        form="tipoCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

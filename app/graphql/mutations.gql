@@ -64,7 +64,9 @@ mutation CreateMetodoValoracion($input: MetodoValoracionRequest!) {
   }
 }
 
-mutation CreateMovimientoInventarioDetalle($input: MovimientoInventarioDetalleRequest!) {
+mutation CreateMovimientoInventarioDetalle(
+  $input: MovimientoInventarioDetalleRequest!
+) {
   createMovimientoInventarioDetalle(input: $input) {
     id
   }

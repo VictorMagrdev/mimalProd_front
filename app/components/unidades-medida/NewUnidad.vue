@@ -1,168 +1,114 @@
 <script setup lang="ts">
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, ref, computed, watch } from "vue";
-import CreateUnidadMedida from "~/graphql/unidades-medida/create-unidad-medida.graphql";
-import GetUnidadesMedidaTipo from "~/graphql/unidades-medida-tipo/get-unidades-medida-tipo.graphql";
-
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
-const emit = defineEmits<{ (e: "create"): void }>();
 
-interface UnidadMedidaFormState {
-  codigo: string;
-  nombre: string;
-  abreviatura: string;
-  idTipo?: string;
-  esActiva: boolean;
-  esBase: boolean;
-}
+const TipoUnidadOptionsQuery = gql`
+  query GetUnidadesMedidaTipo {
+    unidadesMedidaTipo {
+      value: id
+      label: nombre
+    }
+  }
+`;
+type TipoUnidadOptionsResult = {
+  unidadesMedidaTipo: { value: string; label: string }[];
+};
+const { result } = useQuery<TipoUnidadOptionsResult>(TipoUnidadOptionsQuery);
+const tipos = computed(() => result.value?.unidadesMedidaTipo ?? []);
 
-const UnidadSchemaInitialState: UnidadMedidaFormState = {
+const UnidadSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  abreviatura: z.string().min(1),
+  activa: z.boolean().optional(),
+  base: z.boolean().optional(),
+  tipo_id: z.string().min(1),
+});
+type UnidadInput = z.infer<typeof UnidadSchema>;
+
+const state = reactive<UnidadInput>({
   codigo: "",
   nombre: "",
   abreviatura: "",
-  idTipo: undefined,
-  esActiva: true,
-  esBase: false,
-};
-
-const state = reactive({ ...UnidadSchemaInitialState });
-const error = ref<string | null>(null);
-
-// Interfaces de entidades
-interface UnidadMedidaTipo {
-  id: string;
-  nombre: string;
-}
-
-// Estado del formulario
-interface UnidadMedidaFormState {
-  codigo: string;
-  nombre: string;
-  abreviatura: string;
-  idTipo?: string;
-  esActiva: boolean;
-  esBase: boolean;
-}
-
-interface UnidadesMedidaTipoResult {
-  unidadesMedidaTipo: UnidadMedidaTipo[];
-}
-
-const {
-  result: tiposResult,
-  loading: tiposLoading,
-  refetch: refetchTipos,
-} = useQuery<UnidadesMedidaTipoResult>(GetUnidadesMedidaTipo);
-
-const tiposOptions = computed(
-  () =>
-    tiposResult.value?.unidadesMedidaTipo.map((t: UnidadMedidaTipo) => ({
-      label: t.nombre,
-      value: t.id,
-    })) ?? [],
-);
-
-watch(open, (isOpen) => {
-  if (isOpen) {
-    refetchTipos();
-  }
+  activa: true,
+  base: false,
+  tipo_id: "",
 });
 
+const CreateUnidadMutation = gql`
+  mutation createUnidadMedida($input: UnidadMedidaInput!) {
+    createUnidadMedida(input: $input) {
+      id
+    }
+  }
+`;
+type CreateUnidadResult = { createUnidadMedida: { id: string } };
+type CreateUnidadVars = { input: UnidadInput };
+const { mutate } = useMutation<CreateUnidadResult, CreateUnidadVars>(
+  CreateUnidadMutation,
+);
+
 function resetForm() {
-  Object.assign(state, UnidadSchemaInitialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.abreviatura = "";
+  state.activa = true;
+  state.base = false;
+  state.tipo_id = "";
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(CreateUnidadMedida);
-
-async function onSubmit(event: FormSubmitEvent<UnidadMedidaFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<UnidadInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Unidad de medida creada",
-      description: "La unidad de medida fue registrada correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Unidad medida creada", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    toast.add({ title: "Error", description: message });
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
   <UModal v-model:open="open" title="Crear unidad de medida">
-    <template #description>
-      Completa el formulario para registrar una nueva unidad de medida.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nueva unidad"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+    <UButton label="Nueva unidad" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="unidadForm"
+        id="form-unidad"
+        :schema="UnidadSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
-            class="w-full"
-            placeholder="Código de la unidad"
-          />
+          <UInput v-model="state.codigo" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
-            class="w-full"
-            placeholder="Nombre de la unidad"
-          />
+          <UInput v-model="state.nombre" />
         </UFormField>
-
         <UFormField label="Abreviatura" name="abreviatura">
-          <UInput
-            v-model="state.abreviatura"
-            class="w-full"
-            placeholder="Abreviatura de la unidad"
-          />
+          <UInput v-model="state.abreviatura" />
         </UFormField>
-
-        <UFormField label="Tipo" name="idTipo">
+        <UFormField label="Tipo" name="tipo_id">
           <UInputMenu
-            v-model="state.idTipo"
-            :items="tiposOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione un tipo"
-            :loading="tiposLoading"
+            v-model="state.tipo_id"
+            :items="tipos"
+            placeholder="Selecciona tipo"
           />
         </UFormField>
-
-        <UFormField label="Activa" name="esActiva">
-          <UCheckbox v-model="state.esActiva" class="w-full" />
+        <UFormField label="Activa" name="activa">
+          <UCheckbox v-model="state.activa" />
         </UFormField>
-
-        <UFormField label="Es Base" name="esBase">
-          <UCheckbox v-model="state.esBase" class="w-full" />
+        <UFormField label="Base" name="base">
+          <UCheckbox v-model="state.base" />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -178,9 +124,8 @@ async function onSubmit(event: FormSubmitEvent<UnidadMedidaFormState>) {
       <UButton
         label="Crear unidad"
         type="submit"
+        form="form-unidad"
         color="neutral"
-        form="unidadForm"
-        :loading="loading"
       />
     </template>
   </UModal>

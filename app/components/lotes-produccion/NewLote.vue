@@ -1,133 +1,98 @@
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from "vue";
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import CreateLoteProduccion from "~/graphql/lotes-produccion/create-lote-produccion.graphql";
-import GetProductos from "~/graphql/productos/get-productos.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
-
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-interface Producto {
-  id: string;
-  nombre: string;
-}
+const LoteOptions = gql`
+  query LoteProduccionOptions {
+    productos {
+      value: id
+      label: nombre
+    }
+  }
+`;
+type LoteOptionsResult = { productos: { value: string; label: string }[] };
+const { result } = useQuery<LoteOptionsResult>(LoteOptions);
+const productos = computed(() => result.value?.productos ?? []);
 
-interface LoteProduccionFormState {
-  numeroLote: string;
-  idProducto?: string;
-  fabricadoEn: string;
-  venceEn: string;
-}
+const LoteSchema = z.object({
+  numero_lote: z.string().min(1),
+  fabricado_en: z.string().optional(),
+  vence_en: z.string().optional(),
+  producto_id: z.string().min(1),
+});
+type LoteInput = z.infer<typeof LoteSchema>;
 
-const LoteSchemaInitialState: LoteProduccionFormState = {
-  numeroLote: "",
-  idProducto: undefined,
-  fabricadoEn: "",
-  venceEn: "",
-};
-const state = reactive({ ...LoteSchemaInitialState });
-
-// Errores y notificaciones
-const error = ref<string | null>(null);
-const toast = useToast();
-
-const {
-  result: productosResult,
-  loading: productosLoading,
-  refetch: refetchProductos,
-} = useQuery(GetProductos);
-
-// Options tipados
-const productosOptions = computed(() =>
-  (productosResult.value?.productos || []).map((p: Producto) => ({
-    label: p.nombre,
-    id: p.id.toString(),
-  })),
-);
-
-// Refetch productos al abrir modal
-watch(open, (isOpen) => {
-  if (isOpen) refetchProductos();
+const state = reactive<LoteInput>({
+  numero_lote: "",
+  fabricado_en: undefined,
+  vence_en: undefined,
+  producto_id: "",
 });
 
-// Reset
+const CreateLoteMutation = gql`
+  mutation createLoteProduccion($input: LoteProduccionInput!) {
+    createLoteProduccion(input: $input) {
+      id
+    }
+  }
+`;
+type CreateLoteResult = { createLoteProduccion: { id: string } };
+type CreateLoteVars = { input: LoteInput };
+const { mutate } = useMutation<CreateLoteResult, CreateLoteVars>(
+  CreateLoteMutation,
+);
+
 function resetForm() {
-  Object.assign(state, LoteSchemaInitialState);
+  state.numero_lote = "";
+  state.fabricado_en = undefined;
+  state.vence_en = undefined;
+  state.producto_id = "";
 }
 
-// Mutación
-const { mutate, loading } = useMutation(CreateLoteProduccion);
-
-// Submit
-async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
-  error.value = null;
+async function onSubmit(event: FormSubmitEvent<LoteInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Lote creado",
-      description: "El lote de producción fue registrado correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Lote creado", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    error.value = message;
-    toast.add({
-      title: "Error",
-      description: message,
-      color: "error",
-    });
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
   <UModal v-model:open="open" title="Crear lote de producción">
-    <template #description>
-      Completa el formulario para registrar un nuevo lote de producción.
-    </template>
-    <UButton
-      label="Nuevo lote"
-      color="neutral"
-      variant="subtle"
-      @click="open = true"
-    />
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
-
+    <UButton label="Nuevo lote" color="neutral" variant="subtle" />
     <template #body>
-      <UForm id="loteForm" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Número de Lote" name="numeroLote">
-          <UInput
-            v-model="state.numeroLote"
-            class="w-full"
-            placeholder="Número del lote"
-          />
+      <UForm
+        id="form-lote"
+        :schema="LoteSchema"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Número de lote" name="numero_lote">
+          <UInput v-model="state.numero_lote" />
         </UFormField>
-
-        <UFormField label="Producto" name="idProducto">
+        <UFormField label="Producto" name="producto_id">
           <UInputMenu
-            v-model="state.idProducto"
-            :items="productosOptions"
-            value-key="id"
-            class="w-full"
-            placeholder="Seleccione un producto"
-            :loading="productosLoading"
+            v-model="state.producto_id"
+            :items="productos"
+            placeholder="Selecciona producto"
           />
         </UFormField>
-
-        <UFormField label="Fabricado En" name="fabricadoEn">
-          <UInput v-model="state.fabricadoEn" class="w-full" type="date" />
+        <UFormField label="Fabricado en" name="fabricado_en">
+          <UInput v-model="state.fabricado_en" placeholder="YYYY-MM-DD" />
         </UFormField>
-
-        <UFormField label="Vence En" name="venceEn">
-          <UInput v-model="state.venceEn" class="w-full" type="date" />
+        <UFormField label="Vence en" name="vence_en">
+          <UInput v-model="state.vence_en" placeholder="YYYY-MM-DD" />
         </UFormField>
-
-        <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
       </UForm>
     </template>
     <template #footer="{ close }">
@@ -138,7 +103,6 @@ async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
         @click="
           () => {
             close();
-            open = false;
             resetForm();
           }
         "
@@ -146,9 +110,8 @@ async function onSubmit(event: FormSubmitEvent<LoteProduccionFormState>) {
       <UButton
         label="Crear lote"
         type="submit"
+        form="form-lote"
         color="neutral"
-        form="loteForm"
-        :loading="loading"
       />
     </template>
   </UModal>

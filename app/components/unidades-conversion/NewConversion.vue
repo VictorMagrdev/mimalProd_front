@@ -1,101 +1,100 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
-import CreateUnidadConversion from "~/graphql/unidades-conversion/create-unidad-conversion.graphql";
-import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
-
-const open = ref(false);
-const emit = defineEmits<{ (e: "create"): void }>();
-
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
-
-// Interfaces de resultados de queries
-interface UnidadesMedidaResult {
-  unidadesMedida: UnidadMedida[];
-}
-
-// Estado del formulario
-interface UnidadConversionFormState {
-  idOrigen?: string;
-  idDestino?: string;
-  factor: number;
-}
-
-const initialState: UnidadConversionFormState = {
-  idOrigen: undefined,
-  idDestino: undefined,
-  factor: 1,
-};
-
-// Query tipada
-const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
-
-// Options tipados
-const unidadesOptions = computed(
-  () =>
-    unidadesResult.value?.unidadesMedida.map((u) => ({
-      label: u.nombre,
-      value: u.id,
-    })) ?? [],
-);
-function resetForm() {
-  Object.assign(state, initialState);
-}
-const { mutate, loading } = useMutation(CreateUnidadConversion);
-const state = reactive({ ...initialState });
-
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
+const open = ref(false);
 
-async function onSubmit() {
+const query = gql`
+  query GetUnidadesMedida {
+    unidadesMedida {
+      value: id
+      label: nombre
+    }
+  }
+`;
+type ConversionOptionsResult = {
+  unidadesMedida: { value: string; label: string }[];
+};
+const { result } = useQuery<ConversionOptionsResult>(query);
+const unidades = computed(() => result.value?.unidadesMedida ?? []);
+
+const ConversionSchema = z.object({
+  factor: z.number().min(0),
+  origen_id: z.string().min(1),
+  destino_id: z.string().min(1),
+});
+type ConversionInput = z.infer<typeof ConversionSchema>;
+
+const state = reactive<ConversionInput>({
+  factor: 1,
+  origen_id: "",
+  destino_id: "",
+});
+
+const CreateConversionMutation = gql`
+  mutation createUnidadConversion($input: UnidadConversionInput!) {
+    createUnidadConversion(input: $input) {
+      id
+    }
+  }
+`;
+type CreateConversionResult = { createUnidadConversion: { id: string } };
+type CreateConversionVars = { input: ConversionInput };
+const { mutate } = useMutation<CreateConversionResult, CreateConversionVars>(
+  CreateConversionMutation,
+);
+
+function resetForm() {
+  state.factor = 1;
+  state.origen_id = "";
+  state.destino_id = "";
+}
+
+async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
   try {
-    await mutate({ input: state });
-    toast.add({ title: "Éxito", description: "Conversión creada." });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    toast.add({ title: "Error", description: message });
+    await mutate({ input: event.data });
+    toast.add({ title: "Unidad conversión creada", color: "success" });
+    emit("creado");
+    resetForm();
+    open.value = false;
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear conversion">
-    <template #header>
-      <h2>Crear Conversión de Unidad</h2>
-    </template>
-
+  <UModal v-model:open="open" title="Crear unidad de conversión">
+    <UButton label="Nueva conversión" color="neutral" variant="subtle" />
     <template #body>
-      <UForm :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormGroup label="Unidad Origen" name="idOrigen">
-          <USelectMenu
-            v-model="state.idOrigen"
-            :items="unidadesOptions"
-            value-attribute="value"
-            option-attribute="label"
-            :loading="unidadesLoading"
-            class="w-full"
+      <UForm
+        id="form-conversion"
+        :schema="ConversionSchema"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField label="Origen" name="origen_id">
+          <UInputMenu
+            v-model="state.origen_id"
+            :items="unidades"
+            placeholder="Selecciona unidad origen"
           />
-        </UFormGroup>
-
-        <UFormGroup label="Unidad Destino" name="idDestino">
-          <USelectMenu
-            v-model="state.idDestino"
-            :items="unidadesOptions"
-            value-attribute="value"
-            option-attribute="label"
-            :loading="unidadesLoading"
-            class="w-full"
+        </UFormField>
+        <UFormField label="Destino" name="destino_id">
+          <UInputMenu
+            v-model="state.destino_id"
+            :items="unidades"
+            placeholder="Selecciona unidad destino"
           />
-        </UFormGroup>
-
-        <UFormGroup label="Factor" name="factor">
-          <UInput v-model.number="state.factor" type="number" class="w-full" />
-        </UFormGroup>
+        </UFormField>
+        <UFormField label="Factor" name="factor">
+          <UInputNumber v-model="state.factor" />
+        </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -109,11 +108,10 @@ async function onSubmit() {
         "
       />
       <UButton
-        label="Crear conversion"
+        label="Crear conversión"
         type="submit"
+        form="form-conversion"
         color="neutral"
-        form="tipoCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

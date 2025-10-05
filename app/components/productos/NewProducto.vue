@@ -1,158 +1,134 @@
 <script setup lang="ts">
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, ref, computed, watch } from "vue";
-import createProducto from "~/graphql/productos/create-producto.graphql";
-import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-interface ProductoFormState {
-  codigo: string;
-  nombre: string;
-  idUnidadBase?: string;
-  costoBase?: number;
-}
+const ProductoOptions = gql`
+  query ProductoOptions {
+    tiposProducto {
+      value: id
+      label: nombre
+    }
+    metodosValoracion {
+      value: id
+      label: nombre
+    }
+    unidadesMedida {
+      value: id
+      label: nombre
+    }
+  }
+`;
+type ProductoOptionsResult = {
+  tiposProducto: { value: string; label: string }[];
+  metodosValoracion: { value: string; label: string }[];
+  unidadesMedida: { value: string; label: string }[];
+};
+const { result } = useQuery<ProductoOptionsResult>(ProductoOptions);
+const tipos = computed(() => result.value?.tiposProducto ?? []);
+const metodos = computed(() => result.value?.metodosValoracion ?? []);
+const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
-const ProductoSchemaInitialState: ProductoFormState = {
+const ProductoSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  costo_base: z.number().optional(),
+  tipo_id: z.string().min(1),
+  metodo_valoracion_id: z.string().min(1),
+  unidad_base_id: z.string().min(1),
+});
+type ProductoInput = z.infer<typeof ProductoSchema>;
+
+const state = reactive<ProductoInput>({
   codigo: "",
   nombre: "",
-  idUnidadBase: undefined,
-  costoBase: 0,
-};
-
-const state = reactive({ ...ProductoSchemaInitialState });
-const error = ref<string | null>(null);
-
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
-
-interface UnidadesMedidaResult {
-  unidadesMedida: UnidadMedida[];
-}
-
-const {
-  result: unidadesResult,
-  loading: unidadesLoading,
-  refetch: refetchUnidades,
-} = useQuery<UnidadesMedidaResult>(getUnidadesMedida);
-
-const unidadesOptions = computed(
-  () =>
-    unidadesResult.value?.unidadesMedida.map((u) => ({
-      label: u.nombre,
-      value: u.id,
-    })) ?? [],
-);
-
-watch(open, (isOpen) => {
-  if (isOpen && unidadesOptions.value.length === 0) {
-    refetchUnidades();
-  }
+  costo_base: undefined,
+  tipo_id: "",
+  metodo_valoracion_id: "",
+  unidad_base_id: "",
 });
 
+const CreateProductoMutation = gql`
+  mutation createProducto($input: ProductoInput!) {
+    createProducto(input: $input) {
+      id
+    }
+  }
+`;
+type CreateProductoResult = { createProducto: { id: string } };
+type CreateProductoVars = { input: ProductoInput };
+const { mutate } = useMutation<CreateProductoResult, CreateProductoVars>(
+  CreateProductoMutation,
+);
+
 function resetForm() {
-  Object.assign(state, ProductoSchemaInitialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.costo_base = undefined;
+  state.tipo_id = "";
+  state.metodo_valoracion_id = "";
+  state.unidad_base_id = "";
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(createProducto);
-
-async function onSubmit(event: FormSubmitEvent<ProductoFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
   try {
-    const input = {
-      ...event.data,
-      costoBase: Number(event.data.costoBase),
-      idUnidadBase: event.data.idUnidadBase
-        ? String(event.data.idUnidadBase)
-        : undefined,
-    };
-
-    await mutate({ input });
-
-    toast.add({
-      title: "Producto creado",
-      description: "El producto fue registrado correctamente",
-      color: "success",
-    });
-
+    await mutate({ input: event.data });
+    toast.add({ title: "Producto creado", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
   } catch (e) {
-    toast.add({
-      title: "Error",
-      description: String(e),
-      color: "error",
-    });
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
   <UModal v-model:open="open" title="Crear producto">
-    <template #description>
-      Completa el formulario para registrar un nuevo producto.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nuevo producto"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+    <UButton label="Nuevo producto" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="productoForm"
+        id="form-producto"
+        :schema="ProductoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
-            class="w-full"
-            placeholder="Código del producto"
-          />
+          <UInput v-model="state.codigo" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
-            class="w-full"
-            placeholder="Nombre del producto"
-          />
+          <UInput v-model="state.nombre" />
         </UFormField>
-
-        <UFormField label="Costo Base" name="costoBase">
-          <UInput
-            v-model.number="state.costoBase"
-            class="w-full"
-            type="number"
-            placeholder="0.00"
-          />
+        <UFormField label="Costo base" name="costo_base">
+          <UInputNumber v-model="state.costo_base" />
         </UFormField>
-
-        <UFormField label="Unidad Base" name="idUnidadBase">
+        <UFormField label="Tipo" name="tipo_id">
           <UInputMenu
-            v-model="state.idUnidadBase"
-            :items="unidadesOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione una unidad"
-            :loading="unidadesLoading"
-            searchable
+            v-model="state.tipo_id"
+            :items="tipos"
+            placeholder="Selecciona tipo"
+          />
+        </UFormField>
+        <UFormField label="Método valoración" name="metodo_valoracion_id">
+          <UInputMenu
+            v-model="state.metodo_valoracion_id"
+            :items="metodos"
+            placeholder="Selecciona método"
+          />
+        </UFormField>
+        <UFormField label="Unidad base" name="unidad_base_id">
+          <UInputMenu
+            v-model="state.unidad_base_id"
+            :items="unidades"
+            placeholder="Selecciona unidad"
           />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -168,9 +144,8 @@ async function onSubmit(event: FormSubmitEvent<ProductoFormState>) {
       <UButton
         label="Crear producto"
         type="submit"
+        form="form-producto"
         color="neutral"
-        form="productoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

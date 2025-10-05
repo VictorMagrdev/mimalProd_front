@@ -6,13 +6,13 @@ const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-const ReservaOptions = gql`
-  query ReservaMaterialOrdenOptions {
-    ordenesProduccion {
-      value: id
-      label: numero_orden
-    }
+const ConteoCiclicoOptions = gql`
+  query ConteoCiclicoOptions {
     productos {
+      value: id
+      label: nombre
+    }
+    bodegas {
       value: id
       label: nombre
     }
@@ -26,63 +26,64 @@ const ReservaOptions = gql`
     }
   }
 `;
-type ReservaOptionsResult = {
-  ordenesProduccion: { value: string; label: string }[];
+
+type ConteoCiclicoOptionsResult = {
   productos: { value: string; label: string }[];
+  bodegas: { value: string; label: string }[];
   lotesProduccion: { value: string; label: string }[];
   unidadesMedida: { value: string; label: string }[];
 };
-const { result } = useQuery<ReservaOptionsResult>(ReservaOptions);
-const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
+const { result } = useQuery<ConteoCiclicoOptionsResult>(ConteoCiclicoOptions);
 const productos = computed(() => result.value?.productos ?? []);
+const bodegas = computed(() => result.value?.bodegas ?? []);
 const lotes = computed(() => result.value?.lotesProduccion ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
-const ReservaSchema = z.object({
-  cantidad_reservada: z.number().min(0),
-  fecha_reserva: z.string().min(1),
-  orden_id: z.string().min(1),
+const ConteoSchema = z.object({
   producto_id: z.string().min(1),
+  bodega_id: z.string().min(1),
   lote_id: z.string().optional(),
+  cantidad_contada: z.number().min(0),
   unidad_id: z.string().min(1),
+  fecha: z.string().min(1),
 });
-type ReservaInput = z.infer<typeof ReservaSchema>;
+type ConteoInput = z.infer<typeof ConteoSchema>;
 
-const state = reactive<ReservaInput>({
-  cantidad_reservada: 0,
-  fecha_reserva: "",
-  orden_id: "",
+const state = reactive<ConteoInput>({
   producto_id: "",
+  bodega_id: "",
   lote_id: undefined,
+  cantidad_contada: 0,
   unidad_id: "",
+  fecha: "",
 });
 
-const CreateReservaMutation = gql`
-  mutation createReservaMaterialOrden($input: ReservaMaterialOrdenInput!) {
-    createReservaMaterialOrden(input: $input) {
+const CreateConteoMutation = gql`
+  mutation createConteoCiclico($input: ConteoCiclicoRequest!) {
+    createConteoCiclico(input: $input) {
       id
     }
   }
 `;
-type CreateReservaResult = { createReservaMaterialOrden: { id: string } };
-type CreateReservaVars = { input: ReservaInput };
-const { mutate } = useMutation<CreateReservaResult, CreateReservaVars>(
-  CreateReservaMutation,
+
+type CreateConteoResult = { createConteoCiclico: { id: string } };
+type CreateConteoVars = { input: ConteoInput };
+const { mutate } = useMutation<CreateConteoResult, CreateConteoVars>(
+  CreateConteoMutation,
 );
 
 function resetForm() {
-  state.cantidad_reservada = 0;
-  state.fecha_reserva = "";
-  state.orden_id = "";
   state.producto_id = "";
+  state.bodega_id = "";
   state.lote_id = undefined;
+  state.cantidad_contada = 0;
   state.unidad_id = "";
+  state.fecha = "";
 }
 
-async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
+async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
   try {
     await mutate({ input: event.data });
-    toast.add({ title: "Reserva creada", color: "success" });
     emit("creado");
     resetForm();
     open.value = false;
@@ -93,28 +94,28 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear reserva material">
-    <UButton label="Nueva reserva" color="neutral" variant="subtle" />
+  <UModal v-model:open="open" title="Crear conteo cíclico">
+    <UButton label="Nuevo conteo" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="form-reserva"
-        :schema="ReservaSchema"
+        id="form-conteo"
+        :schema="ConteoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden" name="orden_id">
-          <UInputMenu
-            v-model="state.orden_id"
-            :items="ordenes"
-            placeholder="Selecciona orden"
-          />
-        </UFormField>
         <UFormField label="Producto" name="producto_id">
           <UInputMenu
             v-model="state.producto_id"
             :items="productos"
             placeholder="Selecciona producto"
+          />
+        </UFormField>
+        <UFormField label="Bodega" name="bodega_id">
+          <UInputMenu
+            v-model="state.bodega_id"
+            :items="bodegas"
+            placeholder="Selecciona bodega"
           />
         </UFormField>
         <UFormField label="Lote" name="lote_id">
@@ -124,6 +125,9 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             placeholder="Selecciona lote"
           />
         </UFormField>
+        <UFormField label="Cantidad contada" name="cantidad_contada">
+          <UInputNumber v-model="state.cantidad_contada" />
+        </UFormField>
         <UFormField label="Unidad" name="unidad_id">
           <UInputMenu
             v-model="state.unidad_id"
@@ -131,11 +135,8 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             placeholder="Selecciona unidad"
           />
         </UFormField>
-        <UFormField label="Cantidad reservada" name="cantidad_reservada">
-          <UInputNumber v-model="state.cantidad_reservada" />
-        </UFormField>
-        <UFormField label="Fecha reserva" name="fecha_reserva">
-          <UInput v-model="state.fecha_reserva" placeholder="YYYY-MM-DD" />
+        <UFormField label="Fecha" name="fecha">
+          <UInput v-model="state.fecha" placeholder="YYYY-MM-DD" />
         </UFormField>
       </UForm>
     </template>
@@ -152,9 +153,9 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         "
       />
       <UButton
-        label="Crear reserva"
+        label="Crear conteo"
         type="submit"
-        form="form-reserva"
+        form="form-conteo"
         color="neutral"
       />
     </template>

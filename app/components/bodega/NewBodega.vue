@@ -1,192 +1,100 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import CreateLineaOrden from "~/graphql/lineas-orden/create-linea-orden.graphql";
-import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
-import GetProductos from "~/graphql/productos/get-productos.graphql";
-import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
-
-interface OrdenProduccion {
-  id: string;
-  numeroOrden: string;
-}
-interface Producto {
-  id: string;
-  nombre: string;
-}
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
-
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-const initialState = {
-  idOrden: "" as string | undefined,
-  numeroLinea: 1,
-  idProductoComponente: "" as string | undefined,
-  cantidadRequerida: 0,
-  idUnidadComponente: "" as string | undefined,
-  observaciones: "",
-};
-const state = reactive({ ...initialState });
+const BodegaOptionsQuery = gql`
+  query BodegaOptions {
+    tiposBodega {
+      value: id
+      label: nombre
+    }
+  }
+`;
 
-// Interfaces de entidades
-interface OrdenProduccion {
-  id: string;
-  numeroOrden: string;
-}
-interface Producto {
-  id: string;
-  nombre: string;
-}
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
+type BodegaOptionsResult = { tiposBodega: { value: string; label: string }[] };
+const { result } = useQuery<BodegaOptionsResult>(BodegaOptionsQuery);
+const tiposOptions = computed(() => result.value?.tiposBodega ?? []);
 
-interface OrdenesProduccionResult {
-  ordenesProduccion: OrdenProduccion[];
-}
-interface ProductosResult {
-  productos: Producto[];
-}
-interface UnidadesMedidaResult {
-  unidadesMedida: UnidadMedida[];
-}
+const BodegaSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  descripcion: z.string().optional(),
+  tipo_id: z.string().min(1),
+});
+type BodegaInput = z.infer<typeof BodegaSchema>;
 
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
+const state = reactive<BodegaInput>({
+  codigo: "",
+  nombre: "",
+  descripcion: "",
+  tipo_id: "",
+});
 
-const { data: productosResult, pending: productosLoading } =
-  await useAsyncQuery<ProductosResult>(GetProductos);
+const CreateBodegaMutation = gql`
+  mutation createBodega($input: BodegaInput!) {
+    createBodega(input: $input) {
+      id
+    }
+  }
+`;
 
-const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
-
-const ordenesOptions = computed(
-  () =>
-    ordenesResult.value?.ordenesProduccion.map((o) => ({
-      id: o.id,
-      label: o.numeroOrden,
-    })) ?? [],
+type CreateBodegaResult = { createBodega: { id: string } };
+type CreateBodegaVars = { input: BodegaInput };
+const { mutate } = useMutation<CreateBodegaResult, CreateBodegaVars>(
+  CreateBodegaMutation,
 );
 
-const productosOptions = computed(
-  () =>
-    productosResult.value?.productos.map((p) => ({
-      id: p.id,
-      label: p.nombre,
-    })) ?? [],
-);
-
-const unidadesOptions = computed(
-  () =>
-    unidadesResult.value?.unidadesMedida.map((u) => ({
-      id: u.id,
-      label: u.nombre,
-    })) ?? [],
-);
-
-const { mutate, loading } = useMutation(CreateLineaOrden);
-
-const toast = useToast();
-const error = ref<string | null>(null);
-
-function closeModal() {
-  Object.assign(state, initialState);
+function resetForm() {
+  state.codigo = "";
+  state.nombre = "";
+  state.descripcion = "";
+  state.tipo_id = "";
 }
 
-async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
+async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
   try {
-    error.value = null;
     await mutate({ input: event.data });
-    toast.add({ title: "Éxito", description: "Línea de orden creada." });
-    closeModal();
-  } catch (err) {
-    toast.add({
-      title: "Error",
-      description: String(err),
-      color: "error",
-    });
+    toast.add({ title: "Bodega creada", color: "success" });
+    emit("creado");
+    resetForm();
+    open.value = false;
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal :model-value="open" @update:model-value="closeModal">
-    <template #header>
-      <h2>Crear Línea de Orden</h2>
-    </template>
-    <UButton
-      label="Nueva linea"
-      color="neutral"
-      variant="subtle"
-      @click="open = true"
-    />
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear bodega">
+    <UButton label="Nueva bodega" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="create-linea-orden-form"
+        id="form-bodega"
+        :schema="BodegaSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden de Producción" name="idOrden">
+        <UFormField label="Código" name="codigo">
+          <UInput v-model="state.codigo" placeholder="Código" />
+        </UFormField>
+        <UFormField label="Nombre" name="nombre">
+          <UInput v-model="state.nombre" placeholder="Nombre" />
+        </UFormField>
+        <UFormField label="Descripción" name="descripcion">
+          <UInput v-model="state.descripcion" placeholder="Descripción" />
+        </UFormField>
+        <UFormField label="Tipo" name="tipo_id">
           <UInputMenu
-            v-model="state.idOrden"
-            :items="ordenesOptions"
-            value-attribute="label"
-            :loading="ordenesLoading"
-            class="w-full"
+            v-model="state.tipo_id"
+            :items="tiposOptions"
+            placeholder="Selecciona tipo"
           />
         </UFormField>
-
-        <UFormField label="N° Línea" name="numeroLinea">
-          <UInput
-            v-model.number="state.numeroLinea"
-            type="number"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Producto Componente" name="idProductoComponente">
-          <UInputMenu
-            v-model="state.idProductoComponente"
-            :items="productosOptions"
-            value-attribute="id"
-            option-attribute="label"
-            :loading="productosLoading"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Cantidad Requerida" name="cantidadRequerida">
-          <UInput
-            v-model.number="state.cantidadRequerida"
-            type="number"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Unidad Componente" name="idUnidadComponente">
-          <UInputMenu
-            v-model="state.idUnidadComponente"
-            :items="unidadesOptions"
-            value-attribute="label"
-            :loading="unidadesLoading"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Observaciones" name="observaciones">
-          <UTextarea v-model="state.observaciones" class="w-full" />
-        </UFormField>
-
-        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
       </UForm>
     </template>
     <template #footer="{ close }">
@@ -197,16 +105,15 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
         @click="
           () => {
             close();
-            closeModal();
+            resetForm();
           }
         "
       />
       <UButton
-        label="Crear"
+        label="Crear bodega"
         type="submit"
+        form="form-bodega"
         color="neutral"
-        form="create-linea-orden-form"
-        :loading="loading"
       />
     </template>
   </UModal>

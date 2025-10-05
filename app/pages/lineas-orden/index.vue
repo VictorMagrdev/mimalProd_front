@@ -117,8 +117,8 @@ function openUpdateModal(id: string) {
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((column:any) => column.getCanHide())
-              .map((column:any) => ({
+              .filter((column: any) => column.getCanHide())
+              .map((column: any) => ({
                 label: column.id,
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),

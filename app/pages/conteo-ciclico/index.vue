@@ -1,142 +1,267 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue";
+import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Row } from "@tanstack/vue-table";
-import GetConteosCiclicos from "~/graphql/conteo-ciclico/get-conteos-ciclicos.graphql";
 
-interface Producto {
-  id: string;
-  nombre: string;
-}
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UBadge = resolveComponent("UBadge");
 
 export interface ConteoCiclico {
   id: string;
-  producto: Producto;
+  producto_id: string;
+  bodega_id: string;
+  lote_id?: string;
+  cantidad_contada: number;
+  unidad_id: string;
   fecha: string;
-  cantidadContada: number;
+  producto?: {
+    nombre: string;
+    codigo: string;
+  };
+  bodega?: {
+    nombre: string;
+  };
+  lote?: {
+    numero_lote: string;
+  };
+  unidad?: {
+    nombre: string;
+    abreviatura: string;
+  };
 }
 
-interface ConteoCiclicoResult {
+interface QueryResult {
   conteosCiclicos: ConteoCiclico[];
 }
 
-const { data, pending, error } =
-  await useAsyncQuery<ConteoCiclicoResult>(GetConteosCiclicos);
+const query = gql`
+  query conteosCiclicos {
+    conteosCiclicos {
+      id
+      producto_id
+      bodega_id
+      lote_id
+      cantidad_contada
+      unidad_id
+      fecha
+      producto {
+        nombre
+        codigo
+      }
+      bodega {
+        nombre
+      }
+      lote {
+        numero_lote
+      }
+      unidad {
+        nombre
+        abreviatura
+      }
+    }
+  }
+`;
+
+const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
 
 const conteosCiclicos = computed(() => data.value?.conteosCiclicos || []);
 
 const columns: TableColumn<ConteoCiclico>[] = [
   {
-    accessorKey: "producto.nombre",
+    accessorKey: "producto",
     header: "Producto",
-    cell: ({ row }: { row: Row<ConteoCiclico> }) =>
-      row.original.producto.nombre,
+    cell: ({ row }) =>
+      h("div", [
+        h(
+          "div",
+          { class: "font-medium text-highlighted" },
+          row.original.producto?.nombre,
+        ),
+        h(
+          "div",
+          { class: "text-sm text-muted" },
+          row.original.producto?.codigo,
+        ),
+      ]),
   },
   {
-    accessorKey: "fechaConteo",
-    header: "Fecha de Conteo",
-    cell: ({ row }) => row.original.fecha,
+    accessorKey: "bodega",
+    header: "Bodega",
+    cell: ({ row }) =>
+      h(
+        UBadge,
+        {
+          variant: "subtle",
+          color: "neutral",
+          class: "capitalize",
+        },
+        () => row.original.bodega?.nombre,
+      ),
   },
   {
-    accessorKey: "cantidadContada",
-    header: "Cantidad Contada",
-    cell: ({ row }) => row.original.cantidadContada,
+    accessorKey: "lote",
+    header: "Lote",
+    cell: ({ row }) =>
+      row.original.lote?.numero_lote
+        ? h(
+            UBadge,
+            { variant: "outline" },
+            () => row.original.lote?.numero_lote,
+          )
+        : h("span", { class: "text-muted italic" }, "N/A"),
+  },
+  {
+    accessorKey: "cantidad_contada",
+    header: "Cantidad",
+    cell: ({ row }) =>
+      h("div", { class: "text-right font-mono" }, [
+        h("span", row.original.cantidad_contada.toString()),
+        h(
+          "span",
+          { class: "text-sm text-muted ml-1" },
+          row.original.unidad?.abreviatura,
+        ),
+      ]),
+  },
+  {
+    accessorKey: "fecha",
+    header: "Fecha Conteo",
+    cell: ({ row }) =>
+      h(
+        "div",
+        { class: "text-sm text-muted" },
+        new Date(row.original.fecha).toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      ),
   },
   {
     id: "actions",
-    header: "Acciones",
+    enableHiding: false,
     cell: ({ row }) =>
       h(
         "div",
         { class: "text-right" },
         h(
-          "button",
+          UDropdownMenu,
           {
-            class: "text-primary hover:underline",
-            onClick: () => openUpdateModal(row.original.id),
+            items: getRowItems(row.original),
+            content: { align: "end" },
           },
-          "Actualizar",
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+              class: "ml-auto",
+              "aria-label": "Acciones",
+            }),
         ),
       ),
   },
 ];
 
-const updateModalOpen = ref(false);
+function getRowItems(conteo: ConteoCiclico) {
+  return [
+    [
+      {
+        label: "Actualizar",
+        icon: "i-heroicons-pencil-20-solid",
+        onSelect: () => openUpdateModal(conteo.id),
+      },
+    ],
+  ];
+}
+
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 0, pageSize: 10 });
+const globalFilter = ref("");
 
 const selectedId = ref<string | null>(null);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
-  updateModalOpen.value = true;
 }
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 1, pageSize: 10 });
-const globalFilter = ref();
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Conteo ciclico</h1>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Conteos Cíclicos</h1>
+    </div>
 
     <div
-      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+      class="flex items-center gap-2 px-4 py-3.5 border-b border-accented overflow-x-auto"
     >
       <UInput
         v-model="globalFilter"
-        class="max-w-sm"
-        placeholder="Filtrar..."
+        class="max-w-sm min-w-[12ch]"
+        placeholder="Filtrar conteos..."
+        @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
 
-      <div class="flex items-center space-x-2">
-        <UDropdownMenu
-          :items="
-            table?.tableApi
-              ?.getAllColumns()
-              .filter((column:any) => column.getCanHide())
-              .map((column:any) => ({
-                label: column.id,
-                type: 'checkbox' as const,
-                checked: column.getIsVisible(),
-                onUpdateChecked(checked: boolean) {
-                  table?.tableApi
-                    ?.getColumn(column.id)
-                    ?.toggleVisibility(checked);
-                },
-                onSelect(e?: Event) {
-                  e?.preventDefault();
-                },
-              }))
-          "
-          :content="{ align: 'end' }"
-        >
-          <UButton
-            label="Columnas"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-down"
-          />
-        </UDropdownMenu>
-      </div>
-    </div>
-
-    <div class="relative z-0 w-full">
-      <UTable
-        ref="table"
-        v-model:pagination="pagination"
-        v-model:global-filter="globalFilter"
-        :data="conteosCiclicos || []"
-        :columns="columns"
-        :loading="pending"
-      />
-      <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
-        <UPagination
-          v-model="pagination.pageIndex"
-          :page-count="pagination.pageSize"
-          :total="conteosCiclicos?.length || 0"
+      <UDropdownMenu
+        :items="
+          table?.tableApi
+            ?.getAllColumns()
+            .filter((column: any) => column.getCanHide())
+            .map((column: any) => ({
+              label:
+                column.id === 'producto'
+                  ? 'Producto'
+                  : column.id === 'bodega'
+                    ? 'Bodega'
+                    : column.id === 'lote'
+                      ? 'Lote'
+                      : column.id === 'cantidad_contada'
+                        ? 'Cantidad'
+                        : 'Fecha',
+              type: 'checkbox' as const,
+              checked: column.getIsVisible(),
+              onUpdateChecked(checked: boolean) {
+                table?.tableApi
+                  ?.getColumn(column.id)
+                  ?.toggleVisibility(!!checked);
+              },
+              onSelect(e?: Event) {
+                e?.preventDefault();
+              },
+            }))
+        "
+        :content="{ align: 'end' }"
+      >
+        <UButton
+          label="Columnas"
+          color="neutral"
+          variant="outline"
+          trailing-icon="i-lucide-chevron-down"
+          class="ml-auto"
+          aria-label="Columns select dropdown"
         />
-      </div>
+      </UDropdownMenu>
     </div>
 
-    <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>
+    <UTable
+      ref="table"
+      v-model:pagination="pagination"
+      v-model:global-filter="globalFilter"
+      :data="conteosCiclicos"
+      :columns="columns"
+      :loading="pending"
+      class="flex-1"
+    />
+
+    <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
+      Mostrando {{ table?.tableApi?.getRowModel().rows.length || 0 }} de
+      {{ conteosCiclicos.length }} conteos
+    </div>
+
+    <div v-if="error" class="text-red-600 bg-red-50 p-4 rounded-lg">
+      Error al cargar conteos cíclicos: {{ error.message }}
+    </div>
   </div>
 </template>

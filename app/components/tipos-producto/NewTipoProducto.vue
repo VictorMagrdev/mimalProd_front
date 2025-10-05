@@ -1,110 +1,79 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
-import CreateTipoProducto from "~/graphql/tipos-producto/create-tipos-producto.graphql";
-
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
-const emit = defineEmits<{ (e: "create"): void }>();
 
-interface TipoProductoFormState {
-  codigo: string;
-  nombre: string;
-  descripcion: string;
-}
+const TipoProductoSchema = z.object({
+  codigo: z.string().min(1),
+  nombre: z.string().min(1),
+  descripcion: z.string().optional(),
+});
+type TipoProductoInput = z.infer<typeof TipoProductoSchema>;
 
-const TipoProductoSchemaInitialState: TipoProductoFormState = {
+const state = reactive<TipoProductoInput>({
   codigo: "",
   nombre: "",
-  descripcion: "",
-};
+  descripcion: undefined,
+});
 
-const state = reactive({ ...TipoProductoSchemaInitialState });
-const error = ref<string | null>(null);
+const CreateTipoProductoMutation = gql`
+  mutation createTipoProducto($input: TipoProductoInput!) {
+    createTipoProducto(input: $input) {
+      id
+    }
+  }
+`;
+type CreateTipoProductoResult = { createTipoProducto: { id: string } };
+type CreateTipoProductoVars = { input: TipoProductoInput };
+const { mutate } = useMutation<
+  CreateTipoProductoResult,
+  CreateTipoProductoVars
+>(CreateTipoProductoMutation);
 
 function resetForm() {
-  Object.assign(state, TipoProductoSchemaInitialState);
+  state.codigo = "";
+  state.nombre = "";
+  state.descripcion = undefined;
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(CreateTipoProducto);
-
-async function onSubmit(event: FormSubmitEvent<TipoProductoFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<TipoProductoInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Tipo de costo creado",
-      description: "El tipo de costo fue registrado correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Tipo producto creado", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
-  } catch (e: unknown) {
-    const message =
-      typeof e === "object" && e !== null && "message" in e
-        ? (e as { message: string }).message
-        : String(e);
-    error.value = message;
-    toast.add({
-      title: "Error",
-      description: message,
-      color: "error",
-    });
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de costo">
-    <template #description>
-      Completa el formulario para registrar un nuevo tipo de costo.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nuevo tipo de costo"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear tipo de producto">
+    <UButton label="Nuevo tipo producto" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="tipoCostoForm"
+        id="form-tipo-producto"
+        :schema="TipoProductoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput
-            v-model="state.codigo"
-            class="w-full"
-            placeholder="Código del tipo de costo"
-          />
+          <UInput v-model="state.codigo" />
         </UFormField>
-
         <UFormField label="Nombre" name="nombre">
-          <UInput
-            v-model="state.nombre"
-            class="w-full"
-            placeholder="Nombre del tipo de costo"
-          />
+          <UInput v-model="state.nombre" />
         </UFormField>
-
         <UFormField label="Descripción" name="descripcion">
-          <UInput
-            v-model="state.descripcion"
-            class="w-full"
-            placeholder="Descripción del tipo de costo"
-          />
+          <UInput v-model="state.descripcion" />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -118,11 +87,10 @@ async function onSubmit(event: FormSubmitEvent<TipoProductoFormState>) {
         "
       />
       <UButton
-        label="Crear tipo de costo"
+        label="Crear tipo producto"
         type="submit"
+        form="form-tipo-producto"
         color="neutral"
-        form="tipoCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

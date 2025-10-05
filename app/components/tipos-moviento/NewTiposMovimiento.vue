@@ -6,42 +6,46 @@ const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-const TipoBodegaSchema = z.object({
+const TipoMovimientoSchema = z.object({
   codigo: z.string().min(1),
   nombre: z.string().min(1),
   descripcion: z.string().optional(),
+  afecta_wip: z.boolean().optional(),
 });
-type TipoBodegaInput = z.infer<typeof TipoBodegaSchema>;
+type TipoMovimientoInput = z.infer<typeof TipoMovimientoSchema>;
 
-const state = reactive<TipoBodegaInput>({
+const state = reactive<TipoMovimientoInput>({
   codigo: "",
   nombre: "",
   descripcion: undefined,
+  afecta_wip: false,
 });
 
-const CreateTipoBodegaMutation = gql`
-  mutation createTipoBodega($input: TipoBodegaInput!) {
-    createTipoBodega(input: $input) {
+const CreateTipoMovimientoMutation = gql`
+  mutation createTipoMovimiento($input: TipoMovimientoInput!) {
+    createTipoMovimiento(input: $input) {
       id
     }
   }
 `;
-type CreateTipoBodegaResult = { createTipoBodega: { id: string } };
-type CreateTipoBodegaVars = { input: TipoBodegaInput };
-const { mutate } = useMutation<CreateTipoBodegaResult, CreateTipoBodegaVars>(
-  CreateTipoBodegaMutation,
-);
+type CreateTipoMovimientoResult = { createTipoMovimiento: { id: string } };
+type CreateTipoMovimientoVars = { input: TipoMovimientoInput };
+const { mutate } = useMutation<
+  CreateTipoMovimientoResult,
+  CreateTipoMovimientoVars
+>(CreateTipoMovimientoMutation);
 
 function resetForm() {
   state.codigo = "";
   state.nombre = "";
   state.descripcion = undefined;
+  state.afecta_wip = false;
 }
 
-async function onSubmit(event: FormSubmitEvent<TipoBodegaInput>) {
+async function onSubmit(event: FormSubmitEvent<TipoMovimientoInput>) {
   try {
     await mutate({ input: event.data });
-    toast.add({ title: "Tipo bodega creado", color: "success" });
+    toast.add({ title: "Tipo movimiento creado", color: "success" });
     emit("creado");
     resetForm();
     open.value = false;
@@ -52,12 +56,12 @@ async function onSubmit(event: FormSubmitEvent<TipoBodegaInput>) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear tipo de bodega">
-    <UButton label="Nuevo tipo bodega" color="neutral" variant="subtle" />
+  <UModal v-model:open="open" title="Crear tipo de movimiento">
+    <UButton label="Nuevo tipo movimiento" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="form-tipo-bodega"
-        :schema="TipoBodegaSchema"
+        id="form-tipo-movimiento"
+        :schema="TipoMovimientoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
@@ -70,6 +74,9 @@ async function onSubmit(event: FormSubmitEvent<TipoBodegaInput>) {
         </UFormField>
         <UFormField label="Descripción" name="descripcion">
           <UInput v-model="state.descripcion" />
+        </UFormField>
+        <UFormField label="Afecta WIP" name="afecta_wip">
+          <UCheckbox v-model="state.afecta_wip" />
         </UFormField>
       </UForm>
     </template>
@@ -86,9 +93,9 @@ async function onSubmit(event: FormSubmitEvent<TipoBodegaInput>) {
         "
       />
       <UButton
-        label="Crear tipo"
+        label="Crear tipo movimiento"
         type="submit"
-        form="form-tipo-bodega"
+        form="form-tipo-movimiento"
         color="neutral"
       />
     </template>

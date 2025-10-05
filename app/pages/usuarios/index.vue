@@ -58,7 +58,7 @@ const fetchUsers = async () => {
           Authorization: `Bearer ${auth.token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (fetchError.value) {
@@ -66,7 +66,7 @@ const fetchUsers = async () => {
     }
 
     users.value = data.value || [];
-    
+
     toast.add({
       title: "Datos cargados",
       description: `${users.value.length} usuarios encontrados`,
@@ -98,15 +98,17 @@ const desactivar = async (id: number) => {
       `http://localhost:8080/api/users/${id}/deactivate`,
       {
         method: "POST",
-        headers: { 
+        headers: {
           Authorization: `Bearer ${auth.token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (fetchError.value) {
-      throw new Error(fetchError.value.message || "Error al desactivar usuario");
+      throw new Error(
+        fetchError.value.message || "Error al desactivar usuario",
+      );
     }
 
     toast.add({
@@ -119,7 +121,8 @@ const desactivar = async (id: number) => {
     // Actualizar la lista
     await fetchUsers();
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+    const errorMessage =
+      err instanceof Error ? err.message : "Error desconocido";
     toast.add({
       title: "Error",
       description: errorMessage,
@@ -142,9 +145,13 @@ const columns: TableColumn<UserUI>[] = [
   {
     accessorKey: "codigoEmpleado",
     header: "Código",
-    cell: ({ row }: { row: Row<UserUI> }) => 
-      row.original.codigoEmpleado 
-        ? h("span", { class: "font-mono text-sm bg-gray-100 px-2 py-1 rounded" }, row.original.codigoEmpleado)
+    cell: ({ row }: { row: Row<UserUI> }) =>
+      row.original.codigoEmpleado
+        ? h(
+            "span",
+            { class: "font-mono text-sm bg-gray-100 px-2 py-1 rounded" },
+            row.original.codigoEmpleado,
+          )
         : h("span", { class: "text-gray-400 italic" }, "Sin código"),
     meta: {
       class: {
@@ -155,35 +162,39 @@ const columns: TableColumn<UserUI>[] = [
   {
     accessorKey: "username",
     header: "Usuario",
-    cell: ({ row }: { row: Row<UserUI> }) => 
+    cell: ({ row }: { row: Row<UserUI> }) =>
       h("span", { class: "font-medium" }, row.original.username),
   },
   {
     accessorKey: "nombreCompleto",
     header: "Nombre Completo",
-    cell: ({ row }: { row: Row<UserUI> }) => 
+    cell: ({ row }: { row: Row<UserUI> }) =>
       h("span", { class: "text-gray-700" }, getNombreCompleto(row.original)),
   },
   {
     accessorKey: "email",
     header: "Correo",
-    cell: ({ row }: { row: Row<UserUI> }) => 
+    cell: ({ row }: { row: Row<UserUI> }) =>
       h("span", { class: "text-gray-600" }, row.original.email),
   },
   {
     accessorKey: "telefono",
     header: "Teléfono",
-    cell: ({ row }: { row: Row<UserUI> }) => 
-      row.original.telefono 
+    cell: ({ row }: { row: Row<UserUI> }) =>
+      row.original.telefono
         ? h("span", { class: "text-gray-600" }, row.original.telefono)
         : h("span", { class: "text-gray-400 italic" }, "Sin teléfono"),
   },
   {
     accessorKey: "capacidadHorasDia",
     header: "Capacidad",
-    cell: ({ row }: { row: Row<UserUI> }) => 
-      row.original.capacidadHorasDia 
-        ? h("span", { class: "text-blue-600 font-medium" }, `${row.original.capacidadHorasDia} hrs/día`)
+    cell: ({ row }: { row: Row<UserUI> }) =>
+      row.original.capacidadHorasDia
+        ? h(
+            "span",
+            { class: "text-blue-600 font-medium" },
+            `${row.original.capacidadHorasDia} hrs/día`,
+          )
         : h("span", { class: "text-gray-400 italic" }, "No definida"),
     meta: {
       class: {
@@ -195,12 +206,16 @@ const columns: TableColumn<UserUI>[] = [
   {
     accessorKey: "activo",
     header: "Estado",
-    cell: ({ row }: { row: Row<UserUI> }) => 
-      h(UBadge, {
-        color: row.original.activo ? "emerald" : "red",
-        variant: "subtle",
-        class: "capitalize text-xs"
-      }, () => row.original.activo ? "Activo" : "Inactivo"),
+    cell: ({ row }: { row: Row<UserUI> }) =>
+      h(
+        UBadge,
+        {
+          color: row.original.activo ? "emerald" : "red",
+          variant: "subtle",
+          class: "capitalize text-xs",
+        },
+        () => (row.original.activo ? "Activo" : "Inactivo"),
+      ),
     meta: {
       class: {
         th: "w-20 text-center",
@@ -216,15 +231,21 @@ const columns: TableColumn<UserUI>[] = [
       if (!roles || roles.length === 0) {
         return h("span", { class: "text-gray-400 italic" }, "Sin roles");
       }
-      
-      return h("div", { class: "flex flex-wrap gap-1" }, 
-        roles.map(rol => 
-          h(UBadge, {
-            color: "blue",
-            variant: "outline",
-            class: "text-xs"
-          }, () => rol.nombre)
-        )
+
+      return h(
+        "div",
+        { class: "flex flex-wrap gap-1" },
+        roles.map((rol) =>
+          h(
+            UBadge,
+            {
+              color: "blue",
+              variant: "outline",
+              class: "text-xs",
+            },
+            () => rol.nombre,
+          ),
+        ),
       );
     },
   },
@@ -332,7 +353,9 @@ const currentPage = computed({
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200"
+      >
         <UInput
           v-model="globalFilter"
           class="max-w-sm"
@@ -366,11 +389,14 @@ const currentPage = computed({
       />
 
       <!-- Paginación -->
-      <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+      <div
+        class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50"
+      >
         <div class="text-sm text-gray-600">
-          Mostrando {{ Math.min(pagination.pageSize, users.length) }} de {{ users.length }} usuarios
+          Mostrando {{ Math.min(pagination.pageSize, users.length) }} de
+          {{ users.length }} usuarios
         </div>
-        
+
         <UPagination
           v-model="currentPage"
           :page-count="pagination.pageSize"
@@ -421,7 +447,5 @@ const currentPage = computed({
         Reintentar
       </UButton>
     </div>
-
-    
   </div>
 </template>

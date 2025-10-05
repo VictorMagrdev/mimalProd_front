@@ -19,23 +19,23 @@ type Schema = z.output<typeof schema>;
 
 const fields = [
   {
-    name: 'username',
-    type: 'text' as const,
-    label: 'Nombre de Usuario',
-    placeholder: 'Ingresa tu nombre de usuario',
+    name: "username",
+    type: "text" as const,
+    label: "Nombre de Usuario",
+    placeholder: "Ingresa tu nombre de usuario",
     required: true,
-    icon: 'i-lucide-user',
-    autocomplete: 'username'
+    icon: "i-lucide-user",
+    autocomplete: "username",
   },
   {
-    name: 'password',
-    type: 'password' as const,
-    label: 'Contraseña',
-    placeholder: 'Ingresa tu contraseña',
+    name: "password",
+    type: "password" as const,
+    label: "Contraseña",
+    placeholder: "Ingresa tu contraseña",
     required: true,
-    icon: 'i-lucide-lock',
-    autocomplete: 'current-password'
-  }
+    icon: "i-lucide-lock",
+    autocomplete: "current-password",
+  },
 ];
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -47,41 +47,44 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     if (result) {
       toast.add({
-        title: '¡Inicio de sesión exitoso!',
-        description: 'Bienvenido de vuelta al sistema',
-        color: 'success',
-        icon: 'i-lucide-check-circle',
-        duration:3000
+        title: "¡Inicio de sesión exitoso!",
+        description: "Bienvenido de vuelta al sistema",
+        color: "success",
+        icon: "i-lucide-check-circle",
+        duration: 3000,
       });
-      
+
       setTimeout(() => {
         router.push("/");
       }, 500);
     } else {
       toast.add({
-        title: 'Error de inicio de sesión',
-        description: 'Nombre de usuario o contraseña incorrectos',
-        color: 'error',
-        icon: 'i-lucide-alert-circle',
-        duration:500
+        title: "Error de inicio de sesión",
+        description: "Nombre de usuario o contraseña incorrectos",
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 500,
       });
     }
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : "Ocurrió un error inesperado";
-    
+    const errorMessage =
+      err instanceof Error ? err.message : "Ocurrió un error inesperado";
+
     toast.add({
-      title: 'Error de autenticación',
+      title: "Error de autenticación",
       description: errorMessage,
-      color: 'error',
-      icon: 'i-lucide-alert-triangle',
-      duration:500
+      color: "error",
+      icon: "i-lucide-alert-triangle",
+      duration: 500,
     });
   }
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
+  <div
+    class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100"
+  >
     <UPageCard class="w-full max-w-md shadow-xl">
       <UAuthForm
         :schema="schema"
@@ -94,7 +97,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           block: true,
           size: 'lg',
           color: 'primary',
-          loading: authStore.loading
+          loading: authStore.loading,
         }"
         :loading="authStore.loading"
         @submit="onSubmit"

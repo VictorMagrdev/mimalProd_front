@@ -1,183 +1,147 @@
 <script setup lang="ts">
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, ref } from "vue";
-import CreateInventarioLote from "~/graphql/inventario-lote/create-inventario-lote.graphql";
-import ProductosLotesBodegasUnidades from "~/graphql/inventario-lote/get-productos-lotes-bodegas-unidades .graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-interface InventarioLoteFormState {
-  productoId: string;
-  loteId?: string;
-  bodegaId: string;
-  cantidad: number;
-  unidadId: string;
-}
-
-const InventarioLoteSchemaInitialState: InventarioLoteFormState = {
-  productoId: "",
-  loteId: "",
-  bodegaId: "",
-  cantidad: 0,
-  unidadId: "",
-};
-
-const state = reactive({ ...InventarioLoteSchemaInitialState });
-const error = ref<string | null>(null);
-
-interface ProductosLotesBodegasUnidadesData {
-  productos: { id: string; nombre: string }[];
-  lotesProduccion: { id: string; numeroLote: string }[];
-  bodegas: { id: string; nombre: string }[];
-  unidadesMedida: { id: string; nombre: string }[];
-}
-
-const { result, refetch: refetchResult } =
-  useQuery<ProductosLotesBodegasUnidadesData>(ProductosLotesBodegasUnidades);
-
-const {
-  productos,
-  lotesProduccion: lotes,
-  bodegas,
-  unidadesMedida: unidades,
-} = result.value ?? {
-  productos: [],
-  lotesProduccion: [],
-  bodegas: [],
-  unidadesMedida: [],
-};
-
-const productosOptions = computed(() =>
-  productos.map((p) => ({ label: p.nombre, value: p.id })),
-);
-
-const lotesOptions = computed(() =>
-  lotes.map((l) => ({ label: l.numeroLote, value: l.id })),
-);
-
-const bodegasOptions = computed(() =>
-  bodegas.map((b) => ({ label: b.nombre, value: b.id })),
-);
-
-const unidadesOptions = computed(() =>
-  unidades.map((u) => ({ label: u.nombre, value: u.id })),
-);
-
-watch(open, (isOpen) => {
-  if (isOpen && unidadesOptions.value.length === 0) {
-    refetchResult();
+const InventarioOptions = gql`
+  query InventarioLoteOptions {
+    productos {
+      value: id
+      label: nombre
+    }
+    lotesProduccion {
+      value: id
+      label: numero_lote
+    }
+    bodegas {
+      value: id
+      label: nombre
+    }
+    unidadesMedida {
+      value: id
+      label: nombre
+    }
   }
+`;
+type InventarioOptionsResult = {
+  productos: { value: string; label: string }[];
+  lotesProduccion: { value: string; label: string }[];
+  bodegas: { value: string; label: string }[];
+  unidadesMedida: { value: string; label: string }[];
+};
+const { result } = useQuery<InventarioOptionsResult>(InventarioOptions);
+const productos = computed(() => result.value?.productos ?? []);
+const lotes = computed(() => result.value?.lotesProduccion ?? []);
+const bodegas = computed(() => result.value?.bodegas ?? []);
+const unidades = computed(() => result.value?.unidadesMedida ?? []);
+
+const InventarioSchema = z.object({
+  cantidad: z.number().min(0),
+  lote_id: z.string().min(1),
+  bodega_id: z.string().min(1),
+  producto_id: z.string().min(1),
+  unidad_id: z.string().min(1),
+  actualizado_en: z.string().optional(),
+});
+type InventarioInput = z.infer<typeof InventarioSchema>;
+
+const state = reactive<InventarioInput>({
+  cantidad: 0,
+  lote_id: "",
+  bodega_id: "",
+  producto_id: "",
+  unidad_id: "",
+  actualizado_en: undefined,
 });
 
+const CreateInventarioMutation = gql`
+  mutation createInventarioLote($input: InventarioLoteInput!) {
+    createInventarioLote(input: $input) {
+      id
+    }
+  }
+`;
+type CreateInventarioResult = { createInventarioLote: { id: string } };
+type CreateInventarioVars = { input: InventarioInput };
+const { mutate } = useMutation<CreateInventarioResult, CreateInventarioVars>(
+  CreateInventarioMutation,
+);
+
 function resetForm() {
-  Object.assign(state, InventarioLoteSchemaInitialState);
+  state.cantidad = 0;
+  state.lote_id = "";
+  state.bodega_id = "";
+  state.producto_id = "";
+  state.unidad_id = "";
+  state.actualizado_en = undefined;
 }
 
-const toast = useToast();
-const { mutate, loading } = useMutation(CreateInventarioLote);
-
-async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
-  error.value = null;
-
+async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Inventario lote creado",
-      description: "El Inventario lote fue registrado correctamente",
-      color: "success",
-    });
-
+    toast.add({ title: "Inventario creado", color: "success" });
+    emit("creado");
     resetForm();
     open.value = false;
   } catch (e) {
-    toast.add({
-      title: "Error",
-      description: String(e),
-      color: "error",
-    });
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear Inventario lote">
-    <template #description>
-      Completa el formulario para registrar un nuevo Inventario lote.
-    </template>
-
-    <UButton
-      class="right-0"
-      label="Nuevo Inventario lote"
-      color="neutral"
-      variant="subtle"
-    />
-
-    <p v-if="error" class="mt-2 text-red-500">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear inventario por lote">
+    <UButton label="Nuevo inventario" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="tipoCostoForm"
+        id="form-inventario"
+        :schema="InventarioSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Producto" name="productoId">
+        <UFormField label="Producto" name="producto_id">
           <UInputMenu
-            v-model="state.productoId"
-            :items="productosOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione una unidad"
-            searchable
+            v-model="state.producto_id"
+            :items="productos"
+            placeholder="Selecciona producto"
           />
         </UFormField>
-
-        <UFormField label="Lote" name="loteId">
+        <UFormField label="Lote" name="lote_id">
           <UInputMenu
-            v-model="state.loteId"
-            :items="lotesOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione una unidad"
-            searchable
+            v-model="state.lote_id"
+            :items="lotes"
+            placeholder="Selecciona lote"
           />
         </UFormField>
-
-        <UFormField label="Bodega" name="bodegaId">
+        <UFormField label="Bodega" name="bodega_id">
           <UInputMenu
-            v-model="state.bodegaId"
-            :items="bodegasOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione una unidad"
-            searchable
+            v-model="state.bodega_id"
+            :items="bodegas"
+            placeholder="Selecciona bodega"
           />
         </UFormField>
-
+        <UFormField label="Unidad" name="unidad_id">
+          <UInputMenu
+            v-model="state.unidad_id"
+            :items="unidades"
+            placeholder="Selecciona unidad"
+          />
+        </UFormField>
         <UFormField label="Cantidad" name="cantidad">
-          <UInput
-            v-model="state.cantidad"
-            type="number"
-            class="w-full"
-            placeholder="Cantidad en inventario"
-          />
+          <UInputNumber v-model="state.cantidad" />
         </UFormField>
-
-        <UFormField label="Unidad de Medida" name="unidadId">
-          <UInputMenu
-            v-model="state.unidadId"
-            :items="unidadesOptions"
-            value-key="value"
-            class="w-full"
-            placeholder="Seleccione una unidad"
-            searchable
+        <UFormField label="Actualizado en" name="actualizado_en">
+          <UInput
+            v-model="state.actualizado_en"
+            placeholder="YYYY-MM-DDTHH:mm:ss"
           />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -191,11 +155,10 @@ async function onSubmit(event: FormSubmitEvent<InventarioLoteFormState>) {
         "
       />
       <UButton
-        label="Crear Inventario lote"
+        label="Crear inventario"
         type="submit"
+        form="form-inventario"
         color="neutral"
-        form="tipoCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>

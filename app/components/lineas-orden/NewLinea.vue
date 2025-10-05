@@ -1,194 +1,134 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import CreateLineaOrden from "~/graphql/lineas-orden/create-linea-orden.graphql";
-import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
-import GetProductos from "~/graphql/productos/get-productos.graphql";
-import GetUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
-
-interface OrdenProduccion {
-  id: string;
-  numeroOrden: string;
-}
-interface Producto {
-  id: string;
-  nombre: string;
-}
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
-
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-const initialState = {
-  idOrden: "" as string | undefined,
-  numeroLinea: 1,
-  idProductoComponente: "" as string | undefined,
-  cantidadRequerida: 0,
-  idUnidadComponente: "" as string | undefined,
-  observaciones: "",
+const LineaOptions = gql`
+  query LineaOrdenOptions {
+    productos {
+      value: id
+      label: nombre
+    }
+    unidadesMedida {
+      value: id
+      label: nombre
+    }
+  }
+`;
+type LineaOptionsResult = {
+  productos: { value: string; label: string }[];
+  unidadesMedida: { value: string; label: string }[];
 };
-const state = reactive({ ...initialState });
+const { result } = useQuery<LineaOptionsResult>(LineaOptions);
+const productos = computed(() => result.value?.productos ?? []);
+const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
-// Interfaces de entidades
-interface OrdenProduccion {
-  id: string;
-  numeroOrden: string;
-}
-interface Producto {
-  id: string;
-  nombre: string;
-}
-interface UnidadMedida {
-  id: string;
-  nombre: string;
-}
+const LineaSchema = z.object({
+  numero_linea: z.number().optional(),
+  cantidad_requerida: z.number().min(0),
+  cantidad_usada: z.number().min(0).optional(),
+  costo_unitario: z.number().optional(),
+  costo_total: z.number().optional(),
+  observaciones: z.string().optional(),
+  orden_id: z.string().min(1).optional(),
+  producto_componente_id: z.string().min(1),
+  unidad_componente_id: z.string().min(1),
+});
+type LineaInput = z.infer<typeof LineaSchema>;
 
-interface OrdenesProduccionResult {
-  ordenesProduccion: OrdenProduccion[];
-}
-interface ProductosResult {
-  productos: Producto[];
-}
-interface UnidadesMedidaResult {
-  unidadesMedida: UnidadMedida[];
-}
+const state = reactive<LineaInput>({
+  numero_linea: undefined,
+  cantidad_requerida: 0,
+  cantidad_usada: undefined,
+  costo_unitario: undefined,
+  costo_total: undefined,
+  observaciones: undefined,
+  orden_id: undefined,
+  producto_componente_id: "",
+  unidad_componente_id: "",
+});
 
-const { data: ordenesResult, pending: ordenesLoading } =
-  await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
-
-const { data: productosResult, pending: productosLoading } =
-  await useAsyncQuery<ProductosResult>(GetProductos);
-
-const { data: unidadesResult, pending: unidadesLoading } =
-  await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
-
-const ordenesOptions = computed(
-  () =>
-    ordenesResult.value?.ordenesProduccion.map((o) => ({
-      id: o.id,
-      label: o.numeroOrden,
-    })) ?? [],
+const CreateLineaMutation = gql`
+  mutation createLineaOrden($input: LineaOrdenInput!) {
+    createLineaOrden(input: $input) {
+      id
+    }
+  }
+`;
+type CreateLineaResult = { createLineaOrden: { id: string } };
+type CreateLineaVars = { input: LineaInput };
+const { mutate } = useMutation<CreateLineaResult, CreateLineaVars>(
+  CreateLineaMutation,
 );
 
-const productosOptions = computed(
-  () =>
-    productosResult.value?.productos.map((p) => ({
-      id: p.id,
-      label: p.nombre,
-    })) ?? [],
-);
-
-const unidadesOptions = computed(
-  () =>
-    unidadesResult.value?.unidadesMedida.map((u) => ({
-      id: u.id,
-      label: u.nombre,
-    })) ?? [],
-);
-
-const { mutate, loading } = useMutation(CreateLineaOrden);
-
-const toast = useToast();
-const error = ref<string | null>(null);
-
-function closeModal() {
-  Object.assign(state, initialState);
+function resetForm() {
+  state.numero_linea = undefined;
+  state.cantidad_requerida = 0;
+  state.cantidad_usada = undefined;
+  state.costo_unitario = undefined;
+  state.costo_total = undefined;
+  state.observaciones = undefined;
+  state.orden_id = undefined;
+  state.producto_componente_id = "";
+  state.unidad_componente_id = "";
 }
 
-async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
+async function onSubmit(event: FormSubmitEvent<LineaInput>) {
   try {
-    error.value = null;
     await mutate({ input: event.data });
-    toast.add({ title: "Éxito", description: "Línea de orden creada." });
-    closeModal();
-  } catch (err) {
-    toast.add({
-      title: "Error",
-      description: String(err),
-      color: "error",
-    });
+    toast.add({ title: "Línea creada", color: "success" });
+    emit("creado");
+    resetForm();
+    open.value = false;
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal :model-value="open" @update:model-value="closeModal">
-    <template #header>
-      <h2>Crear Línea de Orden</h2>
-    </template>
-    <UButton
-      label="Nueva linea"
-      color="neutral"
-      variant="subtle"
-      @click="open = true"
-    />
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear línea de orden">
+    <UButton label="Nueva línea" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="create-linea-orden-form"
+        id="form-linea"
+        :schema="LineaSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden de Producción" name="idOrden">
+        <UFormField label="Producto componente" name="producto_componente_id">
           <UInputMenu
-            v-model="state.idOrden"
-            :items="ordenesOptions"
-            value-attribute="id"
-            option-attribute="label"
-            :loading="ordenesLoading"
-            class="w-full"
+            v-model="state.producto_componente_id"
+            :items="productos"
+            placeholder="Selecciona producto"
           />
         </UFormField>
-
-        <UFormField label="N° Línea" name="numeroLinea">
-          <UInput
-            v-model.number="state.numeroLinea"
-            type="number"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Producto Componente" name="idProductoComponente">
+        <UFormField label="Unidad componente" name="unidad_componente_id">
           <UInputMenu
-            v-model="state.idProductoComponente"
-            :items="productosOptions"
-            value-attribute="id"
-            option-attribute="label"
-            :loading="productosLoading"
-            class="w-full"
+            v-model="state.unidad_componente_id"
+            :items="unidades"
+            placeholder="Selecciona unidad"
           />
         </UFormField>
-
-        <UFormField label="Cantidad Requerida" name="cantidadRequerida">
-          <UInput
-            v-model.number="state.cantidadRequerida"
-            type="number"
-            class="w-full"
-          />
+        <UFormField label="Cantidad requerida" name="cantidad_requerida">
+          <UInputNumber v-model="state.cantidad_requerida" />
         </UFormField>
-
-        <UFormField label="Unidad Componente" name="idUnidadComponente">
-          <UInputMenu
-            v-model="state.idUnidadComponente"
-            :items="unidadesOptions"
-            value-attribute="id"
-            option-attribute="label"
-            :loading="unidadesLoading"
-            class="w-full"
-          />
+        <UFormField label="Cantidad usada" name="cantidad_usada">
+          <UInputNumber v-model="state.cantidad_usada" />
         </UFormField>
-
+        <UFormField label="Costo unitario" name="costo_unitario">
+          <UInputNumber v-model="state.costo_unitario" />
+        </UFormField>
+        <UFormField label="Costo total" name="costo_total">
+          <UInputNumber v-model="state.costo_total" />
+        </UFormField>
         <UFormField label="Observaciones" name="observaciones">
-          <UTextarea v-model="state.observaciones" class="w-full" />
+          <UInput v-model="state.observaciones" />
         </UFormField>
-
-        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
       </UForm>
     </template>
     <template #footer="{ close }">
@@ -199,16 +139,15 @@ async function onSubmit(event: FormSubmitEvent<typeof initialState>) {
         @click="
           () => {
             close();
-            closeModal();
+            resetForm();
           }
         "
       />
       <UButton
-        label="Crear"
+        label="Crear línea"
         type="submit"
+        form="form-linea"
         color="neutral"
-        form="create-linea-orden-form"
-        :loading="loading"
       />
     </template>
   </UModal>

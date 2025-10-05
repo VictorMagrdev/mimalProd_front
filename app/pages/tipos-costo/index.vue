@@ -24,7 +24,7 @@ interface TiposCostoResult {
 
 const { data, pending, error, refresh } = await useAsyncQuery<TiposCostoResult>(
   GetTiposCosto,
-  {}
+  {},
 );
 
 const tiposCosto = computed(() => data.value?.tiposCosto || []);
@@ -33,38 +33,46 @@ const columns: TableColumn<TipoCosto>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }: { row: Row<TipoCosto> }) => 
-      h("span", { class: "font-mono text-sm bg-gray-100 px-2 py-1 rounded" }, row.original.codigo),
+    cell: ({ row }: { row: Row<TipoCosto> }) =>
+      h(
+        "span",
+        { class: "font-mono text-sm bg-gray-100 px-2 py-1 rounded" },
+        row.original.codigo,
+      ),
     meta: {
       class: {
         th: "w-32",
-        td: "font-medium"
+        td: "font-medium",
       },
     },
   },
   {
     accessorKey: "nombre",
     header: "Nombre",
-    cell: ({ row }: { row: Row<TipoCosto> }) => 
+    cell: ({ row }: { row: Row<TipoCosto> }) =>
       h("span", { class: "font-semibold text-gray-900" }, row.original.nombre),
   },
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    cell: ({ row }: { row: Row<TipoCosto> }) => 
-      row.original.descripcion 
+    cell: ({ row }: { row: Row<TipoCosto> }) =>
+      row.original.descripcion
         ? h("span", { class: "text-gray-600" }, row.original.descripcion)
         : h("span", { class: "text-gray-400 italic" }, "Sin descripción"),
   },
   {
     accessorKey: "activo",
     header: "Estado",
-    cell: ({ row }: { row: Row<TipoCosto> }) => 
-      h(UBadge, {
-        color: row.original.activo ? "emerald" : "gray",
-        variant: "subtle",
-        class: "capitalize text-xs"
-      }, () => row.original.activo ? "Activo" : "Inactivo"),
+    cell: ({ row }: { row: Row<TipoCosto> }) =>
+      h(
+        UBadge,
+        {
+          color: row.original.activo ? "emerald" : "gray",
+          variant: "subtle",
+          class: "capitalize text-xs",
+        },
+        () => (row.original.activo ? "Activo" : "Inactivo"),
+      ),
     meta: {
       class: {
         th: "w-24 text-center",
@@ -86,17 +94,20 @@ const columns: TableColumn<TipoCosto>[] = [
       h(
         "div",
         { class: "flex justify-center" },
-        h(UDropdownMenu, { 
-          items: getRowItems(row.original),
-          content: { align: "end" }
-        }, () =>
-          h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-            size: "sm",
-            "aria-label": `Acciones para ${row.original.nombre}`,
-          }),
+        h(
+          UDropdownMenu,
+          {
+            items: getRowItems(row.original),
+            content: { align: "end" },
+          },
+          () =>
+            h(UButton, {
+              icon: "i-lucide-ellipsis-vertical",
+              color: "neutral",
+              variant: "ghost",
+              size: "sm",
+              "aria-label": `Acciones para ${row.original.nombre}`,
+            }),
         ),
       ),
   },
@@ -137,12 +148,13 @@ function toggleEstado(tipo: TipoCosto) {
 
 const filteredData = computed(() => {
   if (!globalFilter.value) return tiposCosto.value;
-  
+
   const filter = globalFilter.value.toLowerCase();
-  return tiposCosto.value.filter(tipo => 
-    tipo.codigo.toLowerCase().includes(filter) ||
-    tipo.nombre.toLowerCase().includes(filter) ||
-    (tipo.descripcion && tipo.descripcion.toLowerCase().includes(filter))
+  return tiposCosto.value.filter(
+    (tipo) =>
+      tipo.codigo.toLowerCase().includes(filter) ||
+      tipo.nombre.toLowerCase().includes(filter) ||
+      (tipo.descripcion && tipo.descripcion.toLowerCase().includes(filter)),
   );
 });
 </script>
@@ -159,7 +171,9 @@ const filteredData = computed(() => {
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200"
+      >
         <UInput
           v-model="globalFilter"
           class="max-w-sm"
@@ -177,10 +191,16 @@ const filteredData = computed(() => {
                 .getAllColumns()
                 .filter((column: Column<TipoCosto>) => column.getCanHide())
                 .map((column: Column<TipoCosto>) => ({
-                  label: column.id === 'codigo' ? 'Código' : 
-                         column.id === 'nombre' ? 'Nombre' :
-                         column.id === 'descripcion' ? 'Descripción' :
-                         column.id === 'activo' ? 'Estado' : column.id,
+                  label:
+                    column.id === 'codigo'
+                      ? 'Código'
+                      : column.id === 'nombre'
+                        ? 'Nombre'
+                        : column.id === 'descripcion'
+                          ? 'Descripción'
+                          : column.id === 'activo'
+                            ? 'Estado'
+                            : column.id,
                   type: 'checkbox' as const,
                   checked: column.getIsVisible(),
                   onUpdateChecked: (checked: boolean) => {
@@ -225,20 +245,24 @@ const filteredData = computed(() => {
         :ui="{
           tbody: 'divide-y divide-gray-200',
           td: 'px-4 py-3 text-sm',
-          th: 'px-4 py-3 text-sm font-semibold text-gray-900 bg-gray-50'
+          th: 'px-4 py-3 text-sm font-semibold text-gray-900 bg-gray-50',
         }"
       />
 
       <!-- Pie de tabla con paginación -->
-      <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+      <div
+        class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50"
+      >
         <div class="text-sm text-gray-600">
-          Mostrando 
-          <span class="font-medium">{{ Math.min(pagination.pageSize, filteredData.length) }}</span> 
-          de 
-          <span class="font-medium">{{ filteredData.length }}</span> 
+          Mostrando
+          <span class="font-medium">{{
+            Math.min(pagination.pageSize, filteredData.length)
+          }}</span>
+          de
+          <span class="font-medium">{{ filteredData.length }}</span>
           tipos de costo
         </div>
-        
+
         <UPagination
           :page-count="pagination.pageSize"
           :total="filteredData.length"

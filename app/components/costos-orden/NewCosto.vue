@@ -1,152 +1,126 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from "vue";
+import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { useToast } from "#imports";
-
-import CreateCostoOrden from "~/graphql/costos-orden/create-costo-orden.graphql";
-import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";
-import GetTiposCosto from "~/graphql/tipos-costo/get-tipos-costo.graphql";
-
-const emit = defineEmits<{ (e: "create"): void }>();
-
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
 const open = ref(false);
 
-type ID = string;
+const CostoOptions = gql`
+  query CostoOrdenOptions {
+    tiposCosto {
+      value: id
+      label: nombre
+    }
+    ordenesProduccion {
+      value: id
+      label: numero_orden
+    }
+  }
+`;
 
-interface SelectItem {
-  id: ID;
-  label: string;
-}
+type CostoOptionsResult = {
+  tiposCosto: { value: string; label: string }[];
+  ordenesProduccion: { value: string; label: string }[];
+};
+const { result } = useQuery<CostoOptionsResult>(CostoOptions);
+const tipos = computed(() => result.value?.tiposCosto ?? []);
+const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
 
-interface CostoOrdenForm {
-  idOrden?: ID;
-  idTipoCosto?: ID;
-  descripcion: string;
-  monto: number;
-  moneda: string;
-}
+const CostoSchema = z.object({
+  descripcion: z.string().min(1),
+  monto: z.number(),
+  moneda: z.string().min(1),
+  registrado_en: z.string().min(1),
+  orden_id: z.string().optional(),
+  tipo_costo_id: z.string().min(1),
+});
+type CostoInput = z.infer<typeof CostoSchema>;
 
-const initialState: CostoOrdenForm = {
-  idOrden: undefined,
-  idTipoCosto: undefined,
+const state = reactive<CostoInput>({
   descripcion: "",
   monto: 0,
-  moneda: "COP",
-};
+  moneda: "",
+  registrado_en: "",
+  orden_id: undefined,
+  tipo_costo_id: "",
+});
 
-const state = reactive({ ...initialState });
-const error = ref<string | null>(null);
+const CreateCostoMutation = gql`
+  mutation createCostoOrden($input: CostoOrdenInput!) {
+    createCostoOrden(input: $input) {
+      id
+    }
+  }
+`;
+
+type CreateCostoResult = { createCostoOrden: { id: string } };
+type CreateCostoVars = { input: CostoInput };
+const { mutate } = useMutation<CreateCostoResult, CreateCostoVars>(
+  CreateCostoMutation,
+);
 
 function resetForm() {
-  Object.assign(state, initialState);
-  error.value = null;
+  state.descripcion = "";
+  state.monto = 0;
+  state.moneda = "";
+  state.registrado_en = "";
+  state.orden_id = undefined;
+  state.tipo_costo_id = "";
 }
 
-const { data: ordenesResult } = useAsyncQuery<{
-  ordenesProduccion: { id: ID; numeroOrden: string }[];
-}>(GetOrdenesProduccion);
-
-const { data: tiposResult } = useAsyncQuery<{
-  tiposCosto: { id: ID; nombre: string }[];
-}>(GetTiposCosto);
-
-const ordenesOptions = computed<SelectItem[]>(() =>
-  (ordenesResult.value?.ordenesProduccion ?? []).map((o) => ({
-    id: o.id,
-    label: o.numeroOrden,
-  })),
-);
-
-const tiposOptions = computed<SelectItem[]>(() =>
-  (tiposResult.value?.tiposCosto ?? []).map((t) => ({
-    id: t.id,
-    label: t.nombre,
-  })),
-);
-
-const { mutate, loading } = useMutation(CreateCostoOrden);
-const toast = useToast();
-
-async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
-  error.value = null;
-
-  if (!state.idOrden || !state.idTipoCosto) {
-    error.value = "Selecciona una orden y un tipo de costo.";
-    return;
-  }
-
+async function onSubmit(event: FormSubmitEvent<CostoInput>) {
   try {
     await mutate({ input: event.data });
-
-    toast.add({
-      title: "Éxito",
-      description: "El costo de orden fue creado correctamente.",
-      color: "success",
-    });
-
+    toast.add({ title: "Costo creado", color: "success" });
+    emit("creado");
     resetForm();
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    error.value = message;
-    toast.add({ title: "Error", description: message, color: "error" });
+    open.value = false;
+  } catch (e) {
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Crear Costo de Orden">
-    <template #description>
-      Completa la información para registrar un costo en la orden de producción.
-    </template>
-    <UButton
-      label="Nuevo costo"
-      color="neutral"
-      variant="subtle"
-      @click="open = true"
-    />
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
-
+  <UModal v-model:open="open" title="Crear costo orden">
+    <UButton label="Nuevo costo" color="neutral" variant="subtle" />
     <template #body>
       <UForm
-        id="createCostoForm"
+        id="form-costo"
+        :schema="CostoSchema"
         :state="state"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden de Producción" name="idOrden">
-          <UInputMenu
-            v-model="state.idOrden"
-            :items="ordenesOptions"
-            value-key="id"
-            placeholder="Selecciona una orden"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField label="Tipo de Costo" name="idTipoCosto">
-          <UInputMenu
-            v-model="state.idTipoCosto"
-            :items="tiposOptions"
-            value-key="label"
-            placeholder="Selecciona un tipo de costo"
-            class="w-full"
-          />
-        </UFormField>
-
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" class="w-full" />
+          <UInput v-model="state.descripcion" />
         </UFormField>
-
         <UFormField label="Monto" name="monto">
-          <UInput v-model.number="state.monto" type="number" class="w-full" />
+          <UInputNumber v-model="state.monto" />
         </UFormField>
-
         <UFormField label="Moneda" name="moneda">
-          <UInput v-model="state.moneda" class="w-full" />
+          <UInput v-model="state.moneda" />
+        </UFormField>
+        <UFormField label="Registrado en" name="registrado_en">
+          <UInput v-model="state.registrado_en" />
+        </UFormField>
+        <UFormField label="Orden" name="orden_id">
+          <UInputMenu
+            v-model="state.orden_id"
+            :items="ordenes"
+            placeholder="Selecciona orden"
+          />
+        </UFormField>
+        <UFormField label="Tipo costo" name="tipo_costo_id">
+          <UInputMenu
+            v-model="state.tipo_costo_id"
+            :items="tipos"
+            placeholder="Selecciona tipo"
+          />
         </UFormField>
       </UForm>
     </template>
-
     <template #footer="{ close }">
       <UButton
         label="Cancelar"
@@ -160,11 +134,10 @@ async function onSubmit(event: FormSubmitEvent<CostoOrdenForm>) {
         "
       />
       <UButton
-        label="Crear"
+        label="Crear costo"
         type="submit"
+        form="form-costo"
         color="neutral"
-        form="createCostoForm"
-        :loading="loading"
       />
     </template>
   </UModal>
