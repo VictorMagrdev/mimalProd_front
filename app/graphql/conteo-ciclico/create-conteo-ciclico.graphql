@@ -1,5 +1,0 @@
-mutation CreateConteoCiclico($input: ConteoCiclicoInput!) {
-  createConteoCiclico(input: $input) {
-    id
-  }
-}

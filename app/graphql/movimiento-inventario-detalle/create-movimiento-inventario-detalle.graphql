@@ -1,7 +1,0 @@
-mutation CreateMovimientoInventarioDetalle(
-  $input: MovimientoInventarioDetalleInput!
-) {
-  createMovimientoInventarioDetalle(input: $input) {
-    id
-  }
-}

@@ -1,5 +1,0 @@
-mutation CreateUnidadConversion($input: UnidadConversionInput!) {
-  createUnidadConversion(input: $input) {
-    id
-  }
-}

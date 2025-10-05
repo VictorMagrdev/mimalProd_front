@@ -1,0 +1,650 @@
+query GetBodegas {
+  bodegas {
+    id
+    codigo
+    nombre
+    descripcion
+    tipo {
+      id
+      nombre
+    }
+  }
+}
+
+query GetConteosCiclicos {
+  conteosCiclico {
+    id
+    fecha
+    cantidad_contada
+    producto {
+      nombre
+    }
+    bodega {
+      nombre
+    }
+    lote {
+      numero_lote
+    }
+    unidad {
+      nombre
+    }
+  }
+}
+
+query GetCostosOrden {
+  costosOrden {
+    id
+    descripcion
+    monto
+    moneda
+    registrado_en
+    orden {
+      numero_orden
+    }
+    tipo_costo {
+      nombre
+    }
+  }
+}
+
+query GetDiscrepanciasInventario {
+  discrepanciasInventario {
+    id
+    cantidad_sistema
+    resuelto
+    conteo {
+      fecha
+      cantidad_contada
+      producto {
+        nombre
+      }
+      bodega {
+        nombre
+      }
+    }
+  }
+}
+
+query GetEstacionesProduccion {
+  estacionesProduccion {
+    id
+    codigo
+    nombre
+    descripcion
+    orden
+  }
+}
+
+query GetEstadosOrden {
+  estadosOrden {
+    id
+    codigo
+    nombre
+    descripcion
+    activo
+  }
+}
+
+query GetInventariosLote {
+  inventariosLote {
+    id
+    cantidad
+    lote {
+      numero_lote
+    }
+    bodega {
+      nombre
+    }
+    producto {
+      nombre
+    }
+    unidad {
+      nombre
+    }
+    actualizado_en
+  }
+}
+
+query GetLineasOrden {
+  lineasOrden {
+    id
+    numero_linea
+    cantidad_requerida
+    cantidad_usada
+    costo_unitario
+    costo_total
+    observaciones
+    orden {
+      numero_orden
+    }
+    producto_componente {
+      nombre
+    }
+    unidad_componente {
+      nombre
+      abreviatura
+    }
+  }
+}
+
+query GetLotesProduccion {
+  lotesProduccion {
+    id
+    numero_lote
+    fabricado_en
+    vence_en
+    producto {
+      nombre
+    }
+  }
+}
+
+query GetMetodosValoracion {
+  metodosValoracion {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}
+
+query GetMovimientosInventario {
+  movimientosInventario {
+    id
+    fecha
+    referencia
+    observaciones
+    creado_por
+    creado_en
+    bodega_origen {
+      nombre
+    }
+    bodega_destino {
+      nombre
+    }
+    tipo_movimiento {
+      nombre
+    }
+    detalles {
+      cantidad
+      producto {
+        nombre
+      }
+    }
+  }
+}
+
+query GetOrdenesEstacion {
+  ordenesEstacion {
+    id
+    inicio_planificado
+    fin_planificado
+    inicio_real
+    fin_real
+    observaciones
+    orden {
+      numero_orden
+    }
+    estacion {
+      nombre
+    }
+    estado {
+      nombre
+    }
+  }
+}
+
+query GetOrdenesEvento {
+  ordenesEvento {
+    id
+    evento
+    descripcion
+    fecha
+    orden {
+      numero_orden
+    }
+  }
+}
+
+query GetOrdenesProduccion {
+  ordenesProduccion {
+    id
+    numero_orden
+    cantidad
+    cantidad_producida
+    cantidad_desperdicio
+    inicio_planificado
+    fin_planificado
+    inicio_real
+    fin_real
+    observaciones
+    producto {
+      nombre
+    }
+    unidad {
+      nombre
+      abreviatura
+    }
+    estado {
+      nombre
+    }
+    lineas {
+      producto_componente {
+        nombre
+      }
+    }
+  }
+}
+
+query GetProductos {
+  productos {
+    id
+    codigo
+    nombre
+    costo_base
+    tipo {
+      nombre
+    }
+    metodo_valoracion {
+      nombre
+    }
+    unidad_base {
+      nombre
+      abreviatura
+    }
+  }
+}
+
+query GetPuntosReorden {
+  puntosReorden {
+    id
+    stock_minimo
+    stock_seguridad
+    producto {
+      nombre
+    }
+    unidad {
+      nombre
+    }
+  }
+}
+
+query GetReservasMaterialOrden {
+  reservasMaterialOrden {
+    id
+    cantidad_reservada
+    fecha_reserva
+    orden {
+      numero_orden
+    }
+    producto {
+      nombre
+    }
+    lote {
+      numero_lote
+    }
+    unidad {
+      nombre
+    }
+  }
+}
+
+query GetTiposBodega {
+  tiposBodega {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}
+
+query GetTiposCosto {
+  tiposCosto {
+    id
+    codigo
+    nombre
+    descripcion
+    activo
+  }
+}
+
+query GetTiposMovimiento {
+  tiposMovimiento {
+    id
+    codigo
+    nombre
+    descripcion
+    afecta_wip
+    creado_en
+  }
+}
+
+query GetTiposProducto {
+  tiposProducto {
+    id
+    codigo
+    nombre
+    descripcion
+  }
+}
+
+query GetUnidadesConversion {
+  unidadesConversion {
+    id
+    factor
+    origen {
+      nombre
+      abreviatura
+    }
+    destino {
+      nombre
+      abreviatura
+    }
+  }
+}
+
+query GetUnidadesMedida {
+  unidadesMedida {
+    id
+    codigo
+    nombre
+    abreviatura
+    activa
+    base
+    tipo {
+      nombre
+    }
+  }
+}
+
+query GetUnidadesMedidaTipo {
+  unidadesMedidaTipo {
+    id
+    codigo
+    nombre
+    descripcion
+    unidades {
+      nombre
+    }
+  }
+}
+
+# ==================== OPTION QUERIES ====================
+query GetDetallesMovimiento($movimientoId: ID!) {
+  movimientoInventarioDetalles(movimientoId: $movimientoId) {
+    id
+    cantidad
+    costo_unitario
+    costo_total
+    producto {
+      id
+      codigo
+      nombre
+    }
+    lote {
+      id
+      numero_lote
+    }
+    unidad {
+      id
+      nombre
+      abreviatura
+    }
+    movimiento {
+      id
+      referencia
+      fecha
+    }
+  }
+}
+
+query ProductoOptions {
+  tiposProducto {
+    value: id
+    label: nombre
+  }
+  metodosValoracion {
+    value: id
+    label: nombre
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query LoteProduccionOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+}
+
+query OrdenProduccionOptions {
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+  estadosOrden {
+    value: id
+    label: nombre
+  }
+  productos {
+    value: id
+    label: nombre
+  }
+}
+
+query LineaOrdenOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query CostoOrdenOptions {
+  tiposCosto {
+    value: id
+    label: nombre
+  }
+  ordenesProduccion {
+    value: id
+    label: numero_orden
+  }
+}
+
+query BodegaOptions {
+  tiposBodega {
+    value: id
+    label: nombre
+  }
+}
+
+query MovimientoInventarioOptions {
+  bodegas {
+    value: id
+    label: nombre
+  }
+  tiposMovimiento {
+    value: id
+    label: nombre
+  }
+}
+
+query MovimientoInventarioDetalleOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+  lotesProduccion {
+    value: id
+    label: numero_lote
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query InventarioLoteOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+  lotesProduccion {
+    value: id
+    label: numero_lote
+  }
+  bodegas {
+    value: id
+    label: nombre
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query ReservaMaterialOrdenOptions {
+  ordenesProduccion {
+    value: id
+    label: numero_orden
+  }
+  productos {
+    value: id
+    label: nombre
+  }
+  lotesProduccion {
+    value: id
+    label: numero_lote
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query OrdenEstacionOptions {
+  ordenesProduccion {
+    value: id
+    label: numero_orden
+  }
+  estacionesProduccion {
+    value: id
+    label: nombre
+  }
+  estadosOrdenEstacion {
+    value: id
+    label: nombre
+  }
+}
+
+query OrdenEventoOptions {
+  ordenesProduccion {
+    value: id
+    label: numero_orden
+  }
+}
+
+query ConteoCiclicoOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+  bodegas {
+    value: id
+    label: nombre
+  }
+  lotesProduccion {
+    value: id
+    label: numero_lote
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query DiscrepanciaInventarioOptions {
+  conteosCiclico {
+    value: id
+    label: fecha
+  }
+}
+
+query PuntoReordenOptions {
+  productos {
+    value: id
+    label: nombre
+  }
+  unidadesMedida {
+    value: id
+    label: nombre
+  }
+}
+
+query OrdenTrabajoOptions {
+  tiposOrdenTrabajo {
+    value: id
+    label: nombre
+  }
+  estadosAprobacion {
+    value: id
+    label: nombre
+  }
+}
+
+query AsignacionOptions {
+  ordenesTrabajo {
+    value: id
+    label: referencia
+  }
+  estadosAsignacion {
+    value: id
+    label: nombre
+  }
+  funcionesTarea {
+    value: id
+    label: nombre
+  }
+  usuarios: users {
+    value: id
+    label: nombre
+  }
+}
+
+query HojaTimesheetOptions {
+  estadosAprobacion {
+    value: id
+    label: nombre
+  }
+  usuarios: users {
+    value: id
+    label: nombre
+  }
+}
+
+query RegistroTiempoOptions {
+  asignaciones {
+    value: id
+  }
+  tiposActividad {
+    value: id
+    label: nombre
+  }
+  tiposCosto {
+    value: id
+    label: nombre
+  }
+  estadosAprobacion {
+    value: id
+    label: nombre
+  }
+  hojasTimesheet {
+    value: id
+  }
+}

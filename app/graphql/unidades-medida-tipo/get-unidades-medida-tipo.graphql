@@ -1,8 +1,0 @@
-query GetUnidadesMedidaTipo {
-  unidadesMedidaTipo {
-    id
-    codigo
-    nombre
-    descripcion
-  }
-}

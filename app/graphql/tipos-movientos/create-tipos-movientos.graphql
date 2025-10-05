@@ -1,5 +1,0 @@
-mutation CreateTipoCosto($input: TipoCostoInput!) {
-  createTipoCosto(input: $input) {
-    id
-  }
-}

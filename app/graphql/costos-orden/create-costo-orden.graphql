@@ -1,5 +1,0 @@
-mutation CreateCostoOrden($input: CostoOrdenInput!) {
-  createCostoOrden(input: $input) {
-    id
-  }
-}

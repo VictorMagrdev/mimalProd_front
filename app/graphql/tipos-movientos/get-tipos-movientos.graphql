@@ -1,9 +1,0 @@
-query GetTiposMovimiento {
-  tiposMovimiento {
-    id
-    codigo
-    nombre
-    afectaWip
-    creadoEn
-  }
-}

@@ -1,5 +1,0 @@
-mutation CreateReservaMaterialOrden($input: ReservaMaterialOrdenInput!) {
-  createReservaMaterialOrden(input: $input) {
-    id
-  }
-}

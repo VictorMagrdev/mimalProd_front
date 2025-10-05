@@ -1,5 +1,0 @@
-mutation CreateOrdenProduccion($input: OrdenProduccionInput!) {
-  createOrdenProduccion(input: $input) {
-    id
-  }
-}

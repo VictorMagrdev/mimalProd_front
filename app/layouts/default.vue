@@ -1,290 +1,289 @@
 <template>
-  <div>
-    <aside
-      class="w-64 h-screen bg-muted border-r border-muted p-4 fixed overflow-y-auto flex flex-col"
+  <UDashboardGroup>
+    <UDashboardSidebar
+      resizable
+      collapsible
+      :min-size="15"
+      :default-size="18"
+      :max-size="25"
+      :collapsed-size="4"
+      :ui="{
+        root: 'bg-muted border-r border-muted',
+        body: 'space-y-4'
+      }"
     >
-      <!-- Avatar dropdown -->
-      <div class="flex flex-col items-center mb-6">
-        <UDropdownMenu :items="dropdownItems">
-          <UButton circle>
-            <UAvatar :src="avatarUrl" />
-          </UButton>
-        </UDropdownMenu>
-      </div>
+      <template #header="{ collapsed }">
+        <div class="flex items-center gap-3 w-full">
+          <UDropdownMenu :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
+            <UButton 
+              color="neutral" 
+              variant="ghost" 
+              :square="collapsed"
+              :ui="{ rounded: 'rounded-full' }"
+            >
+              <UUser
+                name="Usuario Sistema"
+                description="Administrador"
+                :avatar="{
+                  src: 'https://i.pravatar.cc/150?u=john-doe',
+                  alt: 'Usuario'
+                }"
+                size="sm"
+                :orientation="collapsed ? 'vertical' : 'horizontal'"
+              />
+            </UButton>
+          </UDropdownMenu>
+        </div>
+      </template>
 
-      <nav class="space-y-4 flex-1">
-        <ULink
-          v-for="link in mainLinks"
-          :key="link.to"
-          :to="link.to"
-          class="flex items-center gap-2 px-3 py-2 rounded text-default hover:bg-accented transition"
-          active-class="bg-accented font-semibold"
-        >
-          <UIcon :name="link.icon" class="w-5 h-5" />
-          <span>{{ link.label }}</span>
-        </ULink>
-
-        <!-- Tree -->
-        <UTree
-          v-model:expanded="expandedKeys"
-          :items="treeItems"
-          :get-key="(i:any) => i.value"
+      <template #default="{ collapsed }">
+        <UNavigationMenu
+          :collapsed="collapsed"
+          :items="navigationItems"
+          orientation="vertical"
+          :ui="{
+            base: 'space-y-1',
+            item: {
+              base: 'group relative flex items-center gap-2 w-full',
+              active: 'text-primary font-semibold bg-accented',
+              inactive: 'text-default hover:bg-accented hover:text-highlighted'
+            }
+          }"
         />
-      </nav>
-    </aside>
+      </template>
+    </UDashboardSidebar>
 
-    <main class="ml-64 p-4">
+    <UDashboardPanel>
+      <template #header>
+        <UDashboardNavbar :title="currentPageTitle" />
+      </template>
+
       <slot />
-    </main>
-  </div>
+    </UDashboardPanel>
+  </UDashboardGroup>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import avatarUrl from "@/assets/user_527489.png";
+import type { NavigationMenuItem } from "@nuxt/ui";
 
 const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 
-const navigate = (path: string) => router.push(path);
-
-const mainLinks = [{ label: "Inicio", to: "/", icon: "i-heroicons-home" }];
-
-const expandedKeys = ref<string[]>([]);
-
-watchEffect(() => {
-  const keysToExpand: string[] = [];
-
-  if (route.path.startsWith("/usuarios")) keysToExpand.push("usuarios");
-  if (
-    route.path.startsWith("/ordenes-produccion") ||
-    route.path.startsWith("/lineas-orden") ||
-    route.path.startsWith("/lotes-produccion") ||
-    route.path.startsWith("/costos-orden")
-  )
-    keysToExpand.push("produccion");
-  if (
-    route.path.startsWith("/productos") ||
-    route.path.startsWith("/estados-orden") ||
-    route.path.startsWith("/tipos-costo")
-  )
-    keysToExpand.push("catalogos");
-  if (
-    route.path.startsWith("/unidades-medida") ||
-    route.path.startsWith("/unidades-medida-tipo") ||
-    route.path.startsWith("/unidades-conversion")
-  )
-    keysToExpand.push("configuracion");
-
-  // Combina con los previamente expandidos sin duplicados
-  expandedKeys.value = Array.from(
-    new Set([...expandedKeys.value, ...keysToExpand]),
-  );
+const currentPageTitle = computed(() => {
+  const routeName = route.name?.toString() || '';
+  const titleMap: Record<string, string> = {
+    'index': 'Inicio',
+    'usuarios': 'Usuarios',
+    'ordenes-produccion': 'Órdenes de Producción',
+    'productos': 'Productos',
+  };
+  return titleMap[routeName] || 'Sistema de Producción';
 });
 
-// Dropdown
-const dropdownItems = ref([
+const dropdownItems = [
   [
     {
-      label: "Cerrar sesión",
-      icon: "i-heroicons-logout",
+      label: 'Cerrar sesión',
+      icon: 'i-heroicons-arrow-left-on-rectangle',
       onSelect: () => {
         auth.logout();
-        router.push("/");
-      },
-    },
-  ],
-]);
+        router.push('/');
+      }
+    }
+  ]
+];
 
-const treeItems = ref([
-  {
-    label: "Usuarios",
-    value: "usuarios",
-    children: [
-      {
-        label: "Listado",
-        value: "/usuarios",
-        onSelect: () => navigate("/usuarios"),
-        icon: "i-heroicons-list-bullet",
-      },
-      {
-        label: "Roles",
-        value: "/usuarios/roles",
-        onSelect: () => navigate("/usuarios/roles"),
-        icon: "i-heroicons-user-group",
-      },
-      {
-        label: "Políticas",
-        value: "/usuarios/politicas",
-        onSelect: () => navigate("/usuarios/politicas"),
-        icon: "i-heroicons-shield-check",
-      },
-    ],
-  },
-  {
-    label: "Producción",
-    value: "produccion",
-    children: [
-      {
-        label: "Órdenes",
-        value: "/ordenes-produccion",
-        onSelect: () => navigate("/ordenes-produccion"),
-        icon: "i-heroicons-clipboard-document-list",
-      },
-      {
-        label: "Líneas de Orden",
-        value: "/lineas-orden",
-        onSelect: () => navigate("/lineas-orden"),
-        icon: "i-heroicons-bars-3",
-      },
-      {
-        label: "Lotes",
-        value: "/lotes-produccion",
-        onSelect: () => navigate("/lotes-produccion"),
-        icon: "i-heroicons-archive-box",
-      },
-      {
-        label: "Costos",
-        value: "/costos-orden",
-        onSelect: () => navigate("/costos-orden"),
-        icon: "i-heroicons-currency-dollar",
-      },
-      {
-        label: "Bodegas",
-        value: "/bodegas",
-        onSelect: () => navigate("/bodegas"),
-        icon: "i-heroicons-building-storefront",
-      },
-      {
-        label: "Conteo Cíclico",
-        value: "/conteo-ciclico",
-        onSelect: () => navigate("/conteo-ciclico"),
-        icon: "i-heroicons-check-circle",
-      },
-      {
-        label: "Discrepancia Inventario",
-        value: "/discrepancia-inventario",
-        onSelect: () => navigate("/discrepancia-inventario"),
-        icon: "i-heroicons-exclamation-triangle",
-      },
-      {
-        label: "Inventario Lote",
-        value: "/inventario-lote",
-        onSelect: () => navigate("/inventario-lote"),
-        icon: "i-heroicons-archive-box",
-      },
-      {
-        label: "Movimientos Inventario",
-        value: "/movimientos-inventario",
-        onSelect: () => navigate("/movimientos-inventario"),
-        icon: "i-heroicons-arrow-path",
-      },
-      {
-        label: "Orden Estación",
-        value: "/orden-estacion",
-        onSelect: () => navigate("/orden-estacion"),
-        icon: "i-heroicons-rectangle-stack",
-      },
-      {
-        label: "Orden Evento",
-        value: "/orden-evento",
-        onSelect: () => navigate("/orden-evento"),
-        icon: "i-heroicons-calendar",
-      },
-      {
-        label: "Método de Valoración",
-        value: "/metodo-valoracion",
-        onSelect: () => navigate("/metodo-valoracion"),
-        icon: "i-heroicons-scale",
-      },
-      {
-        label: "Reserva Material Orden",
-        value: "/reserva-material-orden",
-        onSelect: () => navigate("/reserva-material-orden"),
-        icon: "i-heroicons-inbox",
-      },
-      {
-        label: "Punto Reorden",
-        value: "/punto-reorden",
-        onSelect: () => navigate("/punto-reorden"),
-        icon: "i-heroicons-flag",
-      },
-      {
-        label: "Estación Producción",
-        value: "/estacion-produccion",
-        onSelect: () => navigate("/estacion-produccion"),
-        icon: "i-heroicons-cog-6-tooth",
-      },
-    ],
-  },
-  {
-    label: "Catálogos",
-    value: "catalogos",
-    children: [
-      {
-        label: "Productos",
-        value: "/productos",
-        onSelect: () => navigate("/productos"),
-        icon: "i-heroicons-cube",
-      },
-      {
-        label: "Estados de Orden",
-        value: "/estados-orden",
-        onSelect: () => navigate("/estados-orden"),
-        icon: "i-heroicons-tag",
-      },
-      {
-        label: "Tipos de Costo",
-        value: "/tipos-costo",
-        onSelect: () => navigate("/tipos-costo"),
-        icon: "i-heroicons-tag",
-      },
-      {
-        label: "Tipos de Bodega",
-        value: "/tipos-bodega",
-        onSelect: () => navigate("/tipos-bodega"),
-        icon: "i-heroicons-building-library",
-      },
-      {
-        label: "Tipos de Movimientos",
-        value: "/tipos-movimientos",
-        onSelect: () => navigate("/tipos-movimientos"),
-        icon: "i-heroicons-arrows-right-left",
-      },
-      {
-        label: "Tipos de Producto",
-        value: "/tipos-producto",
-        onSelect: () => navigate("/tipos-producto"),
-        icon: "i-heroicons-cube",
-      },
-    ],
-  },
-  {
-    label: "Configuración",
-    value: "configuracion",
-    children: [
-      {
-        label: "Unidades de Medida",
-        value: "/unidades-medida",
-        onSelect: () => navigate("/unidades-medida"),
-        icon: "i-heroicons-scale",
-      },
-      {
-        label: "Tipos de Unidad",
-        value: "/unidades-medida-tipo",
-        onSelect: () => navigate("/unidades-medida-tipo"),
-        icon: "i-heroicons-swatch",
-      },
-      {
-        label: "Conversiones",
-        value: "/unidades-conversion",
-        onSelect: () => navigate("/unidades-conversion"),
-        icon: "i-heroicons-arrows-right-left",
-      },
-    ],
-  },
-]);
+const navigationItems: NavigationMenuItem[][] = [
+  [
+    {
+      label: 'Inicio',
+      icon: 'i-heroicons-home',
+      to: '/',
+      exact: true
+    }
+  ],
+  [
+    {
+      label: 'Usuarios',
+      icon: 'i-heroicons-users',
+      defaultOpen: route.path.startsWith('/usuarios'),
+      children: [
+        {
+          label: 'Listado',
+          icon: 'i-heroicons-list-bullet',
+          to: '/usuarios',
+          exact: true
+        },
+        {
+          label: 'Roles',
+          icon: 'i-heroicons-user-group',
+          to: '/usuarios/roles'
+        },
+        {
+          label: 'Políticas',
+          icon: 'i-heroicons-shield-check',
+          to: '/usuarios/politicas'
+        }
+      ]
+    }
+  ],
+  [
+    {
+      label: 'Producción',
+      icon: 'i-heroicons-cog',
+      defaultOpen: route.path.startsWith('/ordenes-produccion') || 
+                  route.path.startsWith('/lineas-orden') ||
+                  route.path.startsWith('/lotes-produccion') ||
+                  route.path.startsWith('/costos-orden'),
+      children: [
+        {
+          label: 'Órdenes',
+          icon: 'i-heroicons-clipboard-document-list',
+          to: '/ordenes-produccion'
+        },
+        {
+          label: 'Líneas de Orden',
+          icon: 'i-heroicons-bars-3',
+          to: '/lineas-orden'
+        },
+        {
+          label: 'Lotes',
+          icon: 'i-heroicons-archive-box',
+          to: '/lotes-produccion'
+        },
+        {
+          label: 'Costos',
+          icon: 'i-heroicons-currency-dollar',
+          to: '/costos-orden'
+        },
+        {
+          label: 'Bodegas',
+          icon: 'i-heroicons-building-storefront',
+          to: '/bodegas'
+        },
+        {
+          label: 'Conteo Cíclico',
+          icon: 'i-heroicons-check-circle',
+          to: '/conteo-ciclico'
+        },
+        {
+          label: 'Discrepancia Inventario',
+          icon: 'i-heroicons-exclamation-triangle',
+          to: '/discrepancia-inventario'
+        },
+        {
+          label: 'Inventario Lote',
+          icon: 'i-heroicons-archive-box',
+          to: '/inventario-lote'
+        },
+        {
+          label: 'Movimientos Inventario',
+          icon: 'i-heroicons-arrow-path',
+          to: '/movimientos-inventario'
+        },
+        {
+          label: 'Orden Estación',
+          icon: 'i-heroicons-rectangle-stack',
+          to: '/orden-estacion'
+        },
+        {
+          label: 'Orden Evento',
+          icon: 'i-heroicons-calendar',
+          to: '/orden-evento'
+        },
+        {
+          label: 'Método de Valoración',
+          icon: 'i-heroicons-scale',
+          to: '/metodo-valoracion'
+        },
+        {
+          label: 'Reserva Material Orden',
+          icon: 'i-heroicons-inbox',
+          to: '/reserva-material-orden'
+        },
+        {
+          label: 'Punto Reorden',
+          icon: 'i-heroicons-flag',
+          to: '/punto-reorden'
+        },
+        {
+          label: 'Estación Producción',
+          icon: 'i-heroicons-cog-6-tooth',
+          to: '/estacion-produccion'
+        }
+      ]
+    }
+  ],
+  [
+    {
+      label: 'Catálogos',
+      icon: 'i-heroicons-rectangle-stack',
+      defaultOpen: route.path.startsWith('/productos') ||
+                  route.path.startsWith('/estados-orden') ||
+                  route.path.startsWith('/tipos-costo'),
+      children: [
+        {
+          label: 'Productos',
+          icon: 'i-heroicons-cube',
+          to: '/productos'
+        },
+        {
+          label: 'Estados de Orden',
+          icon: 'i-heroicons-tag',
+          to: '/estados-orden'
+        },
+        {
+          label: 'Tipos de Costo',
+          icon: 'i-heroicons-tag',
+          to: '/tipos-costo'
+        },
+        {
+          label: 'Tipos de Bodega',
+          icon: 'i-heroicons-building-library',
+          to: '/tipos-bodega'
+        },
+        {
+          label: 'Tipos de Movimientos',
+          icon: 'i-heroicons-arrows-right-left',
+          to: '/tipos-movimientos'
+        },
+        {
+          label: 'Tipos de Producto',
+          icon: 'i-heroicons-cube',
+          to: '/tipos-producto'
+        }
+      ]
+    }
+  ],
+  [
+    {
+      label: 'Configuración',
+      icon: 'i-heroicons-wrench-screwdriver',
+      defaultOpen: route.path.startsWith('/unidades-medida') ||
+                  route.path.startsWith('/unidades-medida-tipo') ||
+                  route.path.startsWith('/unidades-conversion'),
+      children: [
+        {
+          label: 'Unidades de Medida',
+          icon: 'i-heroicons-scale',
+          to: '/unidades-medida'
+        },
+        {
+          label: 'Tipos de Unidad',
+          icon: 'i-heroicons-swatch',
+          to: '/unidades-medida-tipo'
+        },
+        {
+          label: 'Conversiones',
+          icon: 'i-heroicons-arrows-right-left',
+          to: '/unidades-conversion'
+        }
+      ]
+    }
+  ]
+];
 </script>

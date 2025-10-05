@@ -1,5 +1,0 @@
-mutation CreateInventarioLote($input: InventarioLoteInput!) {
-  createInventarioLote(input: $input) {
-    id
-  }
-}

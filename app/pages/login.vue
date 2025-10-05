@@ -8,21 +8,37 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const router = useRouter();
+const toast = useToast();
 
 const schema = z.object({
-  username: z.string("Invalid username"),
-  password: z.string().min(8, "Must be at least 8 characters"),
+  username: z.string().min(1, "El nombre de usuario es requerido"),
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Partial<Schema>>({
-  username: undefined,
-  password: undefined,
-});
-const error = ref("");
+const fields = [
+  {
+    name: 'username',
+    type: 'text' as const,
+    label: 'Nombre de Usuario',
+    placeholder: 'Ingresa tu nombre de usuario',
+    required: true,
+    icon: 'i-lucide-user',
+    autocomplete: 'username'
+  },
+  {
+    name: 'password',
+    type: 'password' as const,
+    label: 'Contraseña',
+    placeholder: 'Ingresa tu contraseña',
+    required: true,
+    icon: 'i-lucide-lock',
+    autocomplete: 'current-password'
+  }
+];
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  error.value = "";
   try {
     const result = await authStore.login(
       event.data.username,
@@ -30,56 +46,59 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     );
 
     if (result) {
-      router.push("/");
+      toast.add({
+        title: '¡Inicio de sesión exitoso!',
+        description: 'Bienvenido de vuelta al sistema',
+        color: 'success',
+        icon: 'i-lucide-check-circle',
+        duration:3000
+      });
+      
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
     } else {
-      error.value = "Invalid credentials";
+      toast.add({
+        title: 'Error de inicio de sesión',
+        description: 'Nombre de usuario o contraseña incorrectos',
+        color: 'error',
+        icon: 'i-lucide-alert-circle',
+        duration:500
+      });
     }
   } catch (err) {
-    error.value =
-      err instanceof Error && err.message ? err.message : "An error occurred";
+    const errorMessage = err instanceof Error ? err.message : "Ocurrió un error inesperado";
+    
+    toast.add({
+      title: 'Error de autenticación',
+      description: errorMessage,
+      color: 'error',
+      icon: 'i-lucide-alert-triangle',
+      duration:500
+    });
   }
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <UCard class="w-72 max-w-md">
-      <template #header>
-        <h1 class="text-2xl font-bold text-center">Login Page</h1>
-      </template>
-
-      <UForm
-        id="loginForm"
+  <div class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <UPageCard class="w-full max-w-md shadow-xl">
+      <UAuthForm
         :schema="schema"
-        :state="state"
-        class="space-y-6"
+        :fields="fields"
+        title="Bienvenido"
+        description="Inicia sesión en tu cuenta para continuar"
+        icon="i-lucide-shield-check"
+        :submit="{
+          label: 'Iniciar Sesión',
+          block: true,
+          size: 'lg',
+          color: 'primary',
+          loading: authStore.loading
+        }"
+        :loading="authStore.loading"
         @submit="onSubmit"
-      >
-        <UFormField label="Username" name="username">
-          <UInput v-model="state.username" class="w-full" size="lg" />
-        </UFormField>
-
-        <UFormField label="Password" name="password">
-          <UInput
-            v-model="state.password"
-            type="password"
-            class="w-full"
-            size="lg"
-          />
-        </UFormField>
-
-        <div v-if="error" class="p-3 rounded-lg">
-          {{ error }}
-        </div>
-      </UForm>
-
-      <template #footer>
-        <div class="flex justify-center mt-2">
-          <UButton form="loginForm" type="submit" size="lg" class="px-8">
-            Submit
-          </UButton>
-        </div>
-      </template>
-    </UCard>
+      />
+    </UPageCard>
   </div>
 </template>

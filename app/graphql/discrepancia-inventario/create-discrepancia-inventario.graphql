@@ -1,5 +1,0 @@
-mutation CreateDiscrepanciaInventario($input: DiscrepanciaInventarioInput!) {
-  createDiscrepanciaInventario(input: $input) {
-    id
-  }
-}

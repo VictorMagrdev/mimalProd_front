@@ -1,5 +1,0 @@
-mutation CreateEstacionProduccion($input: EstacionProduccionInput!) {
-  createEstacionProduccion(input: $input) {
-    id
-  }
-}

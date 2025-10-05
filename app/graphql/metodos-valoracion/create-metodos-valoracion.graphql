@@ -1,5 +1,0 @@
-mutation CreateMetodoValoracion($input: MetodoValoracionInput!) {
-  createMetodoValoracion(input: $input) {
-    id
-  }
-}
