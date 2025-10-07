@@ -8,9 +8,9 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface PolicyUI {
   id: number;
-  role: { id: number; name: string };
-  tag: { id: number; name: string };
-  permission: { id: number; action: string };
+  rol: { id: number; nombre: string };
+  tag: { id: number; nombre: string };
+  permiso: { id: number; accion: string };
 }
 const auth = useAuthStore();
 const {
@@ -60,17 +60,17 @@ const columns: TableColumn<PolicyUI>[] = [
   {
     accessorKey: "role.name",
     header: "Rol",
-    cell: ({ row }: { row: Row<PolicyUI> }) => row.original.role.name,
+    cell: ({ row }: { row: Row<PolicyUI> }) => row.original.rol.nombre,
   },
   {
     accessorKey: "tag.name",
     header: "Tag",
-    cell: ({ row }) => row.original.tag.name,
+    cell: ({ row }) => row.original.tag.nombre,
   },
   {
     accessorKey: "permission.name",
     header: "Permiso",
-    cell: ({ row }) => row.original.permission.action,
+    cell: ({ row }) => row.original.permiso.accion,
   },
   {
     id: "actions",

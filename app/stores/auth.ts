@@ -29,7 +29,7 @@ export const useAuthStore = defineStore("auth", {
     user: null,
     token: null,
     isAuthenticated: false,
-    loading: true,
+    loading: false,
   }),
   persist: {
     storage: localStorage,

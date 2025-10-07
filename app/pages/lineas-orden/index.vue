@@ -5,7 +5,7 @@ import type { Row } from "@tanstack/vue-table";
 
 const GetLineasOrden = gql`
   query GetLineasOrden {
-    lineasOrden {
+    LineasOrden {
       id
       orden_id
       numero_linea

@@ -6,28 +6,17 @@ import { gql } from "@apollo/client/core"; // opcional si usas gql
 
 // Query como const
 const query = gql`
-  query getInventariosLote {
-    inventariosLote {
-      id
-      producto {
-        id
-        nombre
-      }
-      lote {
-        id
-      }
-      bodega {
-        id
-        nombre
-      }
-      unidad {
-        id
-        nombre
-      }
-      cantidad
-      actualizadoEn
-    }
+  query {
+  inventariosLote {
+    id
+    cantidad
+    actualizado_en
+    producto { id nombre }
+    bodega { id nombre }
+    lote { id numeroLote }
+    unidad { id nombre }
   }
+}
 `;
 
 // Interfaces según esquema

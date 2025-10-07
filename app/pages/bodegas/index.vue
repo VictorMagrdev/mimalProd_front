@@ -66,7 +66,7 @@ const columns: TableColumn<Bodega>[] = [
           color: "neutral",
           class: "capitalize",
         },
-        () => row.original.tipo.nombre,
+        () => row.original.tipo?.nombre || "Sin tipo",
       ),
   },
   {

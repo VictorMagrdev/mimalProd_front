@@ -36,7 +36,7 @@ interface QueryResult {
 
 const query = gql`
   query conteosCiclicos {
-    conteosCiclicos {
+    conteosCiclico {
       id
       producto_id
       bodega_id
@@ -52,7 +52,7 @@ const query = gql`
         nombre
       }
       lote {
-        numero_lote
+        numeroLote
       }
       unidad {
         nombre

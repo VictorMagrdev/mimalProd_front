@@ -7,7 +7,7 @@ const GetLotesProduccion = gql`
   query GetLotesProduccion {
     lotesProduccion {
       id
-      numero_lote
+      numeroLote
       producto_id
       fabricado_en
       vence_en
