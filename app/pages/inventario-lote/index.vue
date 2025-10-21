@@ -2,9 +2,7 @@
 import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import { gql } from "@apollo/client/core"; // opcional si usas gql
 
-// Query como const
 const query = gql`
   query {
   inventariosLote {
@@ -19,7 +17,6 @@ const query = gql`
 }
 `;
 
-// Interfaces según esquema
 interface Lote {
   id: string;
 }

@@ -31,8 +31,8 @@ const query = gql`
   query costosOrden {
     costosOrden {
       id
-      orden_id
-      tipo_costo_id
+      ordenId
+      tipoCostoId
       descripcion
       monto
       moneda
@@ -42,7 +42,7 @@ const query = gql`
         codigo
       }
       orden {
-        numero_orden
+        numeroOrden
       }
     }
   }

@@ -12,17 +12,17 @@ const GetProductos = gql`
       id
       codigo
       nombre
-      costo_base
-      creado_en
+      costoBase
+      creadoEn
       tipo {
         id
         nombre
       }
-      metodo_valoracion {
+      metodoValoracion {
         id
         nombre
       }
-      unidad_base {
+      unidadBase {
         id
         nombre
       }
@@ -50,7 +50,7 @@ export interface Producto {
   codigo: string | null;
   nombre: string;
   costo_base: number | null;
-  creado_en: string;
+  creadoEn: string;
   tipo: TipoProducto | null;
   metodo_valoracion: MetodoValoracion | null;
   unidad_base: UnidadMedida | null;
@@ -113,10 +113,10 @@ const columns: TableColumn<Producto>[] = [
     cell: ({ row }) => row.original.costo_base ?? "-",
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado En",
     cell: ({ row }) =>
-      new Date(row.original.creado_en).toLocaleDateString("es-CO"),
+      new Date(row.original.creadoEn).toLocaleDateString("es-CO"),
   },
   {
     id: "actions",

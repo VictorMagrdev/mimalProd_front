@@ -14,7 +14,7 @@ interface EstadoOrden {
   nombre: string;
   descripcion?: string;
   activo: boolean;
-  creado_en?: string;
+  creadoEn?: string;
 }
 
 // Query como const
@@ -26,7 +26,7 @@ const query = gql`
       nombre
       descripcion
       activo
-      creado_en
+      creadoEn
     }
   }
 `;

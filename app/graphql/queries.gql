@@ -155,7 +155,7 @@ query GetMovimientosInventario {
     referencia
     observaciones
     creado_por
-    creado_en
+    creadoEn
     bodega_origen {
       nombre
     }
@@ -315,7 +315,7 @@ query GetTiposMovimiento {
     nombre
     descripcion
     afecta_wip
-    creado_en
+    creadoEn
   }
 }
 

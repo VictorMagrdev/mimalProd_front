@@ -14,7 +14,7 @@ export interface EstacionProduccion {
   nombre: string;
   descripcion?: string;
   orden: number;
-  creado_en: string;
+  creadoEn: string;
 }
 
 // Query
@@ -26,7 +26,7 @@ const query = gql`
       nombre
       descripcion
       orden
-      creado_en
+      creadoEn
     }
   }
 `;
@@ -72,13 +72,13 @@ const columns: TableColumn<EstacionProduccion>[] = [
       h("span", { class: "text-muted italic" }, "Sin descripción"),
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado",
     cell: ({ row }: { row: Row<EstacionProduccion> }) =>
       h(
         "div",
         { class: "text-sm text-muted" },
-        new Date(row.original.creado_en).toLocaleDateString("es-ES", {
+        new Date(row.original.creadoEn).toLocaleDateString("es-ES", {
           day: "numeric",
           month: "short",
           year: "numeric",

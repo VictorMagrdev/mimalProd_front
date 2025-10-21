@@ -7,22 +7,22 @@ const GetLineasOrden = gql`
   query GetLineasOrden {
     LineasOrden {
       id
-      orden_id
-      numero_linea
+      ordenId
+      numeroLinea
       producto_componente {
         id
         nombre
       }
-      cantidad_requerida
+      cantidadRequerida
       unidad_componente {
         id
         abreviatura
       }
-      cantidad_usada
-      costo_unitario
+      cantidadUsada
+      costoUnitario
       costo_total
       observaciones
-      creado_en
+      creadoEn
     }
   }
 `;
@@ -41,7 +41,7 @@ export interface LineaOrdenRaw {
   costo_unitario?: number | null;
   costo_total?: number | null;
   observaciones?: string | null;
-  creado_en?: string | null;
+  creadoEn?: string | null;
 }
 
 export interface LineaOrdenUI {
@@ -77,7 +77,7 @@ const rows = computed<LineaOrdenUI[]>(() =>
     costoUnitario: l.costo_unitario ?? null,
     costoTotal: l.costo_total ?? null,
     observaciones: l.observaciones ?? null,
-    creadoEn: l.creado_en ?? null,
+    creadoEn: l.creadoEn ?? null,
   })),
 );
 

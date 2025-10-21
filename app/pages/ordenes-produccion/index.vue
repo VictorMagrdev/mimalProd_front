@@ -7,7 +7,7 @@ const GetOrdenesProduccion = gql`
   query GetOrdenesProduccion {
     ordenesProduccion {
       id
-      numero_orden
+      numeroOrden
       cantidad
       unidad {
         id
@@ -17,13 +17,13 @@ const GetOrdenesProduccion = gql`
         id
         nombre
       }
-      inicio_planificado
-      fin_planificado
-      inicio_real
-      fin_real
-      cantidad_desperdicio
-      cantidad_producida
-      creado_en
+      inicioPlanificado
+      finPlanificado
+      inicioReal
+      finReal
+      cantidadDesperdicio
+      cantidadProducida
+      creadoEn
       actualizado_en
     }
   }
@@ -44,7 +44,7 @@ export interface OrdenProduccion {
   fin_real?: string | null;
   cantidad_desperdicio?: number | null;
   cantidad_producida?: number | null;
-  creado_en?: string | null;
+  creadoEn?: string | null;
   actualizado_en?: string | null;
 }
 

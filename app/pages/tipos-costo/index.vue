@@ -15,7 +15,7 @@ const GetTiposCosto = gql`
       nombre
       descripcion
       activo
-      creado_en
+      creadoEn
     }
   }
 `;
@@ -26,7 +26,7 @@ interface TipoCosto {
   nombre: string;
   descripcion: string | null;
   activo: boolean;
-  creado_en?: string;
+  creadoEn?: string;
 }
 
 interface TiposCostoResult {
@@ -92,14 +92,14 @@ const columns: TableColumn<TipoCosto>[] = [
     },
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado en",
     cell: ({ row }: { row: Row<TipoCosto> }) =>
       h(
         "span",
         { class: "text-gray-500 text-sm" },
-        row.original.creado_en
-          ? new Date(row.original.creado_en).toLocaleDateString("es-CO")
+        row.original.creadoEn
+          ? new Date(row.original.creadoEn).toLocaleDateString("es-CO")
           : "-",
       ),
   },
@@ -220,7 +220,7 @@ const filteredData = computed(() => {
                           ? 'Descripción'
                           : column.id === 'activo'
                             ? 'Estado'
-                            : column.id === 'creado_en'
+                            : column.id === 'creadoEn'
                               ? 'Creado en'
                               : column.id,
                   type: 'checkbox' as const,

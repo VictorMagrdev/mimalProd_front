@@ -38,11 +38,11 @@ const query = gql`
   query conteosCiclicos {
     conteosCiclico {
       id
-      producto_id
-      bodega_id
-      lote_id
-      cantidad_contada
-      unidad_id
+      productoId
+      bodegaId
+      loteId
+      cantidadContada
+      unidadId
       fecha
       producto {
         nombre

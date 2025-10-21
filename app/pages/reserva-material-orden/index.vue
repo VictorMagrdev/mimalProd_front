@@ -7,11 +7,11 @@ const GetReservasMaterialOrden = gql`
   query GetReservasMaterialOrden {
     reservasMaterialOrden {
       id
-      orden_id
-      producto_id
-      lote_id
+      ordenId
+      productoId
+      loteId
       cantidad_reservada
-      unidad_id
+      unidadId
       fecha_reserva
     }
   }

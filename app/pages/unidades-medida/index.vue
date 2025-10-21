@@ -19,7 +19,7 @@ const GetUnidadesMedida = gql`
       }
       activa
       base
-      creado_en
+      creadoEn
     }
   }
 `;
@@ -32,7 +32,7 @@ export interface UnidadMedida {
   tipo?: { id: string; nombre: string };
   activa?: boolean;
   base?: boolean;
-  creado_en?: string;
+  creadoEn?: string;
 }
 
 interface UnidadesMedidaResult {

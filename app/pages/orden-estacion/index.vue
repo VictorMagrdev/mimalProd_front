@@ -8,12 +8,12 @@ const GetOrdenesEstacion = gql`
   query GetOrdenesEstacion {
     ordenesEstacion {
       id
-      orden_id
+      ordenId
       estacion_id
-      inicio_planificado
-      fin_planificado
-      inicio_real
-      fin_real
+      inicioPlanificado
+      finPlanificado
+      inicioReal
+      finReal
       estado_orden_estacion_id
       observaciones
       estacion {

@@ -8,7 +8,7 @@ const GetOrdenesEvento = gql`
   query GetOrdenesEvento {
     ordenesEvento {
       id
-      orden_id
+      ordenId
       evento
       descripcion
       fecha

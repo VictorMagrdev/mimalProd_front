@@ -9,27 +9,27 @@ const GetMovimientosInventario = gql`
     movimientosInventario {
       id
       fecha
-      bodega_origen {
+      bodegaOrigen {
         id
         nombre
       }
-      bodega_destino {
+      bodegaDestino {
         id
         nombre
       }
-      tipo_movimiento {
+      tipoMovimiento {
         id
         nombre
       }
       referencia
       observaciones
-      creado_por
-      creado_en
+      creadoPor
+      creadoEn
       detalles {
         id
-        producto_id
+        productoId
         cantidad
-        unidad_id
+        unidadId
       }
     }
   }
@@ -54,7 +54,7 @@ export interface MovimientoInventario {
   referencia?: string | null;
   observaciones?: string | null;
   creado_por?: string | null;
-  creado_en?: string | null;
+  creadoEn?: string | null;
   detalles?: MovimientoInventarioDetalle[] | null;
 }
 
@@ -107,11 +107,11 @@ const columns: TableColumn<MovimientoInventario>[] = [
     cell: ({ row }) => row.original.observaciones ?? "-",
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado En",
     cell: ({ row }) =>
-      row.original.creado_en
-        ? new Date(row.original.creado_en).toLocaleString()
+      row.original.creadoEn
+        ? new Date(row.original.creadoEn).toLocaleString()
         : "-",
   },
   {

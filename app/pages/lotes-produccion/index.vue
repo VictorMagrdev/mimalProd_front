@@ -8,10 +8,10 @@ const GetLotesProduccion = gql`
     lotesProduccion {
       id
       numeroLote
-      producto_id
-      fabricado_en
-      vence_en
-      creado_en
+      productoId
+      fabricadoEn
+      venceEn
+      creadoEn
       producto {
         id
         nombre
@@ -25,11 +25,11 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface LoteProduccion {
   id: string;
-  numero_lote: string;
+  numeroLote: string;
   producto_id?: string | null;
   fabricado_en?: string | null;
   vence_en?: string | null;
-  creado_en?: string | null;
+  creadoEn?: string | null;
   producto?: { id: string; nombre?: string } | null;
 }
 
@@ -46,7 +46,7 @@ const columns: TableColumn<LoteProduccion>[] = [
   {
     accessorKey: "numero_lote",
     header: "Número de Lote",
-    cell: ({ row }: { row: Row<LoteProduccion> }) => row.original.numero_lote,
+    cell: ({ row }: { row: Row<LoteProduccion> }) => row.original.numeroLote,
   },
   {
     accessorKey: "producto.nombre",
@@ -70,11 +70,11 @@ const columns: TableColumn<LoteProduccion>[] = [
         : "-",
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado en",
     cell: ({ row }) =>
-      row.original.creado_en
-        ? new Date(row.original.creado_en).toLocaleDateString("es-CO")
+      row.original.creadoEn
+        ? new Date(row.original.creadoEn).toLocaleDateString("es-CO")
         : "-",
   },
   {

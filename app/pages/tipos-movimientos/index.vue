@@ -11,8 +11,8 @@ const GetTiposMovimiento = gql`
       codigo
       nombre
       descripcion
-      afecta_wip
-      creado_en
+      afectaWip
+      creadoEn
     }
   }
 `;
@@ -26,7 +26,7 @@ export interface TipoMovimiento {
   nombre: string;
   descripcion: string;
   afecta_wip: boolean;
-  creado_en: string;
+  creadoEn: string;
 }
 
 interface TipoMovimientoResult {
@@ -61,9 +61,9 @@ const columns: TableColumn<TipoMovimiento>[] = [
       row.original.afecta_wip ? "Sí" : "No",
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado en",
-    cell: ({ row }) => row.original.creado_en,
+    cell: ({ row }) => row.original.creadoEn,
   },
   {
     id: "actions",

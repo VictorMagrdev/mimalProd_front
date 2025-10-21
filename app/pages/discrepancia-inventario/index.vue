@@ -33,12 +33,12 @@ const query = gql`
   query discrepanciasInventario {
     discrepanciasInventario {
       id
-      conteo_id
-      cantidad_sistema
+      conteoId
+      cantidadSistema
       resuelto
       conteo {
         fecha
-        cantidad_contada
+        cantidadContada
         producto {
           nombre
           codigo

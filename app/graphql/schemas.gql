@@ -9,7 +9,7 @@ type EstadoOrden {
   nombre: String!
   descripcion: String
   activo: Boolean
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input EstadoOrdenRequest {
@@ -25,7 +25,7 @@ type TipoCosto {
   nombre: String!
   descripcion: String
   activo: Boolean
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input TipoCostoRequest {
@@ -40,7 +40,7 @@ type UnidadMedidaTipo {
   codigo: String!
   nombre: String!
   descripcion: String
-  creado_en: DateTime
+  creadoEn: DateTime
   unidades: [UnidadMedida]
 }
 
@@ -58,7 +58,7 @@ type UnidadMedida {
   unidad_medida_tipo_id: ID
   activa: Boolean
   base: Boolean
-  creado_en: DateTime
+  creadoEn: DateTime
   tipo: UnidadMedidaTipo
 }
 
@@ -122,7 +122,7 @@ type Producto {
   tipo_id: ID
   unidad_base_id: ID
   costo_base: Numeric
-  creado_en: DateTime
+  creadoEn: DateTime
   tipo: TipoProducto
   metodo_valoracion: MetodoValoracion
   unidad_base: UnidadMedida
@@ -143,7 +143,7 @@ type LoteProduccion {
   producto_id: ID
   fabricado_en: DateTime
   vence_en: DateTime
-  creado_en: DateTime
+  creadoEn: DateTime
   producto: Producto
 }
 
@@ -168,7 +168,7 @@ type OrdenProduccion {
   cantidad_producida: Numeric
   creado_por: ID
   observaciones: String
-  creado_en: DateTime
+  creadoEn: DateTime
   actualizado_en: DateTime
   unidad: UnidadMedida
   estado: EstadoOrden
@@ -202,7 +202,7 @@ type LineaOrden {
   costo_unitario: Numeric
   costo_total: Numeric
   observaciones: String
-  creado_en: DateTime
+  creadoEn: DateTime
   producto_componente: Producto
   unidad_componente: UnidadMedida
 }
@@ -256,7 +256,7 @@ type Bodega {
   nombre: String!
   descripcion: String
   tipo_bodega_id: ID
-  creado_en: DateTime
+  creadoEn: DateTime
   tipo: TipoBodega
 }
 
@@ -273,7 +273,7 @@ type TipoMovimiento {
   nombre: String!
   descripcion: String
   afecta_wip: Boolean
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input TipoMovimientoRequest {
@@ -292,7 +292,7 @@ type MovimientoInventario {
   referencia: String
   observaciones: String
   creado_por: ID
-  creado_en: DateTime
+  creadoEn: DateTime
   tipo_movimiento: TipoMovimiento
   bodega_origen: Bodega
   bodega_destino: Bodega
@@ -371,7 +371,7 @@ type EstacionProduccion {
   nombre: String!
   descripcion: String
   orden: Int
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input EstacionProduccionRequest {
@@ -532,7 +532,7 @@ type OrdenTrabajo {
   inicio_planificado: DateTime
   fin_planificado: DateTime
   estado_id: ID
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input OrdenTrabajoRequest {
@@ -565,7 +565,7 @@ type Asignacion {
   asignado_por: ID
   estado_asignacion_id: ID
   funcion_tarea: ID
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input AsignacionRequest {
@@ -587,7 +587,7 @@ type HojaTimesheet {
   estado_aprobacion_id: ID
   aprobado_por: ID
   aprobado_en: DateTime
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input HojaTimesheetRequest {
@@ -610,7 +610,7 @@ type RegistroTiempo {
   tipo_costo_id: ID
   estado_aprobacion_id: ID
   hoja_timesheet_id: ID
-  creado_en: DateTime
+  creadoEn: DateTime
   actualizado_en: DateTime
 }
 
@@ -629,7 +629,7 @@ type ExcepcionTiempo {
   usuario_id: ID
   periodo: String
   detalles: String
-  creado_en: DateTime
+  creadoEn: DateTime
   resuelto: Boolean
 }
 
@@ -646,7 +646,7 @@ type TarifaEmpleado {
   moneda: String
   vigente_desde: Date
   vigente_hasta: Date
-  creado_en: DateTime
+  creadoEn: DateTime
 }
 
 input TarifaEmpleadoRequest {

@@ -12,7 +12,7 @@ export interface Bodega {
   nombre: string;
   descripcion?: string;
   tipo_bodega_id: string;
-  creado_en: string;
+  creadoEn: string;
   tipo: {
     nombre: string;
   };
@@ -29,8 +29,8 @@ const query = gql`
       codigo
       nombre
       descripcion
-      tipo_bodega_id
-      creado_en
+      tipoBodegaId
+      creadoEn
       tipo {
         nombre
       }
@@ -77,13 +77,13 @@ const columns: TableColumn<Bodega>[] = [
       h("span", { class: "text-muted italic" }, "N/A"),
   },
   {
-    accessorKey: "creado_en",
+    accessorKey: "creadoEn",
     header: "Creado",
     cell: ({ row }) => {
       return h(
         "div",
         { class: "text-sm text-muted" },
-        new Date(row.original.creado_en).toLocaleDateString("es-ES"),
+        new Date(row.original.creadoEn).toLocaleDateString("es-ES"),
       );
     },
   },
