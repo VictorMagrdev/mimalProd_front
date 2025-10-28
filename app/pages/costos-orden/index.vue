@@ -36,8 +36,8 @@ const query = gql`
       descripcion
       monto
       moneda
-      registrado_en
-      tipo_costo {
+      registradoEn
+      tipoCosto {
         nombre
         codigo
       }

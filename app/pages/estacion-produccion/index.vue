@@ -17,7 +17,6 @@ export interface EstacionProduccion {
   creadoEn: string;
 }
 
-// Query
 const query = gql`
   query getEstacionesProduccion {
     estacionesProduccion {

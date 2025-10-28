@@ -10,9 +10,9 @@ const GetReservasMaterialOrden = gql`
       ordenId
       productoId
       loteId
-      cantidad_reservada
+      cantidadReservada
       unidadId
-      fecha_reserva
+      fechaReserva
     }
   }
 `;

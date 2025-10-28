@@ -24,7 +24,7 @@ const GetOrdenesProduccion = gql`
       cantidadDesperdicio
       cantidadProducida
       creadoEn
-      actualizado_en
+      actualizadoEn
     }
   }
 `;

@@ -9,18 +9,18 @@ const GetLineasOrden = gql`
       id
       ordenId
       numeroLinea
-      producto_componente {
+      productoComponente {
         id
         nombre
       }
       cantidadRequerida
-      unidad_componente {
+      unidadComponente {
         id
         abreviatura
       }
       cantidadUsada
       costoUnitario
-      costo_total
+      costoTotal
       observaciones
       creadoEn
     }

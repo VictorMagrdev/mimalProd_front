@@ -7,10 +7,10 @@ const GetPuntosReorden = gql`
   query GetPuntosReorden {
     puntosReorden {
       id
-      producto_id
-      stock_minimo
-      stock_seguridad
-      unidad_id
+      productoId
+      stockMinimo
+      stockSeguridad
+      unidadId
     }
   }
 `;

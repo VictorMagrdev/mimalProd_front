@@ -8,7 +8,7 @@ const query = gql`
   inventariosLote {
     id
     cantidad
-    actualizado_en
+    actualizadoEn
     producto { id nombre }
     bodega { id nombre }
     lote { id numeroLote }

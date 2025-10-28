@@ -11,7 +11,7 @@ export interface Bodega {
   codigo: string;
   nombre: string;
   descripcion?: string;
-  tipo_bodega_id: string;
+  tipoBodegaId: string;
   creadoEn: string;
   tipo: {
     nombre: string;
