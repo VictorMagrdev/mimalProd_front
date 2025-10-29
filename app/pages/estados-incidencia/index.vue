@@ -32,7 +32,8 @@ interface EstadoIncidenciaResult {
   estadosIncidencia: EstadoIncidencia[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<EstadoIncidenciaResult>(GetEstadosIncidencia);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<EstadoIncidenciaResult>(GetEstadosIncidencia);
 
 const estadosIncidencia = computed(() => data.value?.estadosIncidencia || []);
 
@@ -40,7 +41,7 @@ const columns: TableColumn<EstadoIncidencia>[] = [
   {
     accessorKey: "orden",
     header: "Orden",
-    cell: ({ row }: { row: Row<EstadoIncidencia> }) => 
+    cell: ({ row }: { row: Row<EstadoIncidencia> }) =>
       h("span", { class: "font-mono" }, `#${row.original.orden}`),
   },
   {
@@ -50,20 +51,22 @@ const columns: TableColumn<EstadoIncidencia>[] = [
   {
     accessorKey: "estadoFinal",
     header: "Estado Final",
-    cell: ({ row }) => 
-      h(UBadge, { 
-        color: row.original.estadoFinal ? 'green' : 'gray', 
-        variant: "subtle" 
-      }, () => row.original.estadoFinal ? 'Sí' : 'No'),
+    cell: ({ row }) =>
+      h(
+        UBadge,
+        {
+          color: row.original.estadoFinal ? "green" : "gray",
+          variant: "subtle",
+        },
+        () => (row.original.estadoFinal ? "Sí" : "No"),
+      ),
   },
   {
     accessorKey: "descripcion",
     header: "Descripción",
     cell: ({ row }) => row.original.descripcion || "-",
-    },
+  },
 ];
-
-
 
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
@@ -77,7 +80,9 @@ const globalFilter = ref("");
       <NewEstadosIncidencia @creado="refresh()" />
     </div>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput
         v-model="globalFilter"
         class="max-w-sm"

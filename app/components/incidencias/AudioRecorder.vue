@@ -1,60 +1,64 @@
 <script setup>
-import { ref, onUnmounted } from 'vue'
-import { useToast } from '#imports'
+import { ref, onUnmounted } from "vue";
+import { useToast } from "#imports";
 
-const toast = useToast()
+const toast = useToast();
 
-const isRecording = ref(false)
-const audioUrl = ref(null)
-const mediaRecorder = ref(null)
-const chunks = ref([])
-const timer = ref(0)
-let intervalId = null
+const isRecording = ref(false);
+const audioUrl = ref(null);
+const mediaRecorder = ref(null);
+const chunks = ref([]);
+const timer = ref(0);
+let intervalId = null;
 
-const MAX_SECONDS = 120
+const MAX_SECONDS = 120;
 const resetRecording = () => {
-  stopRecording()
-  audioUrl.value = null
-  chunks.value = []
-  timer.value = 0
-  toast.add({ title: 'Reinicio', description: 'Grabación reiniciada.', color: 'orange' })
-}
+  stopRecording();
+  audioUrl.value = null;
+  chunks.value = [];
+  timer.value = 0;
+  toast.add({
+    title: "Reinicio",
+    description: "Grabación reiniciada.",
+    color: "orange",
+  });
+};
 
 const startRecording = async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    mediaRecorder.value = new MediaRecorder(stream)
-    chunks.value = []
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder.value = new MediaRecorder(stream);
+    chunks.value = [];
 
-    mediaRecorder.value.ondataavailable = e => chunks.value.push(e.data)
+    mediaRecorder.value.ondataavailable = (e) => chunks.value.push(e.data);
     mediaRecorder.value.onstop = () => {
-      const blob = new Blob(chunks.value, { type: 'audio/webm' })
-      audioUrl.value = URL.createObjectURL(blob)
-      stream.getTracks().forEach(t => t.stop())
-    }
+      const blob = new Blob(chunks.value, { type: "audio/webm" });
+      audioUrl.value = URL.createObjectURL(blob);
+      stream.getTracks().forEach((t) => t.stop());
+    };
 
-    mediaRecorder.value.start()
-    isRecording.value = true
-    timer.value = 0
+    mediaRecorder.value.start();
+    isRecording.value = true;
+    timer.value = 0;
 
     intervalId = setInterval(() => {
-      timer.value++
-      if (timer.value >= MAX_SECONDS) stopRecording()
-    }, 1000)
+      timer.value++;
+      if (timer.value >= MAX_SECONDS) stopRecording();
+    }, 1000);
   } catch (err) {
-    toast.add({ title: 'Error', description: string(err), color: 'red' })
+    toast.add({ title: "Error", description: string(err), color: "red" });
   }
-}
+};
 
 const stopRecording = () => {
-  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
-    mediaRecorder.value.stop()
+  if (mediaRecorder.value && mediaRecorder.value.state !== "inactive") {
+    mediaRecorder.value.stop();
   }
-  isRecording.value = false
-  clearInterval(intervalId)
-}
+  isRecording.value = false;
+  clearInterval(intervalId);
+};
 
-onUnmounted(() => clearInterval(intervalId))
+onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <template>
@@ -69,7 +73,9 @@ onUnmounted(() => clearInterval(intervalId))
     <div class="flex flex-col items-center gap-4">
       <UButton
         :color="isRecording ? 'red' : 'green'"
-        :icon="isRecording ? 'i-heroicons-stop-circle' : 'i-heroicons-microphone'"
+        :icon="
+          isRecording ? 'i-heroicons-stop-circle' : 'i-heroicons-microphone'
+        "
         :label="isRecording ? 'Detener grabación' : 'Iniciar grabación'"
         @click="isRecording ? stopRecording() : startRecording()"
       />
@@ -92,19 +98,19 @@ onUnmounted(() => clearInterval(intervalId))
         controls
         class="w-full rounded-lg"
       />
-        <UButton
-          label="Regrabar"
-          color="yellow"
-          icon="i-heroicons-arrow-path"
-          @click="resetRecording"
-        />
+      <UButton
+        label="Regrabar"
+        color="yellow"
+        icon="i-heroicons-arrow-path"
+        @click="resetRecording"
+      />
     </div>
 
-    <template  v-if="audioUrl" #footer>
+    <template v-if="audioUrl" #footer>
       <div class="text-sm text-gray-500">
         Grabación lista — se incluirá en el formulario.
       </div>
-      <input type="hidden" name="audio" :value="audioUrl">
+      <input type="hidden" name="audio" :value="audioUrl" />
     </template>
   </UCard>
 </template>

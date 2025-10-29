@@ -5,16 +5,28 @@ import type { Row } from "@tanstack/vue-table";
 
 const query = gql`
   query {
-  inventariosLote {
-    id
-    cantidad
-    actualizadoEn
-    producto { id nombre }
-    bodega { id nombre }
-    lote { id numeroLote }
-    unidad { id nombre }
+    inventariosLote {
+      id
+      cantidad
+      actualizadoEn
+      producto {
+        id
+        nombre
+      }
+      bodega {
+        id
+        nombre
+      }
+      lote {
+        id
+        numeroLote
+      }
+      unidad {
+        id
+        nombre
+      }
+    }
   }
-}
 `;
 
 interface Lote {

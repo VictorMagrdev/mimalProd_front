@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref,  onMounted } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { gql } from "graphql-tag";
@@ -18,9 +18,10 @@ const auth = useAuthStore();
 const cargarCentrosCosto = async () => {
   try {
     const { data, error } = await useFetch<CentroCosto[]>(
-      "http://localhost:8080/api/v1/centros-costo", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    }
+      "http://localhost:8080/api/v1/centros-costo",
+      {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      },
     );
 
     if (error.value) throw new Error(error.value.message);
@@ -81,7 +82,7 @@ type CreateMaquinaResult = { createMaquina: { id: string } };
 type CreateMaquinaVars = { input: MaquinaInput };
 
 const { mutate } = useMutation<CreateMaquinaResult, CreateMaquinaVars>(
-  CreateMaquinaMutation
+  CreateMaquinaMutation,
 );
 
 function resetForm() {
@@ -138,43 +139,57 @@ async function onSubmit(event: FormSubmitEvent<MaquinaInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-          <UFormField label="Código" name="codigo">
-            <UInput v-model="state.codigo" placeholder="MAQ-001" class="w-full" />
-          </UFormField>
+        <UFormField label="Código" name="codigo">
+          <UInput v-model="state.codigo" placeholder="MAQ-001" class="w-full" />
+        </UFormField>
 
-          <UFormField label="Nombre" name="nombre">
-            <UInput v-model="state.nombre" placeholder="Nombre de la máquina" class="w-full" />
-          </UFormField>
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            placeholder="Nombre de la máquina"
+            class="w-full"
+          />
+        </UFormField>
 
         <UFormField label="Descripción" name="descripcion">
           <UTextarea
             v-model="state.descripcion"
-            placeholder="Descripción de la máquina..." class="w-full" 
+            placeholder="Descripción de la máquina..."
+            class="w-full"
           />
         </UFormField>
 
-          <UFormField label="Número de Serie" name="numeroSerie">
-            <UInput v-model="state.numeroSerie" placeholder="SN123456" class="w-full"  />
-          </UFormField>
+        <UFormField label="Número de Serie" name="numeroSerie">
+          <UInput
+            v-model="state.numeroSerie"
+            placeholder="SN123456"
+            class="w-full"
+          />
+        </UFormField>
 
-          <UFormField label="Centro de Costo" name="centroCostoId">
-            <USelect
-              v-model="state.centroCostoId"
-              :items="centrosCosto"
-              placeholder="Seleccione centro de costo"
-              :loading="!centrosCosto.length"
-              loading-icon="i-heroicons-arrow-path"
-              class="w-full" 
-            />
-          </UFormField>
+        <UFormField label="Centro de Costo" name="centroCostoId">
+          <USelect
+            v-model="state.centroCostoId"
+            :items="centrosCosto"
+            placeholder="Seleccione centro de costo"
+            :loading="!centrosCosto.length"
+            loading-icon="i-heroicons-arrow-path"
+            class="w-full"
+          />
+        </UFormField>
 
         <div class="grid grid-cols-3 gap-4">
           <UFormField label="Fecha de Compra" name="fechaCompra">
-            <UInput v-model="state.fechaCompra" type="date"  class="w-full" />
+            <UInput v-model="state.fechaCompra" type="date" class="w-full" />
           </UFormField>
 
           <UFormField label="Costo de Compra" name="costoCompra">
-            <UInput v-model="state.costoCompra" type="number" step="0.01" class="w-full" >
+            <UInput
+              v-model="state.costoCompra"
+              type="number"
+              step="0.01"
+              class="w-full"
+            >
               <template #leading>
                 <span class="text-gray-500">$</span>
               </template>
@@ -182,7 +197,12 @@ async function onSubmit(event: FormSubmitEvent<MaquinaInput>) {
           </UFormField>
 
           <UFormField label="Valor de Rescate" name="valorRescate">
-            <UInput v-model="state.valorRescate" type="number" step="0.01" class="w-full" >
+            <UInput
+              v-model="state.valorRescate"
+              type="number"
+              step="0.01"
+              class="w-full"
+            >
               <template #leading>
                 <span class="text-gray-500">$</span>
               </template>
@@ -191,7 +211,12 @@ async function onSubmit(event: FormSubmitEvent<MaquinaInput>) {
         </div>
 
         <UFormField label="Vida Útil (años)" name="vidaUtilAnios">
-          <UInput v-model="state.vidaUtilAnios" type="number" min="1" class="w-full" />
+          <UInput
+            v-model="state.vidaUtilAnios"
+            type="number"
+            min="1"
+            class="w-full"
+          />
         </UFormField>
       </UForm>
     </template>

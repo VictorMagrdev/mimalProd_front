@@ -68,7 +68,11 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
     resetForm();
     open.value = false;
   } catch (e) {
-    toast.add({ title: "Error al crear", description: String(e), color: "error" });
+    toast.add({
+      title: "Error al crear",
+      description: String(e),
+      color: "error",
+    });
   }
 }
 </script>

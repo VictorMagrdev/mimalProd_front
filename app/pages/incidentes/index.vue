@@ -76,7 +76,8 @@ interface IncidenciaResult {
   incidencias: Incidencia[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<IncidenciaResult>(GetIncidencias);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<IncidenciaResult>(GetIncidencias);
 
 const incidencias = computed(() => data.value?.incidencias || []);
 
@@ -84,7 +85,7 @@ const columns: TableColumn<Incidencia>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }: { row: Row<Incidencia> }) => 
+    cell: ({ row }: { row: Row<Incidencia> }) =>
       h("span", { class: "font-mono" }, row.original.codigo),
   },
   {
@@ -101,14 +102,22 @@ const columns: TableColumn<Incidencia>[] = [
     header: "Estado",
     cell: ({ row }) => {
       const estado = row.original.estado?.nombre;
-      const color = estado === 'Resuelta' ? 'success' : 
-                   estado === 'En Progreso' ? 'warning' : 'neutral';
-      return h(UBadge, { 
-        class: "capitalize", 
-        variant: "subtle", 
-        color 
-      }, () => estado || "-");
-    }
+      const color =
+        estado === "Resuelta"
+          ? "success"
+          : estado === "En Progreso"
+            ? "warning"
+            : "neutral";
+      return h(
+        UBadge,
+        {
+          class: "capitalize",
+          variant: "subtle",
+          color,
+        },
+        () => estado || "-",
+      );
+    },
   },
   {
     accessorKey: "maquina.nombre",
@@ -118,31 +127,41 @@ const columns: TableColumn<Incidencia>[] = [
   {
     accessorKey: "creadoEn",
     header: "Creado",
-    cell: ({ row }) => 
-      new Date(row.original.creadoEn).toLocaleString(),
+    cell: ({ row }) => new Date(row.original.creadoEn).toLocaleString(),
   },
   {
     accessorKey: "archivos",
     header: "Archivos",
     cell: ({ row }) => {
       const archivos = row.original.archivos || [];
-        const fotos = archivos.filter(a => a.tipo === 'FOTO').length;
-        const audios = archivos.filter(a => a.tipo === 'AUDIO').length;
+      const fotos = archivos.filter((a) => a.tipo === "FOTO").length;
+      const audios = archivos.filter((a) => a.tipo === "AUDIO").length;
 
-      
       return h("div", { class: "flex gap-2 text-sm" }, [
-        fotos > 0 ? h(UBadge, { 
-          color: "blue", 
-          variant: "subtle",
-          size: "sm"
-        }, () => `${fotos} 📷`) : null,
-        audios > 0 ? h(UBadge, { 
-          color: "green", 
-          variant: "subtle",
-          size: "sm"
-        }, () => `${audios} 🎵`) : null,
+        fotos > 0
+          ? h(
+              UBadge,
+              {
+                color: "blue",
+                variant: "subtle",
+                size: "sm",
+              },
+              () => `${fotos} 📷`,
+            )
+          : null,
+        audios > 0
+          ? h(
+              UBadge,
+              {
+                color: "green",
+                variant: "subtle",
+                size: "sm",
+              },
+              () => `${audios} 🎵`,
+            )
+          : null,
       ]);
-    }
+    },
   },
   {
     id: "actions",
@@ -153,9 +172,9 @@ const columns: TableColumn<Incidencia>[] = [
         { class: "text-right" },
         h(
           UDropdownMenu,
-          { 
-            items: getRowItems(row.original), 
-            content: { align: "end" } 
+          {
+            items: getRowItems(row.original),
+            content: { align: "end" },
           },
           () =>
             h(UButton, {
@@ -184,7 +203,7 @@ function getRowItems(incidencia: Incidencia) {
         icon: "i-heroicons-arrow-down-tray-20-solid",
         onSelect: () => downloadArchivos(incidencia),
       },
-    ]
+    ],
   ];
 }
 
@@ -194,8 +213,8 @@ function openDetailsModal(id: string) {
 }
 
 function downloadArchivos(incidencia: Incidencia) {
-  incidencia.archivos.forEach(archivo => {
-    const link = document.createElement('a');
+  incidencia.archivos.forEach((archivo) => {
+    const link = document.createElement("a");
     link.href = archivo.url;
     link.download = archivo.nombreOriginal;
     link.click();
@@ -213,8 +232,9 @@ const globalFilter = ref("");
       <h1 class="text-2xl font-bold">Incidencias</h1>
     </div>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-        
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput
         v-model="globalFilter"
         class="max-w-sm"
@@ -250,7 +270,6 @@ const globalFilter = ref("");
         />
       </UDropdownMenu>
       <NewIncidencia @creada="refresh()" />
-
     </div>
 
     <UTable

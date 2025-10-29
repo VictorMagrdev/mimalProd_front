@@ -24,12 +24,12 @@ interface QueryResult {
 }
 
 const query = gql`
-  query getAllRequerimientos {
-    getAllRequerimientos {
+  query requerimientosMateriales {
+    requerimientosMateriales {
       id
       productoCodigo
       productoNombre
-      ordenProduccionCodigo
+      ordenProduccionNumero
       cantidadRequerida
       cantidadDisponible
       cantidadAPedir
@@ -46,12 +46,14 @@ const columns: TableColumn<RequerimientoMaterial>[] = [
   {
     accessorKey: "productoCodigo",
     header: "Código Producto",
-    cell: ({ row }) => h("div", { class: "font-mono text-sm" }, row.original.productoCodigo),
+    cell: ({ row }) =>
+      h("div", { class: "font-mono text-sm" }, row.original.productoCodigo),
   },
   {
     accessorKey: "productoNombre",
     header: "Nombre Producto",
-    cell: ({ row }) => h("div", { class: "font-medium" }, row.original.productoNombre),
+    cell: ({ row }) =>
+      h("div", { class: "font-medium" }, row.original.productoNombre),
   },
   {
     accessorKey: "ordenProduccionCodigo",
@@ -74,10 +76,8 @@ const columns: TableColumn<RequerimientoMaterial>[] = [
     accessorKey: "cantidadAPedir",
     header: "A Pedir",
     cell: ({ row }) =>
-      h(
-        UBadge,
-        { color: "neutral", variant: "subtle" },
-        () => row.original.cantidadAPedir.toFixed(2)
+      h(UBadge, { color: "neutral", variant: "subtle" }, () =>
+        row.original.cantidadAPedir.toFixed(2),
       ),
   },
   {

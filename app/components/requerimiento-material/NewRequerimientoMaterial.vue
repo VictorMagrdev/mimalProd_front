@@ -36,7 +36,9 @@ const { result: productosResult } = useQuery<ProductosResult>(ProductosQuery);
 const { result: ordenesResult } = useQuery<OrdenesResult>(OrdenesQuery);
 
 const productosOptions = computed(() => productosResult.value?.productos ?? []);
-const ordenesOptions = computed(() => ordenesResult.value?.ordenesProduccion ?? []);
+const ordenesOptions = computed(
+  () => ordenesResult.value?.ordenesProduccion ?? [],
+);
 
 // --- Schema y estado ---
 const RequerimientoSchema = z.object({
@@ -83,7 +85,11 @@ async function onSubmit(event: FormSubmitEvent<RequerimientoInput>) {
     resetForm();
     open.value = false;
   } catch (e) {
-    toast.add({ title: "Error al crear", description: String(e), color: "error" });
+    toast.add({
+      title: "Error al crear",
+      description: String(e),
+      color: "error",
+    });
   }
 }
 </script>

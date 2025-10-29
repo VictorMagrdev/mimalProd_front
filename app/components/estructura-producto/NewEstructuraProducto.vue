@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue"
-import { z } from "zod"
-import type { FormSubmitEvent } from "@nuxt/ui"
+import { reactive, ref, computed } from "vue";
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
-const emit = defineEmits<{ (e: "creado"): void }>()
-const toast = useToast()
-const open = ref(false)
+const emit = defineEmits<{ (e: "creado"): void }>();
+const toast = useToast();
+const open = ref(false);
 
 const ProductosOptionsQuery = gql`
   query ProductosOptions {
@@ -14,7 +14,7 @@ const ProductosOptionsQuery = gql`
       label: nombre
     }
   }
-`
+`;
 
 const UnidadesOptionsQuery = gql`
   query UnidadesOptions {
@@ -23,19 +23,22 @@ const UnidadesOptionsQuery = gql`
       label: nombre
     }
   }
-`
+`;
 
-type ProductoOption = { value: string; label: string }
-type UnidadOption = { value: string; label: string }
+type ProductoOption = { value: string; label: string };
+type UnidadOption = { value: string; label: string };
 
-type ProductosResult = { productos: ProductoOption[] }
-type UnidadesResult = { unidades: UnidadOption[] }
+type ProductosResult = { productos: ProductoOption[] };
+type UnidadesResult = { unidades: UnidadOption[] };
 
-const { result: productosResult } = useQuery<ProductosResult>(ProductosOptionsQuery)
-const { result: unidadesResult } = useQuery<UnidadesResult>(UnidadesOptionsQuery)
+const { result: productosResult } = useQuery<ProductosResult>(
+  ProductosOptionsQuery,
+);
+const { result: unidadesResult } =
+  useQuery<UnidadesResult>(UnidadesOptionsQuery);
 
-const productosOptions = computed(() => productosResult.value?.productos ?? [])
-const unidadesOptions = computed(() => unidadesResult.value?.unidades ?? [])
+const productosOptions = computed(() => productosResult.value?.productos ?? []);
+const unidadesOptions = computed(() => unidadesResult.value?.unidades ?? []);
 
 const EstructuraSchema = z.object({
   productoPadreId: z.string().min(1),
@@ -44,8 +47,8 @@ const EstructuraSchema = z.object({
   unidadId: z.string().optional(),
   version: z.string().optional(),
   activo: z.boolean().default(true),
-})
-type EstructuraInput = z.infer<typeof EstructuraSchema>
+});
+type EstructuraInput = z.infer<typeof EstructuraSchema>;
 
 const state = reactive<EstructuraInput>({
   productoPadreId: "",
@@ -54,7 +57,7 @@ const state = reactive<EstructuraInput>({
   unidadId: "",
   version: "",
   activo: true,
-})
+});
 
 const CreateEstructuraMutation = gql`
   mutation createEstructura($input: EstructuraProductoInput!) {
@@ -62,33 +65,33 @@ const CreateEstructuraMutation = gql`
       id
     }
   }
-`
+`;
 
-type CreateEstructuraResult = { createEstructura: { id: string } }
-type CreateEstructuraVars = { input: EstructuraInput }
+type CreateEstructuraResult = { createEstructura: { id: string } };
+type CreateEstructuraVars = { input: EstructuraInput };
 
 const { mutate } = useMutation<CreateEstructuraResult, CreateEstructuraVars>(
   CreateEstructuraMutation,
-)
+);
 
 function resetForm() {
-  state.productoPadreId = ""
-  state.productoHijoId = ""
-  state.cantidad = 1
-  state.unidadId = ""
-  state.version = ""
-  state.activo = true
+  state.productoPadreId = "";
+  state.productoHijoId = "";
+  state.cantidad = 1;
+  state.unidadId = "";
+  state.version = "";
+  state.activo = true;
 }
 
 async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
   try {
-    await mutate({ input: event.data })
-    toast.add({ title: "Estructura creada", color: "success" })
-    emit("creado")
-    resetForm()
-    open.value = false
+    await mutate({ input: event.data });
+    toast.add({ title: "Estructura creada", color: "success" });
+    emit("creado");
+    resetForm();
+    open.value = false;
   } catch (e) {
-    toast.add({ title: "Error", description: String(e), color: "error" })
+    toast.add({ title: "Error", description: String(e), color: "error" });
   }
 }
 </script>
@@ -122,7 +125,11 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
         </UFormField>
 
         <UFormField label="Cantidad" name="cantidad">
-          <UInput v-model.number="state.cantidad" type="number" placeholder="Cantidad" />
+          <UInput
+            v-model.number="state.cantidad"
+            type="number"
+            placeholder="Cantidad"
+          />
         </UFormField>
 
         <UFormField label="Unidad" name="unidadId">
@@ -150,8 +157,8 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
         variant="outline"
         @click="
           () => {
-            close()
-            resetForm()
+            close();
+            resetForm();
           }
         "
       />

@@ -20,8 +20,8 @@ interface QueryResult {
 }
 
 const query = gql`
-  query getAllParametros {
-    getAllParametros {
+  query parametrosClasificacion {
+    parametrosClasificacion {
       id
       productoCodigo
       productoNombre
@@ -41,12 +41,14 @@ const columns: TableColumn<ParametroPlanificacion>[] = [
   {
     accessorKey: "productoCodigo",
     header: "Código Producto",
-    cell: ({ row }) => h("div", { class: "font-mono text-sm" }, row.original.productoCodigo),
+    cell: ({ row }) =>
+      h("div", { class: "font-mono text-sm" }, row.original.productoCodigo),
   },
   {
     accessorKey: "productoNombre",
     header: "Nombre Producto",
-    cell: ({ row }) => h("div", { class: "font-medium" }, row.original.productoNombre),
+    cell: ({ row }) =>
+      h("div", { class: "font-medium" }, row.original.productoNombre),
   },
   {
     accessorKey: "leadTimeDias",

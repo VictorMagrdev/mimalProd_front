@@ -42,9 +42,10 @@ const CreateTipoIncidenciaMutation = gql`
 type CreateTipoIncidenciaResult = { crearTipoIncidencia: { id: string } };
 type CreateTipoIncidenciaVars = { input: TipoIncidenciaInput };
 
-const { mutate } = useMutation<CreateTipoIncidenciaResult, CreateTipoIncidenciaVars>(
-  CreateTipoIncidenciaMutation
-);
+const { mutate } = useMutation<
+  CreateTipoIncidenciaResult,
+  CreateTipoIncidenciaVars
+>(CreateTipoIncidenciaMutation);
 
 function resetForm() {
   Object.assign(state, {
@@ -58,15 +59,18 @@ function resetForm() {
 async function onSubmit(event: FormSubmitEvent<TipoIncidenciaInput>) {
   try {
     await mutate({ input: event.data });
-    toast.add({ title: "Tipo de incidencia creado exitosamente", color: "success" });
+    toast.add({
+      title: "Tipo de incidencia creado exitosamente",
+      color: "success",
+    });
     emit("creado");
     resetForm();
     open.value = false;
   } catch (error) {
-    toast.add({ 
-      title: "Error al crear el tipo de incidencia", 
+    toast.add({
+      title: "Error al crear el tipo de incidencia",
       description: String(error),
-      color: "error" 
+      color: "error",
     });
   }
 }
@@ -75,7 +79,7 @@ async function onSubmit(event: FormSubmitEvent<TipoIncidenciaInput>) {
 <template>
   <UModal v-model:open="open" title="Crear Tipo de Incidencia">
     <UButton label="Nuevo Tipo" color="neutral" variant="subtle" />
-    
+
     <template #body>
       <UForm
         id="form-tipo-incidencia"
@@ -95,7 +99,10 @@ async function onSubmit(event: FormSubmitEvent<TipoIncidenciaInput>) {
         </div>
 
         <UFormField label="Descripción" name="descripcion">
-          <UTextarea v-model="state.descripcion" placeholder="Descripción del tipo..." />
+          <UTextarea
+            v-model="state.descripcion"
+            placeholder="Descripción del tipo..."
+          />
         </UFormField>
 
         <UFormField label="Prioridad Base" name="prioridadBase">

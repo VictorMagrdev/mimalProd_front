@@ -36,9 +36,10 @@ const CreateEstadoIncidenciaMutation = gql`
 type CreateEstadoIncidenciaResult = { createEstadoIncidencia: { id: string } };
 type CreateEstadoIncidenciaVars = { input: EstadoIncidenciaInput };
 
-const { mutate } = useMutation<CreateEstadoIncidenciaResult, CreateEstadoIncidenciaVars>(
-  CreateEstadoIncidenciaMutation
-);
+const { mutate } = useMutation<
+  CreateEstadoIncidenciaResult,
+  CreateEstadoIncidenciaVars
+>(CreateEstadoIncidenciaMutation);
 
 function resetForm() {
   Object.assign(state, {
@@ -52,15 +53,18 @@ function resetForm() {
 async function onSubmit(event: FormSubmitEvent<EstadoIncidenciaInput>) {
   try {
     await mutate({ input: event.data });
-    toast.add({ title: "Estado de incidencia creado exitosamente", color: "success" });
+    toast.add({
+      title: "Estado de incidencia creado exitosamente",
+      color: "success",
+    });
     emit("creado");
     resetForm();
     open.value = false;
   } catch (error) {
-    toast.add({ 
-      title: "Error al crear el estado de incidencia", 
+    toast.add({
+      title: "Error al crear el estado de incidencia",
       description: String(error),
-      color: "error" 
+      color: "error",
     });
   }
 }
@@ -69,7 +73,7 @@ async function onSubmit(event: FormSubmitEvent<EstadoIncidenciaInput>) {
 <template>
   <UModal v-model:open="open" title="Crear Estado de Incidencia">
     <UButton label="Nuevo Estado" color="neutral" variant="subtle" />
-    
+
     <template #body>
       <UForm
         id="form-estado-incidencia"
@@ -83,16 +87,19 @@ async function onSubmit(event: FormSubmitEvent<EstadoIncidenciaInput>) {
         </UFormField>
 
         <UFormField label="Descripción" name="descripcion">
-          <UTextarea v-model="state.descripcion" placeholder="Descripción del estado..." />
+          <UTextarea
+            v-model="state.descripcion"
+            placeholder="Descripción del estado..."
+          />
         </UFormField>
 
         <div class="grid grid-cols-2 gap-4">
           <UFormField label="Orden" name="orden">
-            <UInput 
-              v-model="state.orden" 
-              type="number" 
-              min="1" 
-              placeholder="1" 
+            <UInput
+              v-model="state.orden"
+              type="number"
+              min="1"
+              placeholder="1"
             />
           </UFormField>
 

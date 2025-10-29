@@ -33,7 +33,8 @@ interface TipoIncidenciaResult {
   tiposIncidencia: TipoIncidencia[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<TipoIncidenciaResult>(GetTiposIncidencia);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<TipoIncidenciaResult>(GetTiposIncidencia);
 
 const tiposIncidencia = computed(() => data.value?.tiposIncidencia || []);
 
@@ -41,7 +42,7 @@ const columns: TableColumn<TipoIncidencia>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }: { row: Row<TipoIncidencia> }) => 
+    cell: ({ row }: { row: Row<TipoIncidencia> }) =>
       h("span", { class: "font-mono" }, row.original.codigo),
   },
   {
@@ -53,17 +54,21 @@ const columns: TableColumn<TipoIncidencia>[] = [
     header: "Prioridad Base",
     cell: ({ row }) => {
       const color = {
-        'LEVE': 'green',
-        'MEDIA': 'yellow', 
-        'ALTA': 'red'
+        LEVE: "green",
+        MEDIA: "yellow",
+        ALTA: "red",
       }[row.original.prioridadBase];
-      
-      return h(UBadge, { 
-        class: "capitalize", 
-        variant: "subtle", 
-        color 
-      }, () => row.original.prioridadBase.toLowerCase());
-    }
+
+      return h(
+        UBadge,
+        {
+          class: "capitalize",
+          variant: "subtle",
+          color,
+        },
+        () => row.original.prioridadBase.toLowerCase(),
+      );
+    },
   },
   {
     accessorKey: "descripcion",
@@ -79,7 +84,7 @@ const columns: TableColumn<TipoIncidencia>[] = [
         { class: "text-right" },
         h(
           UDropdownMenu,
-          
+
           () =>
             h(UButton, {
               icon: "i-lucide-ellipsis-vertical",
@@ -91,10 +96,6 @@ const columns: TableColumn<TipoIncidencia>[] = [
       ),
   },
 ];
-
-
-
-
 
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
@@ -108,7 +109,9 @@ const globalFilter = ref("");
       <NewTiposIncidencias @creado="refresh()" />
     </div>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput
         v-model="globalFilter"
         class="max-w-sm"

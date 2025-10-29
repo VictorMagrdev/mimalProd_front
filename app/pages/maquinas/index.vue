@@ -26,8 +26,6 @@ const GetMaquinas = gql`
   }
 `;
 
-
-
 interface Maquina {
   id: string;
   codigo: string;
@@ -46,7 +44,8 @@ interface MaquinaResult {
   maquinas: Maquina[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<MaquinaResult>(GetMaquinas);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<MaquinaResult>(GetMaquinas);
 
 const maquinas = computed(() => data.value?.maquinas || []);
 
@@ -54,7 +53,7 @@ const columns: TableColumn<Maquina>[] = [
   {
     accessorKey: "codigo",
     header: "Código",
-    cell: ({ row }: { row: Row<Maquina> }) => 
+    cell: ({ row }: { row: Row<Maquina> }) =>
       h("span", { class: "font-mono" }, row.original.codigo),
   },
   {
@@ -74,9 +73,12 @@ const columns: TableColumn<Maquina>[] = [
   {
     accessorKey: "costoCompra",
     header: "Costo",
-    cell: ({ row }) => 
-      h("span", { class: "font-mono" }, 
-        `$${row.original.costoCompra.toLocaleString()}`),
+    cell: ({ row }) =>
+      h(
+        "span",
+        { class: "font-mono" },
+        `$${row.original.costoCompra.toLocaleString()}`,
+      ),
   },
   {
     accessorKey: "vidaUtilAnios",
@@ -92,9 +94,9 @@ const columns: TableColumn<Maquina>[] = [
         { class: "text-right" },
         h(
           UDropdownMenu,
-          { 
-            items: getRowItems(row.original), 
-            content: { align: "end" } 
+          {
+            items: getRowItems(row.original),
+            content: { align: "end" },
           },
           () =>
             h(UButton, {
@@ -120,7 +122,6 @@ function getRowItems(maquina: Maquina) {
   ];
 }
 
-
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const globalFilter = ref("");
@@ -133,7 +134,9 @@ const globalFilter = ref("");
       <NewMaquinas @creada="refresh()" />
     </div>
 
-    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+    <div
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
+    >
       <UInput
         v-model="globalFilter"
         class="max-w-sm"

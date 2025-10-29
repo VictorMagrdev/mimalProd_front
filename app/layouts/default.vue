@@ -109,21 +109,183 @@ const navigationItems: NavigationMenuItem[][] = [
       exact: true,
     },
   ],
+
   [
     {
-      label: "Usuarios",
-      icon: "i-heroicons-users",
-      defaultOpen: route.path.startsWith("/usuarios"),
+      label: "Producción",
+      icon: "i-heroicons-cog-6-tooth",
+      defaultOpen:
+        route.path.startsWith("/ordenes-produccion") ||
+        route.path.startsWith("/lineas-orden"),
       children: [
         {
-          label: "Listado",
-          icon: "i-heroicons-list-bullet",
-          to: "/usuarios",
-          exact: true,
+          label: "Órdenes de Producción",
+          icon: "i-heroicons-clipboard-document-list",
+          to: "/ordenes-produccion",
         },
         {
+          label: "Líneas de Orden",
+          icon: "i-heroicons-bars-3",
+          to: "/lineas-orden",
+        },
+        {
+          label: "Estaciones",
+          icon: "i-heroicons-building-office-2",
+          to: "/estacion-produccion",
+        },
+        { label: "Máquinas", icon: "i-heroicons-cpu-chip", to: "/maquinas" },
+        {
+          label: "Eventos y Seguimiento",
+          icon: "i-heroicons-calendar-days",
+          to: "/orden-evento",
+        },
+        {
+          label: "Costos de Orden",
+          icon: "i-heroicons-banknotes",
+          to: "/costos-orden",
+        },
+        {
+          label: "Método de Valoración",
+          icon: "i-heroicons-scale",
+          to: "/metodo-valoracion",
+        },
+        {
+          label: "Parámetros de Planificación",
+          icon: "i-heroicons-adjustments-horizontal",
+          to: "/parametro-planificacion",
+        },
+      ],
+    },
+  ],
+
+  [
+    {
+      label: "Inventario",
+      icon: "i-heroicons-archive-box",
+      defaultOpen:
+        route.path.startsWith("/bodegas") ||
+        route.path.startsWith("/inventario-lote"),
+      children: [
+        {
+          label: "Bodegas",
+          icon: "i-heroicons-building-storefront",
+          to: "/bodegas",
+        },
+        {
+          label: "Inventario por Lote",
+          icon: "i-heroicons-archive-box",
+          to: "/inventario-lote",
+        },
+        {
+          label: "Movimientos de Inventario",
+          icon: "i-heroicons-arrow-path",
+          to: "/movimientos-inventario",
+        },
+        {
+          label: "Conteo Cíclico",
+          icon: "i-heroicons-check-badge",
+          to: "/conteo-ciclico",
+        },
+        {
+          label: "Discrepancias",
+          icon: "i-heroicons-exclamation-triangle",
+          to: "/discrepancia-inventario",
+        },
+        {
+          label: "Reserva de Material",
+          icon: "i-heroicons-inbox-arrow-down",
+          to: "/reserva-material-orden",
+        },
+        {
+          label: "Punto de Reorden",
+          icon: "i-heroicons-flag",
+          to: "/punto-reorden",
+        },
+        {
+          label: "Requerimiento de Material",
+          icon: "i-heroicons-cube-transparent",
+          to: "/requerimiento-material",
+        },
+      ],
+    },
+  ],
+
+  [
+    {
+      label: "Incidencias",
+      icon: "i-heroicons-bug-ant",
+      defaultOpen: route.path.startsWith("/incidentes"),
+      children: [
+        {
+          label: "Gestión de Incidentes",
+          icon: "i-heroicons-bug-ant",
+          to: "/incidentes",
+        },
+        {
+          label: "Tipos de Incidencia",
+          icon: "i-heroicons-rectangle-group",
+          to: "/tipos-incidencia",
+        },
+        {
+          label: "Estados de Incidencia",
+          icon: "i-heroicons-adjustments-horizontal",
+          to: "/estados-incidencia",
+        },
+      ],
+    },
+  ],
+
+  [
+    {
+      label: "Catálogos",
+      icon: "i-heroicons-rectangle-stack",
+      defaultOpen: route.path.startsWith("/productos"),
+      children: [
+        { label: "Productos", icon: "i-heroicons-cube", to: "/productos" },
+        {
+          label: "Estructura del Producto (BOM)",
+          icon: "i-heroicons-cube-transparent",
+          to: "/estructura-producto",
+        },
+        {
+          label: "Tipos de Producto",
+          icon: "i-heroicons-squares-2x2",
+          to: "/tipos-producto",
+        },
+        {
+          label: "Estados de Orden",
+          icon: "i-heroicons-tag",
+          to: "/estados-orden",
+        },
+        {
+          label: "Tipos de Costo",
+          icon: "i-heroicons-banknotes",
+          to: "/tipos-costo",
+        },
+        {
+          label: "Tipos de Bodega",
+          icon: "i-heroicons-building-library",
+          to: "/tipos-bodega",
+        },
+        {
+          label: "Tipos de Movimiento",
+          icon: "i-heroicons-arrows-right-left",
+          to: "/tipos-movimientos",
+        },
+      ],
+    },
+  ],
+
+  [
+    {
+      label: "Usuarios y Seguridad",
+      icon: "i-heroicons-user-group",
+      defaultOpen: route.path.startsWith("/usuarios"),
+      children: [
+        { label: "Usuarios", icon: "i-heroicons-users", to: "/usuarios" },
+        {
           label: "Roles",
-          icon: "i-heroicons-user-group",
+          icon: "i-heroicons-identification",
           to: "/usuarios/roles",
         },
         {
@@ -134,166 +296,12 @@ const navigationItems: NavigationMenuItem[][] = [
       ],
     },
   ],
-  [
-    {
-      label: "Producción",
-      icon: "i-heroicons-cog",
-      defaultOpen:
-        route.path.startsWith("/ordenes-produccion") ||
-        route.path.startsWith("/lineas-orden") ||
-        route.path.startsWith("/lotes-produccion") ||
-        route.path.startsWith("/costos-orden"),
-      children: [
-        {
-          label: "Órdenes",
-          icon: "i-heroicons-clipboard-document-list",
-          to: "/ordenes-produccion",
-        },
-        {
-          label: "Líneas de Orden",
-          icon: "i-heroicons-bars-3",
-          to: "/lineas-orden",
-        },
-        {
-          label: "Lotes",
-          icon: "i-heroicons-archive-box",
-          to: "/lotes-produccion",
-        },
-        {
-          label: "Costos",
-          icon: "i-heroicons-currency-dollar",
-          to: "/costos-orden",
-        },
-        {
-          label: "Bodegas",
-          icon: "i-heroicons-building-storefront",
-          to: "/bodegas",
-        },
-        {
-          label: "Conteo Cíclico",
-          icon: "i-heroicons-check-circle",
-          to: "/conteo-ciclico",
-        },
-        {
-          label: "Discrepancia Inventario",
-          icon: "i-heroicons-exclamation-triangle",
-          to: "/discrepancia-inventario",
-        },
-        {
-          label: "Inventario Lote",
-          icon: "i-heroicons-archive-box",
-          to: "/inventario-lote",
-        },
-        {
-          label: "Movimientos Inventario",
-          icon: "i-heroicons-arrow-path",
-          to: "/movimientos-inventario",
-        },
-        {
-          label: "Orden Estación",
-          icon: "i-heroicons-rectangle-stack",
-          to: "/orden-estacion",
-        },
-        {
-          label: "Orden Evento",
-          icon: "i-heroicons-calendar",
-          to: "/orden-evento",
-        },
-        {
-          label: "Método de Valoración",
-          icon: "i-heroicons-scale",
-          to: "/metodo-valoracion",
-        },
-        {
-          label: "Reserva Material Orden",
-          icon: "i-heroicons-inbox",
-          to: "/reserva-material-orden",
-        },
-        {
-          label: "Punto Reorden",
-          icon: "i-heroicons-flag",
-          to: "/punto-reorden",
-        },
-        {
-          label: "Estación Producción",
-          icon: "i-heroicons-cog-6-tooth",
-          to: "/estacion-produccion",
-        },{
-          label: "Incidentes",
-          icon: "i-heroicons-bug-ant",
-          to: "/incidentes",
-        },
-        {
-        label: 'Máquinas',
-        icon: 'i-heroicons-cpu-chip',
-        to: '/maquinas',
-        active: route.path.startsWith('/maquinas'),
-      },
-      {
-        label: 'Tipos de incidencias',
-        icon: 'i-heroicons-exclamation-triangle',
-        to: '/tipos-incidencia',
-        active: route.path.startsWith('/tipos-incidencia'),
-      },
-      {
-        label: 'Estados de incidencias',
-        icon: 'i-heroicons-adjustments-horizontal',
-        to: '/estados-incidencia',
-        active: route.path.startsWith('/estados-incidencia'),
-      },
-      ],
-    },
-  ],
-  [
-    {
-      label: "Catálogos",
-      icon: "i-heroicons-rectangle-stack",
-      defaultOpen:
-        route.path.startsWith("/productos") ||
-        route.path.startsWith("/estados-orden") ||
-        route.path.startsWith("/tipos-costo"),
-      children: [
-        {
-          label: "Productos",
-          icon: "i-heroicons-cube",
-          to: "/productos",
-        },
-        {
-          label: "Estados de Orden",
-          icon: "i-heroicons-tag",
-          to: "/estados-orden",
-        },
-        {
-          label: "Tipos de Costo",
-          icon: "i-heroicons-tag",
-          to: "/tipos-costo",
-        },
-        {
-          label: "Tipos de Bodega",
-          icon: "i-heroicons-building-library",
-          to: "/tipos-bodega",
-        },
-        {
-          label: "Tipos de Movimientos",
-          icon: "i-heroicons-arrows-right-left",
-          to: "/tipos-movimientos",
-        },
-        {
-          label: "Tipos de Producto",
-          icon: "i-heroicons-cube",
-          to: "/tipos-producto",
-        },
-      ],
-    },
-  ],
+
   [
     {
       label: "Configuración",
       icon: "i-heroicons-wrench-screwdriver",
-      defaultOpen:
-        route.path.startsWith("/unidades-medida") ||
-        route.path.startsWith("/unidades-medida-tipo") ||
-        route.path.startsWith("/unidades-conversion"),
+      defaultOpen: route.path.startsWith("/unidades-medida"),
       children: [
         {
           label: "Unidades de Medida",
