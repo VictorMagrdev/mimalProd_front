@@ -110,7 +110,7 @@ onUnmounted(() => clearInterval(intervalId));
       <div class="text-sm text-gray-500">
         Grabación lista — se incluirá en el formulario.
       </div>
-      <input type="hidden" name="audio" :value="audioUrl" />
+      <input type="hidden" name="audio" :value="audioUrl">
     </template>
   </UCard>
 </template>

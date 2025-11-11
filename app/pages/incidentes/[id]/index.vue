@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useArrayFilter } from "@vueuse/core";
 import type { Archivo, Incidencia } from "~/utils/types";
 
 const route = useRoute();
@@ -33,13 +34,31 @@ const { data, pending } = await useAsyncQuery<{ incidencia: Incidencia }>(
 
 const incidencia = computed(() => data.value?.incidencia ?? null);
 
+const archivosFoto = useArrayFilter(
+  () => incidencia.value?.archivos ?? [],
+  (a) => a.tipo === "FOTO",
+);
+
+const archivosAudio = useArrayFilter(
+  () => incidencia.value?.archivos ?? [],
+  (a) => a.tipo === "AUDIO",
+);
+
+function useDownloadFile(url: string, filename?: string) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename || "archivo";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 const descargarArchivo = (archivo: Archivo) => {
-  const a = document.createElement("a");
-  a.href = archivo.url;
-  a.download = archivo.nombreOriginal;
-  a.click();
+  useDownloadFile(archivo.url, archivo.nombreOriginal);
 };
 </script>
+
+
 
 <template>
   <div class="container mx-auto p-6 space-y-6">
@@ -94,42 +113,25 @@ const descargarArchivo = (archivo: Archivo) => {
             v-if="incidencia.archivos.some((a) => a?.tipo === 'FOTO')"
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
           >
-            <div
-              v-for="archivo in incidencia.archivos.filter(
-                (a) => a?.tipo === 'FOTO',
-              ) || []"
-              :key="archivo.id"
-              class="relative group border rounded-lg overflow-hidden"
-            >
-              <img
-                :src="archivo.url"
-                :alt="archivo.nombreOriginal"
-                class="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105">
-              <div
-                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-              >
-                <UButton
-                  icon="i-heroicons-arrow-down-tray"
-                  size="sm"
-                  color="white"
-                  variant="solid"
-                  @click="descargarArchivo(archivo)"
-                >
-                  Descargar
-                </UButton>
+            <div v-if="archivosFoto.length">
+              <label class="text-sm font-medium text-gray-500 mb-2 block">
+                Fotografías
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <ArchivoFoto
+                  v-for="a in archivosFoto"
+                  :key="a.id"
+                  :archivo="a"
+                  @descargar="descargarArchivo"
+                />
               </div>
             </div>
           </div>
 
           <!-- Audios -->
-          <div
-            v-if="incidencia.archivos.some((a) => a?.tipo === 'AUDIO')"
-            class="mt-6 space-y-4"
-          >
+          <div v-if="archivosAudio.length" class="mt-6 space-y-4">
             <div
-              v-for="archivo in incidencia.archivos.filter(
-                (a) => a?.tipo === 'AUDIO',
-              ) || []"
+              v-for="archivo in archivosAudio"
               :key="archivo.id"
               class="p-4 border rounded-lg flex flex-col items-center gap-2"
             >
@@ -137,10 +139,11 @@ const descargarArchivo = (archivo: Archivo) => {
                 <source :src="archivo.url" type="audio/webm" >
                 Tu navegador no soporta el elemento de audio.
               </audio>
+
               <div class="flex justify-between w-full items-center">
-                <span class="text-sm text-gray-600 truncate">{{
-                  archivo.nombreOriginal
-                }}</span>
+                <span class="text-sm text-gray-600 truncate">
+                  {{ archivo.nombreOriginal }}
+                </span>
                 <UButton
                   icon="i-heroicons-arrow-down-tray"
                   color="neutral"
