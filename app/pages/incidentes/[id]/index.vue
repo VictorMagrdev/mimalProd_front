@@ -7,7 +7,6 @@ interface Archivo {
   tipo: "FOTO" | "AUDIO";
   nombreOriginal: string;
   url: string;
-  incidenciaId: string;
 }
 
 interface Incidencia {
@@ -25,10 +24,9 @@ interface Incidencia {
 const route = useRoute();
 const incidenciaId = route.params.id as string;
 
-// Queries
-const GET_TODAS_INCIDENCIAS = gql`
-  query GetTodasIncidencias {
-    incidencias {
+const GET_INCIDENCIA = gql`
+  query GetIncidencia($id: ID!) {
+    incidencia(id: $id) {
       id
       codigo
       titulo
@@ -37,52 +35,23 @@ const GET_TODAS_INCIDENCIAS = gql`
       estadoId
       maquinaId
       creadoEn
+      archivos {
+        id
+        tipo
+        nombreOriginal
+        url
+      }
     }
   }
 `;
 
-const GET_TODOS_ARCHIVOS = gql`
-  query GetTodosArchivos {
-    incidenciasArchivo {
-      id
-      incidenciaId
-      tipo
-      nombreOriginal
-      url
-    }
-  }
-`;
-
-// Requests
-const { data: dataIncidencias, pending: pendingIncidencias } =
-  await useAsyncQuery<{ incidencias: Omit<Incidencia, "archivos">[] }>(
-    GET_TODAS_INCIDENCIAS,
-  );
-const { data: dataArchivos, pending: pendingArchivos } = await useAsyncQuery<{
-  incidenciasArchivo: Archivo[];
-}>(GET_TODOS_ARCHIVOS);
-
-// Filtramos la incidencia y sus archivos
-const incidencia = computed<Incidencia | null>(() => {
-  const inc = dataIncidencias.value?.incidencias.find(
-    (i) => i.id === incidenciaId,
-  );
-  if (!inc) return null;
-
-  return {
-    ...inc,
-    archivos:
-      dataArchivos.value?.incidenciasArchivo.filter(
-        (a) => a.incidenciaId === incidenciaId && a.id,
-      ) || [],
-  };
-});
-
-const pending = computed(
-  () => pendingIncidencias.value || pendingArchivos.value,
+const { data, pending } = await useAsyncQuery<{ incidencia: Incidencia }>(
+  GET_INCIDENCIA,
+  { id: incidenciaId },
 );
 
-// Función para descargar archivos
+const incidencia = computed(() => data.value?.incidencia ?? null);
+
 const descargarArchivo = (archivo: Archivo) => {
   const a = document.createElement("a");
   a.href = archivo.url;

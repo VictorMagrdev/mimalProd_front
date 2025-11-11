@@ -20,53 +20,16 @@ const GetMaquina = gql`
       valorRescate
       vidaUtilAnios
       creadoEn
+      depreciaciones {
+        id
+        periodo
+        depreciacionPeriodo
+        depreciacionAcumulada
+        valorNeto
+      }
     }
   }
 `;
-
-const GetDepreciaciones = gql`
-  query GetDepreciaciones {
-    depreciaciones {
-      id
-      maquinaId
-      periodo
-      depreciacionPeriodo
-      depreciacionAcumulada
-      valorNeto
-    }
-  }
-`;
-
-interface Depreciacion {
-  id: string;
-  maquinaId: string;
-  periodo: string;
-  depreciacionPeriodo: string;
-  depreciacionAcumulada: string;
-  valorNeto: string;
-}
-
-interface Maquina {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion?: string;
-  numeroSerie?: string;
-  fechaCompra: string;
-  costoCompra: number;
-  valorRescate?: number;
-  vidaUtilAnios: number;
-  creadoEn: string;
-}
-
-interface PuntoGrafico {
-  año: number;
-  fecha: string;
-  valorEnLibros: number;
-  valorDepreciacion: number;
-  valorAcumulado: number;
-  tipo: "Real" | "Proyectado";
-}
 
 const maquina = ref<Maquina | null>(null);
 const depreciaciones = ref<Depreciacion[]>([]);
@@ -77,57 +40,69 @@ const { data: dataMaquina } = await useAsyncQuery<{ maquina: Maquina }>(
 );
 maquina.value = dataMaquina.value?.maquina || null;
 
-const { data: dataDep } = await useAsyncQuery<{
-  depreciaciones: Depreciacion[];
-}>(GetDepreciaciones);
-depreciaciones.value =
-  dataDep.value?.depreciaciones.filter((d) => d.maquinaId === maquinaId) || [];
-
 const depreciacionProyectada = computed<PuntoGrafico[]>(() => {
-  if (!maquina.value) return [];
-  const { costoCompra, valorRescate, vidaUtilAnios, fechaCompra } =
-    maquina.value;
-  const depAnual = (costoCompra - (valorRescate || 0)) / vidaUtilAnios;
-  const datos: PuntoGrafico[] = [];
-  for (let i = 0; i <= vidaUtilAnios; i++) {
+  const maquinaActual = maquina.value;
+  if (!maquinaActual) return [];
+
+  const {
+    costoCompra,
+    valorRescate = 0,
+    vidaUtilAnios,
+    fechaCompra,
+  } = maquinaActual;
+  const depreciacionAnual = (costoCompra - valorRescate) / vidaUtilAnios;
+
+  const años = Array.from({ length: vidaUtilAnios + 1 }, (_, i) => i);
+
+  return años.map((año) => {
     const fecha = new Date(fechaCompra);
-    fecha.setFullYear(fecha.getFullYear() + i);
-    const acumulado = depAnual * i;
-    const valorEnLibros = Math.max(costoCompra - acumulado, valorRescate || 0);
-    datos.push({
-      año: i,
-      fecha: fecha.toISOString().split("T")[0] ?? "",
+    fecha.setFullYear(fecha.getFullYear() + año);
+
+    const fechaISO: string = fecha.toISOString().split("T")[0] || "";
+    const acumulado = depreciacionAnual * año;
+    const valorEnLibros = Math.max(costoCompra - acumulado, valorRescate);
+
+    const punto: PuntoGrafico = {
+      año,
+      fecha: fechaISO,
       valorEnLibros,
-      valorDepreciacion: i === 0 ? 0 : depAnual,
+      valorDepreciacion: año === 0 ? 0 : depreciacionAnual,
       valorAcumulado: acumulado,
       tipo: "Proyectado",
-    });
-  }
-  return datos;
+    };
+
+    return punto;
+  });
 });
 
 const graphData = computed<PuntoGrafico[]>(() => {
-  const reales: PuntoGrafico[] = depreciaciones.value.map((d) => {
-    const año =
-      new Date(d.periodo).getFullYear() -
-      new Date(maquina.value!.fechaCompra).getFullYear();
+  const maquinaActual = maquina.value;
+  if (!maquinaActual) return [];
+
+  const añoBase = new Date(maquinaActual.fechaCompra).getFullYear();
+
+  const datosReales = depreciaciones.value.map((dep) => {
+    const año = new Date(dep.periodo).getFullYear() - añoBase;
+
     return {
       año,
-      fecha: d.periodo,
-      valorEnLibros: Number(d.valorNeto),
-      valorDepreciacion: Number(d.depreciacionPeriodo),
-      valorAcumulado: Number(d.depreciacionAcumulada),
+      fecha: dep.periodo,
+      valorEnLibros: Number(dep.valorNeto),
+      valorDepreciacion: Number(dep.depreciacionPeriodo),
+      valorAcumulado: Number(dep.depreciacionAcumulada),
       tipo: "Real",
       color: "#3b82f6",
-    } as PuntoGrafico & { color: string };
+    } satisfies PuntoGrafico & { color: string };
   });
 
-  const proyectadas: PuntoGrafico[] = depreciacionProyectada.value.map((d) => ({
-    ...d,
+  const datosProyectados = depreciacionProyectada.value.map((punto) => ({
+    ...punto,
     color: "#6b7280",
   }));
 
-  return [...proyectadas, ...reales];
+  const grafico = [...datosProyectados, ...datosReales];
+
+  return grafico;
 });
 
 const x = (d: PuntoGrafico) => d.año;

@@ -18,7 +18,7 @@
             v-model="tipoCostoSeleccionado"
             :options="tiposCostoOptions"
           />
-        </UFormField >
+        </UFormField>
       </template>
     </ChartControls>
 

@@ -64,3 +64,34 @@ export interface DashboardConsolidadoDTO {
   costos: CostosKPIDTO;
   tiempos: TiemposKPIDTO;
 }
+
+export interface Depreciacion {
+  id: string;
+  maquinaId: string;
+  periodo: string;
+  depreciacionPeriodo: string;
+  depreciacionAcumulada: string;
+  valorNeto: string;
+}
+
+export interface Maquina {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  numeroSerie?: string;
+  fechaCompra: string;
+  costoCompra: number;
+  valorRescate?: number;
+  vidaUtilAnios: number;
+  creadoEn: string;
+}
+
+export interface PuntoGrafico {
+  año: number;
+  fecha: string;
+  valorEnLibros: number;
+  valorDepreciacion: number;
+  valorAcumulado: number;
+  tipo: "Real" | "Proyectado";
+}

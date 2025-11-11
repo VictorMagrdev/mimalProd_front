@@ -11,7 +11,7 @@
       @update:show-scatter="showScatter = $event"
     >
       <template #additional-controls>
-        <UFormField  label="Agrupar por:">
+        <UFormField label="Agrupar por:">
           <URadioGroup
             v-model="groupBy"
             :options="[

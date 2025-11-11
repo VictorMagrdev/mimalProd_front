@@ -14,9 +14,9 @@
       @export-csv="handleExportCSV"
     >
       <template #additional-controls>
-        <UFormField  label="Tipo de gráfico:" class="w-48">
+        <UFormField label="Tipo de gráfico:" class="w-48">
           <USelect v-model="chartType" :options="chartTypeOptions" />
-        </UFormField >
+        </UFormField>
       </template>
     </ChartControls>
 

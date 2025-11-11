@@ -25,29 +25,29 @@
     </template>
 
     <div class="flex flex-wrap items-center gap-4">
-      <UFormField  label="Valor faltante:" class="w-48">
+      <UFormField label="Valor faltante:" class="w-48">
         <USelect
           :model-value="fallbackValue"
           :options="fallbackOptions"
           @update:model-value="$emit('update:fallbackValue', $event)"
         />
-      </UFormField >
+      </UFormField>
 
-      <UFormField >
+      <UFormField>
         <UCheckbox
           :model-value="interpolation"
           label="Interpolar"
           @update:model-value="$emit('update:interpolation', $event)"
         />
-      </UFormField >
+      </UFormField>
 
-      <UFormField >
+      <UFormField>
         <UCheckbox
           label="Mostrar puntos"
           :model-value="showScatter"
           @update:model-value="$emit('update:showScatter', $event)"
         />
-      </UFormField >
+      </UFormField>
 
       <slot name="additional-controls" />
     </div>
