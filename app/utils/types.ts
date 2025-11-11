@@ -95,3 +95,22 @@ export interface PuntoGrafico {
   valorAcumulado: number;
   tipo: "Real" | "Proyectado";
 }
+
+export interface Archivo {
+  id: string;
+  tipo: "FOTO" | "AUDIO";
+  nombreOriginal: string;
+  url: string;
+}
+
+export interface Incidencia {
+  id: string;
+  codigo: string;
+  titulo: string;
+  descripcion?: string;
+  tipoIncidenciaId?: string;
+  estadoId?: string;
+  maquinaId?: string;
+  creadoEn: string;
+  archivos: Archivo[];
+}

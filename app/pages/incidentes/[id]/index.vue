@@ -1,25 +1,6 @@
 <script setup lang="ts">
-import { gql } from "graphql-tag";
 import { computed } from "vue";
-
-interface Archivo {
-  id: string;
-  tipo: "FOTO" | "AUDIO";
-  nombreOriginal: string;
-  url: string;
-}
-
-interface Incidencia {
-  id: string;
-  codigo: string;
-  titulo: string;
-  descripcion?: string;
-  tipoIncidenciaId?: string;
-  estadoId?: string;
-  maquinaId?: string;
-  creadoEn: string;
-  archivos: Archivo[];
-}
+import type { Archivo, Incidencia } from "~/utils/types";
 
 const route = useRoute();
 const incidenciaId = route.params.id as string;
