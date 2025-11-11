@@ -123,8 +123,7 @@ const descargarArchivo = (archivo: Archivo) => {
               <img
                 :src="archivo.url"
                 :alt="archivo.nombreOriginal"
-                class="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
-              />
+                class="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105">
               <div
                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
               >
@@ -154,7 +153,7 @@ const descargarArchivo = (archivo: Archivo) => {
               class="p-4 border rounded-lg flex flex-col items-center gap-2"
             >
               <audio controls class="w-full">
-                <source :src="archivo.url" type="audio/webm" />
+                <source :src="archivo.url" type="audio/webm" >
                 Tu navegador no soporta el elemento de audio.
               </audio>
               <div class="flex justify-between w-full items-center">
