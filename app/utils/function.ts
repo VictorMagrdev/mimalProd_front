@@ -1,0 +1,3 @@
+export function isFiniteNumber(x: unknown): x is number {
+  return typeof x === "number" && Number.isFinite(x);
+}

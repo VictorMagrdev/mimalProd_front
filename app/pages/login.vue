@@ -41,6 +41,7 @@ const fields = [
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     const result = await authStore.login(
+      undefined,
       event.data.username,
       event.data.password,
     );
@@ -83,7 +84,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <template>
   <div
-    class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100"
+    class="flex items-center justify-center min-h-screen p-4 bg-linear-to-br from-blue-50 to-indigo-100"
   >
     <UPageCard class="w-full max-w-md shadow-xl">
       <UAuthForm

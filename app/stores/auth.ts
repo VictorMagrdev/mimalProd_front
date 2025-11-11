@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { useStorage, useAsyncState } from "@vueuse/core";
+
 interface Policy {
   tag: string;
   permission: string;
@@ -10,13 +12,6 @@ interface User {
   policies: Policy[];
 }
 
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-}
-
 interface LoginResponse {
   token: string;
   username: string;
@@ -24,60 +19,52 @@ interface LoginResponse {
   policies: Policy[];
 }
 
-export const useAuthStore = defineStore("auth", {
-  state: (): AuthState => ({
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    loading: false,
-  }),
-  persist: {
-    storage: localStorage,
-  },
-  actions: {
-    setUser(user: User) {
-      this.user = user;
-      this.isAuthenticated = true;
-    },
+export const useAuthStore = defineStore("auth", () => {
+  const token = useStorage<string | null>("token", null);
+  const user = useStorage<User | null>("user", null);
 
-    setToken(token: string) {
-      this.token = token;
-      localStorage.setItem("token", token);
-    },
+  const isAuthenticated = computed(() => !!token.value && !!user.value);
+  const loading = ref(false);
 
-    clearAuth() {
-      this.user = null;
-      this.token = null;
-      this.isAuthenticated = false;
-      localStorage.removeItem("token");
-    },
+  const setUser = (u: User) => (user.value = u);
+  const clearAuth = () => {
+    token.value = null;
+    user.value = null;
+  };
 
-    async login(username: string, password: string) {
-      try {
-        const response = await $fetch<LoginResponse>(
-          "http://localhost:8080/api/auth/login",
-          {
-            method: "POST",
-            body: { username, password },
-          },
-        );
-
-        this.setToken(response.token);
-        this.setUser({
-          username: response.username,
-          roles: response.roles,
-          policies: response.policies,
-        });
-        return true;
-      } catch (error) {
-        console.error("Login error:", error);
-        return false;
-      }
+  const { execute: login } = useAsyncState(
+    async (username: string, password: string) => {
+      const response = await $fetch<LoginResponse>(
+        "http://localhost:8080/api/auth/login",
+        {
+          method: "POST",
+          body: { username, password },
+        },
+      );
+      token.value = response.token;
+      setUser({
+        username: response.username,
+        roles: response.roles,
+        policies: response.policies,
+      });
+      return true;
     },
+    false,
+    { immediate: false },
+  );
 
-    async logout() {
-      this.clearAuth();
-      await navigateTo("/");
-    },
-  },
+  const logout = async () => {
+    clearAuth();
+    await navigateTo("/");
+  };
+
+  return {
+    user,
+    token,
+    isAuthenticated,
+    loading,
+    login,
+    logout,
+    clearAuth,
+  };
 });

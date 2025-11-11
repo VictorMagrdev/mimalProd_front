@@ -296,7 +296,6 @@ const navigationItems: NavigationMenuItem[][] = [
       ],
     },
   ],
-
   [
     {
       label: "Configuración",
@@ -317,6 +316,45 @@ const navigationItems: NavigationMenuItem[][] = [
           label: "Conversiones",
           icon: "i-heroicons-arrows-right-left",
           to: "/unidades-conversion",
+        },
+      ],
+    },
+  ],
+  [
+    {
+      label: "Dashboards y reportes",
+      icon: "i-heroicons-chart-pie",
+      defaultOpen: route.path.startsWith("/productividad"),
+      children: [
+        {
+          label: "Índice de productividad",
+          icon: "i-heroicons-presentation-chart-line",
+          to: "/productividad",
+        },
+        {
+          label: "Reporte de costos material",
+          icon: "i-heroicons-cube-transparent",
+          to: "/reporte/costos-material",
+        },
+        {
+          label: "Reporte de costos por orden",
+          icon: "i-heroicons-clipboard-document-check",
+          to: "/reporte/costos-orden",
+        },
+        {
+          label: "Gráfico de costos",
+          icon: "i-heroicons-banknotes",
+          to: "/reporte/temporal-costos",
+        },
+        {
+          label: "Gráfico de producción",
+          icon: "i-heroicons-cog-6-tooth",
+          to: "/reporte/temporal-produccion",
+        },
+        {
+          label: "Gráfico de tiempos",
+          icon: "i-heroicons-clock",
+          to: "/reporte/temporal-tiempos",
         },
       ],
     },
