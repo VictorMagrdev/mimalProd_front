@@ -115,24 +115,25 @@ const { data: productividadData, pending } = useAsyncData<
 
 // Computed
 const crosshairTemplate = (d: ChartDataPoint) => {
-  const rows = series.value.map(
-    (serie: { id: string; nombre: string; color: string }) => {
-      const value = d[serie.id];
-      const displayValue =
-        typeof value === "number" && Number.isFinite(value)
-          ? `${Math.round(value)}%`
-          : "Sin dato";
-      return `${serie.nombre}: ${displayValue}`;
-    },
-  );
+  if (!d) return "";
+
+  const rowsHtml = series.value
+    .map(({ id, nombre }) => {
+      const value = d[id];
+      const num = typeof value === "number" ? value : Number(value);
+      const formatted = Number.isFinite(num) ? `${Math.round(num)}%` : "Sin dato";
+      return `<div>${nombre}: ${formatted}</div>`;
+    })
+    .join("");
 
   return `
-    <div class="text-sm">
-      <strong>Orden: ${d.ordenId}</strong><br/>
-      ${rows.join("<br/>")}
+    <div class="text-sm leading-tight">
+      <strong>Orden: ${d.ordenId ?? "—"}</strong>
+      ${rowsHtml}
     </div>
   `;
 };
+
 
 const yAxisTickFormat = (d: number) => `${d}%`;
 
@@ -185,7 +186,7 @@ const handleExportPDF = async (): Promise<void> => {
 const handleExportCSV = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "/api/reportes/productividad/csv",
+      "http://localhost:8080/api/reportes/productividad/csv",
       "indicadores_productividad.csv",
       "CSV",
     );

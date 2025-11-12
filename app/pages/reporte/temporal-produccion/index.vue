@@ -106,11 +106,17 @@ watch(
 
     setSeries([{ id: "v", nombre: "Producción", color: "var(--vis-color0)" }]);
 
-    const newChartData: ChartDataPoint[] = list.map((it) => ({
-      xValue: it.fecha.toISOString(),
-      fecha: it.fecha.toISOString(),
-      v: Number(it.valor),
-    }));
+    const newChartData: ChartDataPoint[] = list.map((it) => {
+  const date = new Date(it.fecha + "T00:00:00Z");
+  const iso = date.toISOString();
+
+  return {
+    xValue: iso,
+    fecha: iso,
+    v: Number(it.valor),
+  };
+});
+
 
     setChartData(newChartData);
   },
