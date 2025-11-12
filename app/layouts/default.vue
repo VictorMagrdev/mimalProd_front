@@ -68,23 +68,18 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import type { NavigationMenuItem } from "@nuxt/ui";
 
-const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 
 const currentPageTitle = computed(() => {
-  const routeName = route.name?.toString() || "";
-  const titleMap: Record<string, string> = {
-    index: "Inicio",
-    usuarios: "Usuarios",
-    "ordenes-produccion": "Órdenes de Producción",
-    productos: "Productos",
-  };
-  return titleMap[routeName] || "Sistema de Producción";
+  if (route.path.includes("/usuarios")) return "Usuarios";
+  if (route.path.includes("/ordenes-produccion")) return "Órdenes de Producción";
+  if (route.path.includes("/productos")) return "Productos";
+  return "Sistema de Producción";
 });
 
 const dropdownItems = [
@@ -94,7 +89,6 @@ const dropdownItems = [
       icon: "i-heroicons-arrow-left-on-rectangle",
       onSelect: () => {
         auth.logout();
-        router.push("/");
       },
     },
   ],
