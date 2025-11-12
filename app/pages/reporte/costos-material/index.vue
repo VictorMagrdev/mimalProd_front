@@ -88,7 +88,6 @@ import { CurveType } from "@unovis/ts";
 
 import type { ReporteCostoMaterialDTO, ChartDataPoint } from "~/utils/types";
 
-// Composables
 const chart = useChart();
 const exportState = useExport();
 
@@ -107,10 +106,8 @@ const {
   setChartData,
 } = chart;
 
-// Estado local
 const chartType = ref<"line" | "bar">("line");
 
-// Fetch data
 
 const auth = useAuthStore();
 
@@ -130,7 +127,6 @@ const { data: costosMaterialData, pending } = useAsyncData<
   return data.value || [];
 });
 
-// Computed
 const chartTypeOptions = [
   { label: "Líneas", value: "line" },
   { label: "Barras", value: "bar" },
@@ -154,7 +150,6 @@ const xAxisTickFormat = (d: number, i: number) => {
 
 const yAxisTickFormat = (d: number) => `$${d}`;
 
-// Watch para actualizar gráfico
 watchEffect(() => {
   if (costosMaterialData.value && costosMaterialData.value.length > 0) {
     const newSeries = costosMaterialData.value.map((item, index) => ({
@@ -189,18 +184,16 @@ watchEffect(() => {
   }
 });
 
-// Métodos
 const handleExportPDF = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "/api/reportes/costos/material/pdf",
+      "http://localhost:8080/api/reportes/costos/material/pdf",
       "reporte_costos_material.pdf",
     );
   } catch (error) {
     useToast().add({
       title: "Error",
-      description:
-        error instanceof Error ? error.message : "Error al descargar PDF",
+      description: String(error) || "Error al descargar PDF",
       color: "error",
     });
   }
@@ -209,15 +202,14 @@ const handleExportPDF = async (): Promise<void> => {
 const handleExportCSV = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "/api/reportes/costos/material/csv",
+      "http://localhost:8080/api/reportes/costos/material/csv",
       "reporte_costos_material.csv",
       "CSV",
     );
   } catch (error) {
     useToast().add({
       title: "Error",
-      description:
-        error instanceof Error ? error.message : "Error al descargar CSV",
+      description: String(error) || "Error al descargar CSV",
       color: "error",
     });
   }
