@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateReservaResult, ReservaOptionsResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -26,12 +27,8 @@ const ReservaOptions = gql`
     }
   }
 `;
-type ReservaOptionsResult = {
-  ordenesProduccion: { value: string; label: string }[];
-  productos: { value: string; label: string }[];
-  lotesProduccion: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+
+
 const { result } = useQuery<ReservaOptionsResult>(ReservaOptions);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
 const productos = computed(() => result.value?.productos ?? []);
@@ -64,7 +61,6 @@ const CreateReservaMutation = gql`
     }
   }
 `;
-type CreateReservaResult = { createReservaMaterialOrden: { id: string } };
 type CreateReservaVars = { input: ReservaInput };
 const { mutate } = useMutation<CreateReservaResult, CreateReservaVars>(
   CreateReservaMutation,

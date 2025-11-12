@@ -2,6 +2,8 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateTipoProductoResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -26,7 +28,6 @@ const CreateTipoProductoMutation = gql`
     }
   }
 `;
-type CreateTipoProductoResult = { createTipoProducto: { id: string } };
 type CreateTipoProductoVars = { input: TipoProductoInput };
 const { mutate } = useMutation<
   CreateTipoProductoResult,

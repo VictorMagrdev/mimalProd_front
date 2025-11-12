@@ -2,6 +2,8 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateTipoBodegaResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -26,7 +28,6 @@ const CreateTipoBodegaMutation = gql`
     }
   }
 `;
-type CreateTipoBodegaResult = { createTipoBodega: { id: string } };
 type CreateTipoBodegaVars = { input: TipoBodegaInput };
 const { mutate } = useMutation<CreateTipoBodegaResult, CreateTipoBodegaVars>(
   CreateTipoBodegaMutation,

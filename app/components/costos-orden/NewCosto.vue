@@ -2,6 +2,8 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CostoOptionsResult, CreateCostoResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -18,11 +20,8 @@ const CostoOptions = gql`
     }
   }
 `;
+type CreateCostoVars = { input: CostoInput };
 
-type CostoOptionsResult = {
-  tiposCosto: { value: string; label: string }[];
-  ordenesProduccion: { value: string; label: string }[];
-};
 const { result } = useQuery<CostoOptionsResult>(CostoOptions);
 const tipos = computed(() => result.value?.tiposCosto ?? []);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
@@ -54,8 +53,6 @@ const CreateCostoMutation = gql`
   }
 `;
 
-type CreateCostoResult = { createCostoOrden: { id: string } };
-type CreateCostoVars = { input: CostoInput };
 const { mutate } = useMutation<CreateCostoResult, CreateCostoVars>(
   CreateCostoMutation,
 );

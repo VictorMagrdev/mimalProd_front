@@ -58,8 +58,6 @@ const descargarArchivo = (archivo: Archivo) => {
 };
 </script>
 
-
-
 <template>
   <div class="container mx-auto p-6 space-y-6">
     <UCard>

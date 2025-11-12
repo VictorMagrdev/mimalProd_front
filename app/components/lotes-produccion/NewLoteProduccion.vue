@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { LoteOptionsResult, CreateLoteResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -14,7 +15,7 @@ const LoteOptions = gql`
     }
   }
 `;
-type LoteOptionsResult = { productos: { value: string; label: string }[] };
+
 const { result } = useQuery<LoteOptionsResult>(LoteOptions);
 const productos = computed(() => result.value?.productos ?? []);
 
@@ -40,7 +41,7 @@ const CreateLoteMutation = gql`
     }
   }
 `;
-type CreateLoteResult = { createLoteProduccion: { id: string } };
+
 type CreateLoteVars = { input: LoteInput };
 const { mutate } = useMutation<CreateLoteResult, CreateLoteVars>(
   CreateLoteMutation,

@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { InventarioOptionsResult, CreateInventarioResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -26,12 +27,7 @@ const InventarioOptions = gql`
     }
   }
 `;
-type InventarioOptionsResult = {
-  productos: { value: string; label: string }[];
-  lotesProduccion: { value: string; label: string }[];
-  bodegas: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+
 const { result } = useQuery<InventarioOptionsResult>(InventarioOptions);
 const productos = computed(() => result.value?.productos ?? []);
 const lotes = computed(() => result.value?.lotesProduccion ?? []);
@@ -64,7 +60,6 @@ const CreateInventarioMutation = gql`
     }
   }
 `;
-type CreateInventarioResult = { createInventarioLote: { id: string } };
 type CreateInventarioVars = { input: InventarioInput };
 const { mutate } = useMutation<CreateInventarioResult, CreateInventarioVars>(
   CreateInventarioMutation,

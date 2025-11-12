@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { DiscrepanciaOptionsResult, CreateDiscResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -15,9 +16,6 @@ const DiscrepanciaOptions = gql`
   }
 `;
 
-type DiscrepanciaOptionsResult = {
-  conteosCiclico: { value: string; label: string }[];
-};
 const { result } = useQuery<DiscrepanciaOptionsResult>(DiscrepanciaOptions);
 const conteos = computed(() => result.value?.conteosCiclico ?? []);
 
@@ -42,7 +40,6 @@ const CreateDiscMutation = gql`
   }
 `;
 
-type CreateDiscResult = { createDiscrepanciaInventario: { id: string } };
 type CreateDiscVars = { input: DiscrepanciaInput };
 const { mutate } = useMutation<CreateDiscResult, CreateDiscVars>(
   CreateDiscMutation,

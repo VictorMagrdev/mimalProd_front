@@ -2,6 +2,8 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { MovimientoOptionsResult, CreateMovimientoResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -18,10 +20,7 @@ const MovimientoOptions = gql`
     }
   }
 `;
-type MovimientoOptionsResult = {
-  bodegas: { value: string; label: string }[];
-  tiposMovimiento: { value: string; label: string }[];
-};
+
 const { result } = useQuery<MovimientoOptionsResult>(MovimientoOptions);
 const bodegas = computed(() => result.value?.bodegas ?? []);
 const tipos = computed(() => result.value?.tiposMovimiento ?? []);
@@ -54,7 +53,6 @@ const CreateMovimientoMutation = gql`
     }
   }
 `;
-type CreateMovimientoResult = { createMovimientoInventario: { id: string } };
 type CreateMovimientoVars = { input: MovimientoInput };
 const { mutate } = useMutation<CreateMovimientoResult, CreateMovimientoVars>(
   CreateMovimientoMutation,

@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateEstadoIncidenciaResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -33,7 +34,6 @@ const CreateEstadoIncidenciaMutation = gql`
   }
 `;
 
-type CreateEstadoIncidenciaResult = { createEstadoIncidencia: { id: string } };
 type CreateEstadoIncidenciaVars = { input: EstadoIncidenciaInput };
 
 const { mutate } = useMutation<

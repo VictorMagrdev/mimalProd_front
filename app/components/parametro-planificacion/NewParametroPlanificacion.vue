@@ -2,12 +2,12 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { ProductosResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-// --- Query para productos ---
 const ProductosQuery = gql`
   query ProductosOptions {
     productos {
@@ -17,13 +17,9 @@ const ProductosQuery = gql`
   }
 `;
 
-type ProductoOption = { value: string; label: string };
-type ProductosResult = { productos: ProductoOption[] };
-
 const { result } = useQuery<ProductosResult>(ProductosQuery);
 const productosOptions = computed(() => result.value?.productos ?? []);
 
-// --- Schema y estado ---
 const ParametroSchema = z.object({
   productoId: z.string().min(1),
   leadTimeDias: z.number().min(0).optional(),
@@ -41,7 +37,6 @@ const state = reactive<ParametroInput>({
   politicaInventario: "",
 });
 
-// --- Mutación ---
 const CreateParametroMutation = gql`
   mutation createParametro($input: ParametroPlanificacionInput!) {
     createParametro(input: $input) {

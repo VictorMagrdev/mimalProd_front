@@ -3,18 +3,18 @@ import { reactive, ref, onMounted } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { gql } from "graphql-tag";
+import type { SelectOption, CentroCosto, CreateMaquinaResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creada"): void }>();
 const toast = useToast();
 const open = ref(false);
-
-interface CentroCosto {
-  id: string;
-  nombre: string;
-}
-
-const centrosCosto = ref<{ label: string; value: string }[]>([]);
 const auth = useAuthStore();
+
+
+
+const centrosCosto = ref<SelectOption[]>([]);
+
+
 const cargarCentrosCosto = async () => {
   try {
     const { data, error } = await useFetch<CentroCosto[]>(
@@ -78,7 +78,6 @@ const CreateMaquinaMutation = gql`
   }
 `;
 
-type CreateMaquinaResult = { createMaquina: { id: string } };
 type CreateMaquinaVars = { input: MaquinaInput };
 
 const { mutate } = useMutation<CreateMaquinaResult, CreateMaquinaVars>(

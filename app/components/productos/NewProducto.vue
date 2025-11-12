@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateProductoResult, ProductoOptionsResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -22,11 +23,8 @@ const ProductoOptions = gql`
     }
   }
 `;
-type ProductoOptionsResult = {
-  tiposProducto: { value: string; label: string }[];
-  metodosValoracion: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+
+
 const { result } = useQuery<ProductoOptionsResult>(ProductoOptions);
 const tipos = computed(() => result.value?.tiposProducto ?? []);
 const metodos = computed(() => result.value?.metodosValoracion ?? []);
@@ -58,7 +56,6 @@ const CreateProductoMutation = gql`
     }
   }
 `;
-type CreateProductoResult = { createProducto: { id: string } };
 type CreateProductoVars = { input: ProductoInput };
 const { mutate } = useMutation<CreateProductoResult, CreateProductoVars>(
   CreateProductoMutation,

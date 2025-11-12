@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateOrdenResult, OrdenProdOptionsResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -22,11 +23,9 @@ const OrdenProdOptions = gql`
     }
   }
 `;
-type OrdenProdOptionsResult = {
-  unidadesMedida: { value: string; label: string }[];
-  estadosOrden: { value: string; label: string }[];
-  productos: { value: string; label: string }[];
-};
+
+
+
 const { result } = useQuery<OrdenProdOptionsResult>(OrdenProdOptions);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 const estados = computed(() => result.value?.estadosOrden ?? []);
@@ -70,7 +69,6 @@ const CreateOrdenMutation = gql`
     }
   }
 `;
-type CreateOrdenResult = { createOrdenProduccion: { id: string } };
 type CreateOrdenVars = { input: OrdenInput };
 const { mutate } = useMutation<CreateOrdenResult, CreateOrdenVars>(
   CreateOrdenMutation,

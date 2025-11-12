@@ -2,12 +2,12 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { ProductosResult, OrdenesResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-// --- Queries para selects ---
 const ProductosQuery = gql`
   query ProductosOptions {
     productos {
@@ -26,11 +26,7 @@ const OrdenesQuery = gql`
   }
 `;
 
-type ProductoOption = { value: string; label: string };
-type OrdenOption = { value: string; label: string };
 
-type ProductosResult = { productos: ProductoOption[] };
-type OrdenesResult = { ordenesProduccion: OrdenOption[] };
 
 const { result: productosResult } = useQuery<ProductosResult>(ProductosQuery);
 const { result: ordenesResult } = useQuery<OrdenesResult>(OrdenesQuery);
@@ -40,7 +36,6 @@ const ordenesOptions = computed(
   () => ordenesResult.value?.ordenesProduccion ?? [],
 );
 
-// --- Schema y estado ---
 const RequerimientoSchema = z.object({
   productoId: z.string().min(1),
   ordenProduccionId: z.string().optional(),

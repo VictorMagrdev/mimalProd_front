@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateTipoIncidenciaResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -39,7 +40,6 @@ const CreateTipoIncidenciaMutation = gql`
   }
 `;
 
-type CreateTipoIncidenciaResult = { crearTipoIncidencia: { id: string } };
 type CreateTipoIncidenciaVars = { input: TipoIncidenciaInput };
 
 const { mutate } = useMutation<

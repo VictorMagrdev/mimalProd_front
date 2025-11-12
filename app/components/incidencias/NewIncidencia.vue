@@ -2,6 +2,8 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import AudioRecorder from "./AudioRecorder.vue";
+import type { IncidenciaOptionsResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creada"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -31,36 +33,41 @@ const IncidenciaOptions = gql`
   }
 `;
 
-type IncidenciaOptionsResult = {
-  tiposIncidencia: { value: string; label: string }[];
-  estadosIncidencia: { value: string; label: string }[];
-  maquinas: { value: string; label: string }[];
-  ordenesProduccion: { value: string; label: string }[];
-  estacionesProduccion: { value: string; label: string }[];
-};
 
-const { result } = useQuery<IncidenciaOptionsResult>(IncidenciaOptions);
-const tiposIncidencia = computed(() => result.value?.tiposIncidencia ?? []);
-const estadosIncidencia = computed(() => result.value?.estadosIncidencia ?? []);
-const maquinas = computed(() => result.value?.maquinas ?? []);
-const ordenesProduccion = computed(() => result.value?.ordenesProduccion ?? []);
-const estacionesProduccion = computed(
-  () => result.value?.estacionesProduccion ?? [],
-);
+const { result } = useQuery<IncidenciaOptionsResult>(IncidenciaOptions)
+
+const options = computed(() => result.value ?? {
+  tiposIncidencia: [],
+  estadosIncidencia: [],
+  maquinas: [],
+  ordenesProduccion: [],
+  estacionesProduccion: [],
+})
+
+const {
+  tiposIncidencia,
+  estadosIncidencia,
+  maquinas,
+  ordenesProduccion,
+  estacionesProduccion
+} = toRefs(options.value)
 
 // Esquema de validación
+const stringFromNumber = z.union([z.string(), z.number()]).transform(String);
+
 const IncidenciaSchema = z.object({
   codigo: z.string().min(1, "El código es requerido"),
   titulo: z.string().min(1, "El título es requerido"),
   descripcion: z.string().optional(),
-  tipoIncidenciaId: z.string().min(1, "El tipo de incidencia es requerido"),
-  estadoId: z.string().min(1, "El estado es requerido"),
-  maquinaId: z.string().optional(),
-  ordenId: z.string().optional(),
-  estacionId: z.string().optional(),
+  tipoIncidenciaId: stringFromNumber.refine((v) => v.length > 0, "El tipo de incidencia es requerido"),
+  estadoId: stringFromNumber.refine((v) => v.length > 0, "El estado es requerido"),
+  maquinaId: stringFromNumber.optional(),
+  ordenId: stringFromNumber.optional(),
+  estacionId: stringFromNumber.optional(),
   fechaCierre: z.string().optional(),
   tiempoParada: z.string().optional(),
 });
+
 
 type IncidenciaInput = z.infer<typeof IncidenciaSchema>;
 
@@ -81,10 +88,6 @@ const state = reactive<IncidenciaInput>({
 const fotos = ref<File[]>([]);
 const audioUrl = ref<string | null>(null);
 const audioBlob = ref<Blob | null>(null);
-
-function removeFoto(index: number) {
-  fotos.value.splice(index, 1);
-}
 
 const resetForm = () => {
   Object.assign(state, {
@@ -154,11 +157,10 @@ const onSubmit = async () => {
     emit("creada");
     resetForm();
     open.value = false;
-  } catch (err: unknown) {
-    const error = err as { data?: { message?: string }; message?: string };
+  } catch (ere) {
     toast.add({
       title: "Error al crear la incidencia",
-      description: error.data?.message || error.message,
+      description: String(ere),
       color: "error",
     });
   }
@@ -273,13 +275,13 @@ const onSubmit = async () => {
           <UFileUpload
             v-model="fotos"
             accept="image/*"
+            icon="i-lucide-image"
+            label="Arrastra o selecciona tus fotos"
+            description="JPG, PNG o WebP (máx. 2 MB)"
             layout="list"
             multiple
-            label="Arrastra o selecciona tus fotos"
-            description="JPG, PNG o WebP — máximo 2 MB cada una"
             class="w-full min-h-40"
           >
-            <!-- Botón personalizado -->
             <template #actions="{ open: openFileDialog }">
               <UButton
                 label="Seleccionar imágenes"
@@ -290,28 +292,22 @@ const onSubmit = async () => {
               />
             </template>
 
-            <!-- Vista previa de imágenes -->
-            <template #files-bottom="{ files }">
-              <div v-if="files?.length" class="grid grid-cols-3 gap-3 mt-4">
-                <div
-                  v-for="(file, i) in files"
-                  :key="file.name"
-                  class="relative rounded-lg border p-1 bg-neutral-50 dark:bg-neutral-900"
-                >
-                  <NuxtImg
-                    :src="file.url"
-                    class="w-full h-24 object-cover rounded-md"
-                    :alt="file.name"
-                  />
-                  <UButton
-                    icon="i-heroicons-x-mark-20-solid"
-                    color="red"
-                    variant="ghost"
-                    size="xs"
-                    class="absolute top-0 right-0"
-                    @click="removeFoto(i)"
-                  />
-                </div>
+            <template #files-bottom="{ removeFile, files }">
+              <div class="flex justify-between items-center mt-3 w-full">
+                <span class="text-sm text-gray-500">
+                  {{ files.length }} imagen{{
+                    files.length !== 1 ? "es" : ""
+                  }}
+                  seleccionada{{ files.length !== 1 ? "s" : "" }}
+                </span>
+                <UButton
+                  v-if="files.length"
+                  label="Eliminar todas"
+                  icon="i-lucide-trash-2"
+                  color="red"
+                  variant="ghost"
+                  @click="removeFile()"
+                />
               </div>
             </template>
           </UFileUpload>

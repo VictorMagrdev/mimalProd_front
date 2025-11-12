@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { ConversionOptionsResult, CreateConversionResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -14,9 +15,8 @@ const query = gql`
     }
   }
 `;
-type ConversionOptionsResult = {
-  unidadesMedida: { value: string; label: string }[];
-};
+
+
 const { result } = useQuery<ConversionOptionsResult>(query);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
@@ -40,7 +40,6 @@ const CreateConversionMutation = gql`
     }
   }
 `;
-type CreateConversionResult = { createUnidadConversion: { id: string } };
 type CreateConversionVars = { input: ConversionInput };
 const { mutate } = useMutation<CreateConversionResult, CreateConversionVars>(
   CreateConversionMutation,

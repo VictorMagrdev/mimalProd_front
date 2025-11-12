@@ -2,9 +2,17 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { BodegaOptionsResult, CreateBodegaResult } from "~/utils/types";
+
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
+
+
+type CreateBodegaVars = {
+  input: BodegaInput
+}
 
 const BodegaOptionsQuery = gql`
   query BodegaOptions {
@@ -15,9 +23,20 @@ const BodegaOptionsQuery = gql`
   }
 `;
 
-type BodegaOptionsResult = { tiposBodega: { value: string; label: string }[] };
 const { result } = useQuery<BodegaOptionsResult>(BodegaOptionsQuery);
 const tiposOptions = computed(() => result.value?.tiposBodega ?? []);
+
+const CreateBodegaMutation = gql`
+  mutation createBodega($input: BodegaInput!) {
+    createBodega(input: $input) {
+      id
+    }
+  }
+`;
+
+const { mutate } = useMutation<CreateBodegaResult, CreateBodegaVars>(
+  CreateBodegaMutation,
+);
 
 const BodegaSchema = z.object({
   codigo: z.string().min(1),
@@ -34,19 +53,6 @@ const state = reactive<BodegaInput>({
   tipo_id: "",
 });
 
-const CreateBodegaMutation = gql`
-  mutation createBodega($input: BodegaInput!) {
-    createBodega(input: $input) {
-      id
-    }
-  }
-`;
-
-type CreateBodegaResult = { createBodega: { id: string } };
-type CreateBodegaVars = { input: BodegaInput };
-const { mutate } = useMutation<CreateBodegaResult, CreateBodegaVars>(
-  CreateBodegaMutation,
-);
 
 function resetForm() {
   state.codigo = "";

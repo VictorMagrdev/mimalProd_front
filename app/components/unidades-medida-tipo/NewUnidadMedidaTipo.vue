@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateTipoResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -26,7 +27,6 @@ const CreateTipoMutation = gql`
     }
   }
 `;
-type CreateTipoResult = { createUnidadMedidaTipo: { id: string } };
 type CreateTipoVars = { input: TipoInput };
 const { mutate } = useMutation<CreateTipoResult, CreateTipoVars>(
   CreateTipoMutation,

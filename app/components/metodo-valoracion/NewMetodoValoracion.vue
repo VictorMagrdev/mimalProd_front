@@ -2,6 +2,8 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateMetodoResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -11,6 +13,7 @@ const MetodoSchema = z.object({
   nombre: z.string().min(1),
   descripcion: z.string().optional(),
 });
+
 type MetodoInput = z.infer<typeof MetodoSchema>;
 
 const state = reactive<MetodoInput>({
@@ -26,7 +29,7 @@ const CreateMetodoMutation = gql`
     }
   }
 `;
-type CreateMetodoResult = { createMetodoValoracion: { id: string } };
+
 type CreateMetodoVars = { input: MetodoInput };
 const { mutate } = useMutation<CreateMetodoResult, CreateMetodoVars>(
   CreateMetodoMutation,

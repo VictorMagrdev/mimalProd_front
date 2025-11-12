@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 
 const open = ref(false);
 const emit = defineEmits<{ (e: "create"): void }>();
+const auth = useAuthStore();
 
 const RoleSchemaInitialState = {
   name: "",
@@ -22,7 +23,6 @@ const toast = useToast();
 async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
 
-  const auth = useAuthStore();
 
   const { data, error: fetchError } = await useFetch(
     "http://localhost:8080/api/roles",
@@ -53,6 +53,7 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
 
   resetForm();
   open.value = false;
+  emit("create");
 }
 </script>
 

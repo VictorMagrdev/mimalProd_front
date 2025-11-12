@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
+import type { Role } from "~/utils/types";
 
-interface Role {
-  id: number;
-  name: string;
-}
+
 const auth = useAuthStore();
 const open = ref(false);
 const roles = ref<Role[]>([]);

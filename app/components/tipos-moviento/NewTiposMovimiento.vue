@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreateTipoMovimientoResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -28,7 +29,6 @@ const CreateTipoMovimientoMutation = gql`
     }
   }
 `;
-type CreateTipoMovimientoResult = { createTipoMovimiento: { id: string } };
 type CreateTipoMovimientoVars = { input: TipoMovimientoInput };
 const { mutate } = useMutation<
   CreateTipoMovimientoResult,

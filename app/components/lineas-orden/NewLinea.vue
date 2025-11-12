@@ -2,6 +2,8 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { LineaOptionsResult, CreateLineaResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -18,10 +20,9 @@ const LineaOptions = gql`
     }
   }
 `;
-type LineaOptionsResult = {
-  productos: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+
+
+
 const { result } = useQuery<LineaOptionsResult>(LineaOptions);
 const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
@@ -58,7 +59,6 @@ const CreateLineaMutation = gql`
     }
   }
 `;
-type CreateLineaResult = { createLineaOrden: { id: string } };
 type CreateLineaVars = { input: LineaInput };
 const { mutate } = useMutation<CreateLineaResult, CreateLineaVars>(
   CreateLineaMutation,

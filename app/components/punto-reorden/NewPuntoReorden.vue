@@ -2,6 +2,7 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { CreatePuntoResult, PuntoOptionsResult } from "~/utils/types";
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -18,10 +19,8 @@ const PuntoOptions = gql`
     }
   }
 `;
-type PuntoOptionsResult = {
-  productos: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+
+
 const { result } = useQuery<PuntoOptionsResult>(PuntoOptions);
 const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
@@ -48,7 +47,6 @@ const CreatePuntoMutation = gql`
     }
   }
 `;
-type CreatePuntoResult = { createPuntoReorden: { id: string } };
 type CreatePuntoVars = { input: PuntoInput };
 const { mutate } = useMutation<CreatePuntoResult, CreatePuntoVars>(
   CreatePuntoMutation,

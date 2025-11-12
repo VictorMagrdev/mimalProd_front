@@ -2,6 +2,9 @@
 import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { ConteoCiclicoOptionsResult, CreateConteoResult } from "~/utils/types";
+
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -27,17 +30,18 @@ const ConteoCiclicoOptions = gql`
   }
 `;
 
-type ConteoCiclicoOptionsResult = {
-  productos: { value: string; label: string }[];
-  bodegas: { value: string; label: string }[];
-  lotesProduccion: { value: string; label: string }[];
-  unidadesMedida: { value: string; label: string }[];
-};
+type CreateConteoVars = {
+  input: ConteoInput
+}
+
+
 const { result } = useQuery<ConteoCiclicoOptionsResult>(ConteoCiclicoOptions);
-const productos = computed(() => result.value?.productos ?? []);
-const bodegas = computed(() => result.value?.bodegas ?? []);
-const lotes = computed(() => result.value?.lotesProduccion ?? []);
-const unidades = computed(() => result.value?.unidadesMedida ?? []);
+
+const productos = computed(() => result.value?.productos || []);
+const bodegas = computed(() => result.value?.bodegas || []);
+const lotes = computed(() => result.value?.lotesProduccion || []);
+const unidades = computed(() => result.value?.unidadesMedida || []);
+
 
 const ConteoSchema = z.object({
   producto_id: z.string().min(1),
@@ -66,8 +70,7 @@ const CreateConteoMutation = gql`
   }
 `;
 
-type CreateConteoResult = { createConteoCiclico: { id: string } };
-type CreateConteoVars = { input: ConteoInput };
+
 const { mutate } = useMutation<CreateConteoResult, CreateConteoVars>(
   CreateConteoMutation,
 );
