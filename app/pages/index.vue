@@ -139,8 +139,6 @@ import {
   VisBulletLegend,
 } from "@unovis/vue";
 
-const backend = "http://localhost:8080";
-
 // Reactive Data
 const produccion7Dias = ref<[]>([]);
 const topProductos = ref<[]>([]);
@@ -149,7 +147,8 @@ const ordenesAtrasadas = ref(0);
 const produccionHoy = ref(0);
 const cumplimientoHoy = ref(0);
 
-// Fetch SPA
+const backend: string = "http://localhost:8080";
+
 onMounted(async () => {
   produccion7Dias.value = await $fetch(`${backend}/produccion/7-dias`);
   topProductos.value = await $fetch(`${backend}/productos/top-30-dias`);

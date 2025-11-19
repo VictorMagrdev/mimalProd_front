@@ -16,11 +16,9 @@ const {
   data: user,
   pending,
   error,
-} = useAsyncData<User>(`user-${userId}`, () =>
-  $fetch(`http://localhost:8080/api/users/${userId}`, {
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-    },
+} = useAsyncData("user", () =>
+  $fetch<User>(`http://localhost:8080/api/users/${userId}`, {
+    headers: { Authorization: `Bearer ${auth.token}` },
   }),
 );
 </script>
