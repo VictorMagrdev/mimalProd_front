@@ -77,7 +77,8 @@ const auth = useAuthStore();
 
 const currentPageTitle = computed(() => {
   if (route.path.includes("/usuarios")) return "Usuarios";
-  if (route.path.includes("/ordenes-produccion")) return "Órdenes de Producción";
+  if (route.path.includes("/ordenes-produccion"))
+    return "Órdenes de Producción";
   if (route.path.includes("/productos")) return "Productos";
   return "Sistema de Producción";
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, watch, computed } from "vue";
+import { computed, reactive, watch } from "vue";
 import GetLineaOrdenById from "~/graphql/lineas-orden/get-linea-orden-by-id.graphql";
 import UpdateLineaOrden from "~/graphql/lineas-orden/update-linea-orden.graphql";
 import GetOrdenesProduccion from "~/graphql/ordenes-produccion/get-ordenes-produccion.graphql";

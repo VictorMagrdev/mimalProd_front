@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import type { Role, Tag, Permission } from "~/utils/types";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { computed, reactive, ref } from "vue";
+import type { Permission, Role, Tag } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "create"): void }>();
 
@@ -99,8 +99,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
   });
   resetForm();
   open.value = false;
-emit("create")
-
+  emit("create");
 }
 </script>
 

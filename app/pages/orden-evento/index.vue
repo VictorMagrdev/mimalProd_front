@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
+import { computed, ref, resolveComponent } from "vue";
 
 const GetOrdenesEvento = gql`
   query GetOrdenesEvento {

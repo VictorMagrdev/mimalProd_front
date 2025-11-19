@@ -121,7 +121,9 @@ const crosshairTemplate = (d: ChartDataPoint) => {
     .map(({ id, nombre }) => {
       const value = d[id];
       const num = typeof value === "number" ? value : Number(value);
-      const formatted = Number.isFinite(num) ? `${Math.round(num)}%` : "Sin dato";
+      const formatted = Number.isFinite(num)
+        ? `${Math.round(num)}%`
+        : "Sin dato";
       return `<div>${nombre}: ${formatted}</div>`;
     })
     .join("");
@@ -133,7 +135,6 @@ const crosshairTemplate = (d: ChartDataPoint) => {
     </div>
   `;
 };
-
 
 const yAxisTickFormat = (d: number) => `${d}%`;
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import { z } from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
 import type { CreateEstacionResult } from "~/utils/types";
 
 type CreateEstacionVars = { input: EstacionInput };
@@ -32,7 +32,6 @@ const CreateEstacionMutation = gql`
     }
   }
 `;
-
 
 const { mutate } = useMutation<CreateEstacionResult, CreateEstacionVars>(
   CreateEstacionMutation,

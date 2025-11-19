@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, watch, computed } from "vue";
 import { useQuery } from "#imports";
+import { computed, reactive, watch } from "vue";
 import GetTipoCostoById from "~/graphql/tipos-costo/get-tipo-costo-by-id.graphql";
 import UpdateTipoCosto from "~/graphql/tipos-costo/update-tipo-costo.graphql";
 

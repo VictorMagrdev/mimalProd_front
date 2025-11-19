@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineEmits, defineProps, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { computed, defineEmits, defineProps, reactive, ref, watch } from "vue";
 
 interface Role {
   id: number;

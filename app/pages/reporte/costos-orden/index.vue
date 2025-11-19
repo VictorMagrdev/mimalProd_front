@@ -71,18 +71,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { CurveType } from "@unovis/ts";
 import {
-  VisXYContainer,
-  VisLine,
   VisAxis,
   VisCrosshair,
+  VisLine,
   VisScatter,
   VisTooltip,
+  VisXYContainer,
 } from "@unovis/vue";
-import { CurveType } from "@unovis/ts";
+import { computed, ref } from "vue";
 
-import type { ReporteCostoOrdenDTO, ChartDataPoint } from "~/utils/types";
+import type { ChartDataPoint, ReporteCostoOrdenDTO } from "~/utils/types";
 
 // Composables
 const chart = useChart();

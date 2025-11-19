@@ -21,8 +21,6 @@ const LineaOptions = gql`
   }
 `;
 
-
-
 const { result } = useQuery<LineaOptionsResult>(LineaOptions);
 const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);

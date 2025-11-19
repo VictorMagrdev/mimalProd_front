@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, watch, computed } from "vue";
+import { computed, reactive, watch } from "vue";
 import GetEstadoOrdenById from "~/graphql/estados-orden/get-estado-orden-by-id.graphql";
 import UpdateEstadoOrden from "~/graphql/estados-orden/update-estado-orden.graphql";
 

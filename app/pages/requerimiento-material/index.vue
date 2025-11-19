@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import { computed, h, ref, resolveComponent } from "vue";
 import NewRequerimientoMaterial from "~/components/requerimiento-material/NewRequerimientoMaterial.vue";
 
 const UBadge = resolveComponent("UBadge");

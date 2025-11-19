@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
-import type { Row, Column } from "@tanstack/vue-table";
+import type { Column, Row } from "@tanstack/vue-table";
+import { computed, h, ref, resolveComponent } from "vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");

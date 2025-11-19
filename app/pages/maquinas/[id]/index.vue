@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { VisLine, VisXYContainer } from "@unovis/vue";
 import { gql } from "graphql-tag";
-import { VisXYContainer, VisLine } from "@unovis/vue";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from "vue";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { computed, reactive, ref, watch } from "vue";
 import getProductoById from "~/graphql/productos/get-producto-by-id.graphql";
 import updateProducto from "~/graphql/productos/update-producto.graphql";
 import getUnidadesMedida from "~/graphql/unidades-medida/get-unidades-medida.graphql";

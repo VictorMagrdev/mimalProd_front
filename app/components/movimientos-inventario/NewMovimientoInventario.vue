@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { MovimientoOptionsResult, CreateMovimientoResult } from "~/utils/types";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
+import type {
+  CreateMovimientoResult,
+  MovimientoOptionsResult,
+} from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();

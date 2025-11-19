@@ -1,14 +1,13 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import { z } from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
 import type { CreateTipoIncidenciaResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-// Esquema de validación
 const TipoIncidenciaSchema = z.object({
   codigo: z.string().min(1, "El código es requerido"),
   nombre: z.string().min(1, "El nombre es requerido"),

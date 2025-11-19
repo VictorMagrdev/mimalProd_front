@@ -75,18 +75,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { CurveType } from "@unovis/ts";
 import {
-  VisXYContainer,
-  VisLine,
   VisAxis,
   VisCrosshair,
+  VisLine,
   VisScatter,
   VisTooltip,
+  VisXYContainer,
 } from "@unovis/vue";
-import { CurveType } from "@unovis/ts";
+import { computed, ref } from "vue";
 
-import type { ReporteCostoMaterialDTO, ChartDataPoint } from "~/utils/types";
+import type { ChartDataPoint, ReporteCostoMaterialDTO } from "~/utils/types";
 
 const chart = useChart();
 const exportState = useExport();
@@ -107,7 +107,6 @@ const {
 } = chart;
 
 const chartType = ref<"line" | "bar">("line");
-
 
 const auth = useAuthStore();
 

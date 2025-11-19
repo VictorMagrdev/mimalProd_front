@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch, computed } from "vue";
+import { computed, reactive, watch } from "vue";
 import GetUnidadMedidaTipoById from "~/graphql/unidades-medida-tipo/get-unidad-medida-tipo-by-id.graphql";
 import UpdateUnidadMedidaTipo from "~/graphql/unidades-medida-tipo/update-unidad-medida-tipo.graphql";
 

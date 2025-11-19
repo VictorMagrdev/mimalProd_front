@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, h, computed, resolveComponent } from "vue";
+import NewIncidencia from "@/components/incidencias/NewIncidencia.vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
-import NewIncidencia from "@/components/incidencias/NewIncidencia.vue";
+import { computed, h, ref, resolveComponent } from "vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");

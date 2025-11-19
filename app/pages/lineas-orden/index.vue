@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
+import { computed, h, ref, resolveComponent } from "vue";
 
 const GetLineasOrden = gql`
   query GetLineasOrden {

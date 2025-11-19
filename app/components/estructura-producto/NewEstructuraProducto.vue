@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();

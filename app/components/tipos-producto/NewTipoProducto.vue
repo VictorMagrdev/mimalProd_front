@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
 import { reactive, ref } from "vue";
 import { z } from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
 import type { CreateTipoProductoResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();

@@ -23,7 +23,6 @@ const toast = useToast();
 async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
 
-
   const { data, error: fetchError } = await useFetch(
     "http://localhost:8080/api/roles",
     {

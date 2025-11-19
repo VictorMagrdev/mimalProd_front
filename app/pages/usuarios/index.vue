@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, h, resolveComponent, onMounted } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
+import { h, onMounted, ref, resolveComponent } from "vue";
 import { useRouter } from "vue-router";
 import NewUser from "~/components/user/NewUser.vue";
 

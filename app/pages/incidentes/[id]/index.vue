@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useArrayFilter } from "@vueuse/core";
+import { computed } from "vue";
 import type { Archivo, Incidencia } from "~/utils/types";
 
 const route = useRoute();
@@ -134,7 +134,7 @@ const descargarArchivo = (archivo: Archivo) => {
               class="p-4 border rounded-lg flex flex-col items-center gap-2"
             >
               <audio controls class="w-full">
-                <source :src="archivo.url" type="audio/webm" >
+                <source :src="archivo.url" type="audio/webm" />
                 Tu navegador no soporta el elemento de audio.
               </audio>
 

@@ -3,6 +3,7 @@ import { reactive, ref, computed } from "vue";
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import type { CreateReservaResult, ReservaOptionsResult } from "~/utils/types";
+
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
@@ -27,7 +28,6 @@ const ReservaOptions = gql`
     }
   }
 `;
-
 
 const { result } = useQuery<ReservaOptionsResult>(ReservaOptions);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);

@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
 import type { BodegaOptionsResult, CreateBodegaResult } from "~/utils/types";
-
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-
 type CreateBodegaVars = {
-  input: BodegaInput
-}
+  input: BodegaInput;
+};
 
 const BodegaOptionsQuery = gql`
   query BodegaOptions {
@@ -52,7 +50,6 @@ const state = reactive<BodegaInput>({
   descripcion: "",
   tipo_id: "",
 });
-
 
 function resetForm() {
   state.codigo = "";

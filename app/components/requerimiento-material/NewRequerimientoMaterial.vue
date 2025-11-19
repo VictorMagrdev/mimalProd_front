@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { ProductosResult, OrdenesResult } from "~/utils/types";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
+import type { LoteOptionsResult, OrdenOptionsResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -26,10 +26,8 @@ const OrdenesQuery = gql`
   }
 `;
 
-
-
-const { result: productosResult } = useQuery<ProductosResult>(ProductosQuery);
-const { result: ordenesResult } = useQuery<OrdenesResult>(OrdenesQuery);
+const { result: productosResult } = useQuery<LoteOptionsResult>(ProductosQuery);
+const { result: ordenesResult } = useQuery<OrdenOptionsResult>(OrdenesQuery);
 
 const productosOptions = computed(() => productosResult.value?.productos ?? []);
 const ordenesOptions = computed(

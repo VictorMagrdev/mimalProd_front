@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { gql } from "graphql-tag";
-import type { SelectOption, CentroCosto, CreateMaquinaResult } from "~/utils/types";
+import { onMounted, reactive, ref } from "vue";
+import { z } from "zod";
+import type {
+  CentroCosto,
+  CreateMaquinaResult,
+  SelectOption,
+} from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creada"): void }>();
 const toast = useToast();
 const open = ref(false);
 const auth = useAuthStore();
 
-
-
 const centrosCosto = ref<SelectOption[]>([]);
-
 
 const cargarCentrosCosto = async () => {
   try {

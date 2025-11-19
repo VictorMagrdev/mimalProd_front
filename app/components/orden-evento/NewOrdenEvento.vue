@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { OrdenOptionsResult, CreateEventoResult } from "~/utils/types";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
+import type { CreateEventoResult, OrdenOptionsResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -16,7 +16,6 @@ const OrdenOptionsQuery = gql`
     }
   }
 `;
-
 
 const { result } = useQuery<OrdenOptionsResult>(OrdenOptionsQuery);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);

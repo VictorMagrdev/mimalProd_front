@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
+import { computed, reactive, ref } from "vue";
 import { z } from "zod";
-import AudioRecorder from "./AudioRecorder.vue";
 import type { IncidenciaOptionsResult } from "~/utils/types";
+import AudioRecorder from "./AudioRecorder.vue";
 
 const emit = defineEmits<{ (e: "creada"): void }>();
 const toast = useToast();
@@ -33,24 +33,26 @@ const IncidenciaOptions = gql`
   }
 `;
 
+const { result } = useQuery<IncidenciaOptionsResult>(IncidenciaOptions);
 
-const { result } = useQuery<IncidenciaOptionsResult>(IncidenciaOptions)
-
-const options = computed(() => result.value ?? {
-  tiposIncidencia: [],
-  estadosIncidencia: [],
-  maquinas: [],
-  ordenesProduccion: [],
-  estacionesProduccion: [],
-})
+const options = computed(
+  () =>
+    result.value ?? {
+      tiposIncidencia: [],
+      estadosIncidencia: [],
+      maquinas: [],
+      ordenesProduccion: [],
+      estacionesProduccion: [],
+    },
+);
 
 const {
   tiposIncidencia,
   estadosIncidencia,
   maquinas,
   ordenesProduccion,
-  estacionesProduccion
-} = toRefs(options.value)
+  estacionesProduccion,
+} = toRefs(options.value);
 
 // Esquema de validación
 const stringFromNumber = z.union([z.string(), z.number()]).transform(String);
@@ -59,15 +61,20 @@ const IncidenciaSchema = z.object({
   codigo: z.string().min(1, "El código es requerido"),
   titulo: z.string().min(1, "El título es requerido"),
   descripcion: z.string().optional(),
-  tipoIncidenciaId: stringFromNumber.refine((v) => v.length > 0, "El tipo de incidencia es requerido"),
-  estadoId: stringFromNumber.refine((v) => v.length > 0, "El estado es requerido"),
+  tipoIncidenciaId: stringFromNumber.refine(
+    (v) => v.length > 0,
+    "El tipo de incidencia es requerido",
+  ),
+  estadoId: stringFromNumber.refine(
+    (v) => v.length > 0,
+    "El estado es requerido",
+  ),
   maquinaId: stringFromNumber.optional(),
   ordenId: stringFromNumber.optional(),
   estacionId: stringFromNumber.optional(),
   fechaCierre: z.string().optional(),
   tiempoParada: z.string().optional(),
 });
-
 
 type IncidenciaInput = z.infer<typeof IncidenciaSchema>;
 

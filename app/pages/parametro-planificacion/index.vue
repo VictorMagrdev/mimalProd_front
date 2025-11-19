@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, h, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import { computed, h, ref } from "vue";
 import NewParametroPlanificacion from "~/components/parametro-planificacion/NewParametroPlanificacion.vue";
 
 export interface ParametroPlanificacion {

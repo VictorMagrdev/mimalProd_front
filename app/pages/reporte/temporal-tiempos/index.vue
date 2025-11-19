@@ -60,18 +60,18 @@
 </template>
 
 <script setup lang="ts">
+import { CurveType } from "@unovis/ts";
 import {
-  VisXYContainer,
-  VisLine,
   VisAxis,
   VisCrosshair,
+  VisLine,
   VisScatter,
   VisTooltip,
+  VisXYContainer,
 } from "@unovis/vue";
-import { CurveType } from "@unovis/ts";
 
-import type { ChartDataPoint, SerieTemporalDTO } from "~/utils/types";
 import { isFiniteNumber } from "~/utils/function";
+import type { ChartDataPoint, SerieTemporalDTO } from "~/utils/types";
 
 const chart = useChart();
 const auth = useAuthStore();
@@ -118,15 +118,15 @@ watch(
       return;
     }
     const newChartData: ChartDataPoint[] = list.map((it) => {
-  const date = new Date(it.fecha + "T00:00:00Z");
-  const iso = date.toISOString();
+      const date = new Date(it.fecha + "T00:00:00Z");
+      const iso = date.toISOString();
 
-  return {
-    xValue: iso,
-    fecha: iso,
-    v: Number(it.valor),
-  };
-});
+      return {
+        xValue: iso,
+        fecha: iso,
+        v: Number(it.valor),
+      };
+    });
 
     setChartData(newChartData);
   },

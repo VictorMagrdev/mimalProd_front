@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { ConteoCiclicoOptionsResult, CreateConteoResult } from "~/utils/types";
-
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
+import type {
+  ConteoCiclicoOptionsResult,
+  CreateConteoResult,
+} from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -31,9 +33,8 @@ const ConteoCiclicoOptions = gql`
 `;
 
 type CreateConteoVars = {
-  input: ConteoInput
-}
-
+  input: ConteoInput;
+};
 
 const { result } = useQuery<ConteoCiclicoOptionsResult>(ConteoCiclicoOptions);
 
@@ -41,7 +42,6 @@ const productos = computed(() => result.value?.productos || []);
 const bodegas = computed(() => result.value?.bodegas || []);
 const lotes = computed(() => result.value?.lotesProduccion || []);
 const unidades = computed(() => result.value?.unidadesMedida || []);
-
 
 const ConteoSchema = z.object({
   producto_id: z.string().min(1),
@@ -69,7 +69,6 @@ const CreateConteoMutation = gql`
     }
   }
 `;
-
 
 const { mutate } = useMutation<CreateConteoResult, CreateConteoVars>(
   CreateConteoMutation,

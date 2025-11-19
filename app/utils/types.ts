@@ -75,12 +75,13 @@ export type TipoUnidadOptionsResult = { unidadesMedidaTipo: SelectOption[] };
 // Resultados de creación
 // ----------------------------
 type CreateResult<T extends string> = {
-  [K in T]: { id: string }
+  [K in T]: { id: string };
 };
 
 // Ejemplos de uso
 export type CreateEstacionResult = CreateResult<"createEstacionProduccion">;
-export type CreateEstadoIncidenciaResult = CreateResult<"createEstadoIncidencia">;
+export type CreateEstadoIncidenciaResult =
+  CreateResult<"createEstadoIncidencia">;
 export type CreateBodegaResult = CreateResult<"createBodega">;
 export type CreateConteoResult = CreateResult<"createConteoCiclico">;
 export type CreateCostoResult = CreateResult<"createCostoOrden">;

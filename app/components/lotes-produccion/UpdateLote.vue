@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { reactive, watch, computed } from "vue";
+import { computed, reactive, watch } from "vue";
 import GetLoteProduccionById from "~/graphql/lotes-produccion/get-lote-produccion-by-id.graphql";
 import UpdateLoteProduccion from "~/graphql/lotes-produccion/update-lote-produccion.graphql";
 import GetProductos from "~/graphql/productos/get-productos.graphql";

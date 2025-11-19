@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
+import { computed, ref } from "vue";
 
 const GetPuntosReorden = gql`
   query GetPuntosReorden {

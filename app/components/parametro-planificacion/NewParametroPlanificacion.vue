@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
-import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { ProductosResult } from "~/utils/types";
+import { computed, reactive, ref } from "vue";
+import { z } from "zod";
+import type { PuntoOptionsResult } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
@@ -17,7 +17,7 @@ const ProductosQuery = gql`
   }
 `;
 
-const { result } = useQuery<ProductosResult>(ProductosQuery);
+const { result } = useQuery<PuntoOptionsResult>(ProductosQuery);
 const productosOptions = computed(() => result.value?.productos ?? []);
 
 const ParametroSchema = z.object({
