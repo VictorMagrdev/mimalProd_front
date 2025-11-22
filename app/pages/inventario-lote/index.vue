@@ -58,17 +58,15 @@ export interface InventarioLote {
   actualizadoEn?: string;
 }
 
-interface InventarioLoteResult {
+export interface InventarioLoteResult {
   inventariosLote: InventarioLote[];
 }
 
-// Data fetching (ejemplo con useAsyncQuery)
 const { data, pending, error } =
   await useAsyncQuery<InventarioLoteResult>(query);
 
 const inventariosLote = computed(() => data.value?.inventariosLote || []);
 
-// Columnas tipadas
 const columns: TableColumn<InventarioLote>[] = [
   {
     accessorKey: "lote.id",

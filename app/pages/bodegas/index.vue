@@ -1,22 +1,11 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { Bodega } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
-
-export interface Bodega {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion?: string;
-  tipoBodegaId: string;
-  creadoEn: string;
-  tipo: {
-    nombre: string;
-  };
-}
 
 interface QueryResult {
   bodegas: Bodega[];

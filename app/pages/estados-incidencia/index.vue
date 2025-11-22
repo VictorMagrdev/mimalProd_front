@@ -4,6 +4,7 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { EstadoIncidencia, EstadoIncidenciaResult } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -21,17 +22,6 @@ const GetEstadosIncidencia = gql`
   }
 `;
 
-interface EstadoIncidencia {
-  id: string;
-  nombre: string;
-  descripcion?: string;
-  orden: number;
-  estadoFinal: boolean;
-}
-
-interface EstadoIncidenciaResult {
-  estadosIncidencia: EstadoIncidencia[];
-}
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<EstadoIncidenciaResult>(GetEstadosIncidencia);

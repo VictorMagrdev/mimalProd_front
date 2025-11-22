@@ -8,8 +8,8 @@ const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const GetUnidadesMedidaTipo = gql`
-  query GetUnidadesMedidaTipo {
-    unidadesMedidaTipo {
+  query unidadesMedidaTipos {
+    unidadesMedidaTipos {
       id
       codigo
       nombre

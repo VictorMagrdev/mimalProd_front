@@ -1,38 +1,11 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { ConteoCiclico, QueryResult } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
-
-export interface ConteoCiclico {
-  id: string;
-  producto_id: string;
-  bodega_id: string;
-  lote_id?: string;
-  cantidad_contada: number;
-  unidad_id: string;
-  fecha: string;
-  producto?: {
-    nombre: string;
-    codigo: string;
-  };
-  bodega?: {
-    nombre: string;
-  };
-  lote?: {
-    numero_lote: string;
-  };
-  unidad?: {
-    nombre: string;
-    abreviatura: string;
-  };
-}
-
-interface QueryResult {
-  conteosCiclicos: ConteoCiclico[];
-}
 
 const query = gql`
   query conteosCiclicos {

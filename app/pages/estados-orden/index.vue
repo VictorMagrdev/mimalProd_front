@@ -2,22 +2,13 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { EstadoOrden } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-// Interface según esquema
-interface EstadoOrden {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion?: string;
-  activo: boolean;
-  creadoEn?: string;
-}
 
-// Query como const
 const query = gql`
   query getEstadosOrden {
     estadosOrden {
@@ -31,14 +22,12 @@ const query = gql`
   }
 `;
 
-// Fetching data
 const { data, pending, error } = await useAsyncQuery<{
   estadosOrden: EstadoOrden[];
 }>(query);
 
 const rows = computed<EstadoOrden[]>(() => data.value?.estadosOrden || []);
 
-// Columnas tipadas usando Row explícitamente
 const columns: TableColumn<EstadoOrden>[] = [
   {
     accessorKey: "codigo",

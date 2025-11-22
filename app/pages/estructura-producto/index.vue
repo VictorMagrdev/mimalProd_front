@@ -2,19 +2,13 @@
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref, resolveComponent } from "vue";
 import NewEstructuraProducto from "~/components/estructura-producto/NewEstructuraProducto.vue";
+import type { Estructura } from "~/utils/types";
 
 const UBadge = resolveComponent("UBadge");
+const table = useTemplateRef("table");
+const pagination = ref({ pageIndex: 0, pageSize: 10 });
+const globalFilter = ref("");
 
-export interface Estructura {
-  id: string;
-  productoPadreNombre: string;
-  productoHijoNombre: string;
-  cantidad: number;
-  unidadNombre?: string;
-  version?: string;
-  activo: boolean;
-  creadoEn: string;
-}
 
 interface QueryResult {
   getAllEstructuras: Estructura[];
@@ -90,9 +84,7 @@ const columns: TableColumn<Estructura>[] = [
   },
 ];
 
-const table = useTemplateRef("table");
-const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const globalFilter = ref("");
+
 </script>
 
 <template>

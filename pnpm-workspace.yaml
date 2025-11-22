@@ -1,8 +1,9 @@
 onlyBuiltDependencies:
-  - "@apollo/protobufjs"
+  - '@apollo/protobufjs'
   - core-js
   - core-js-pure
   - cypress
   - esbuild
+  - sharp
   - vue-demi
   - yarn

@@ -2,28 +2,13 @@
 import { ref, computed, h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
+import type { DiscrepanciaInventario } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-export interface DiscrepanciaInventario {
-  id: string;
-  conteo_id: string;
-  cantidad_sistema: number;
-  resuelto: boolean;
-  conteo: {
-    fecha: string;
-    cantidad_contada: number;
-    producto: {
-      nombre: string;
-      codigo: string;
-    };
-    unidad?: {
-      abreviatura: string;
-    };
-  };
-}
+
 
 interface QueryResult {
   discrepanciasInventario: DiscrepanciaInventario[];

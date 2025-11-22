@@ -17,7 +17,6 @@ const selectedUserId = ref<number | null>(null);
 const selectedUserForRole = ref<number | null>(null);
 const selectedUserForDeleteRole = ref<number | null>(null);
 
-// Interfaces basadas en el DTO UserResponse
 interface RolResponse {
   id: number;
   nombre: string;
@@ -40,12 +39,10 @@ interface UserUI {
   roles: RolResponse[];
 }
 
-// Datos reactivos
 const users = ref<UserUI[]>([]);
 const pending = ref(false);
 const error = ref<string | null>(null);
 
-// Función para obtener usuarios
 const fetchUsers = async () => {
   pending.value = true;
   error.value = null;
@@ -86,12 +83,10 @@ const fetchUsers = async () => {
   }
 };
 
-// Cargar datos al montar el componente
 onMounted(() => {
   fetchUsers();
 });
 
-// Función para desactivar usuario
 const desactivar = async (id: number) => {
   try {
     const { error: fetchError } = await useFetch(
@@ -132,7 +127,6 @@ const desactivar = async (id: number) => {
   }
 };
 
-// Función para obtener nombre completo
 const getNombreCompleto = (user: UserUI) => {
   if (user.nombre && user.apellidos) {
     return `${user.nombre} ${user.apellidos}`;

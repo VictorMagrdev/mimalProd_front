@@ -58,7 +58,7 @@
       icon="i-heroicons-clock"
       title="Cargando datos..."
       description="Por favor espere mientras se cargan los indicadores de productividad."
-      color="blue"
+      color="success"
     />
   </div>
 </template>

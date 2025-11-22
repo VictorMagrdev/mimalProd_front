@@ -42,7 +42,7 @@
       icon="i-heroicons-clock"
       title="Cargando datos..."
       description="Por favor espere mientras se cargan la serie de producción."
-      color="blue"
+      color="success"
     />
   </div>
 </template>

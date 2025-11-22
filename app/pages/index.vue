@@ -140,22 +140,58 @@ import {
 } from "@unovis/vue";
 
 // Reactive Data
-const produccion7Dias = ref<[]>([]);
-const topProductos = ref<[]>([]);
+const produccion7Dias = ref<{ fecha: string; total: number }[]>([]);
+const topProductos = ref<{ nombre: string; totalProducido: number }[]>([]);
 const ordenesPorEstado = ref<{ estado: string; cantidad: number }[]>([]);
 const ordenesAtrasadas = ref(0);
 const produccionHoy = ref(0);
 const cumplimientoHoy = ref(0);
 
-const backend: string = "http://localhost:8080";
-
+const backend: string = "http://localhost:8080/api/dashboard";
+const auth = useAuthStore();
 onMounted(async () => {
-  produccion7Dias.value = await $fetch(`${backend}/produccion/7-dias`);
-  topProductos.value = await $fetch(`${backend}/productos/top-30-dias`);
-  ordenesPorEstado.value = await $fetch(`${backend}/ordenes/por-estado`);
-  ordenesAtrasadas.value = await $fetch(`${backend}/ordenes/atrasadas-hoy`);
-  produccionHoy.value = await $fetch(`${backend}/produccion/hoy`);
-  cumplimientoHoy.value = await $fetch(`${backend}/cumplimiento/hoy`);
+  produccion7Dias.value = await $fetch(`${backend}/produccion/7-dias`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  topProductos.value = await $fetch(`${backend}/productos/top-30-dias`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  ordenesPorEstado.value = await $fetch(`${backend}/ordenes/por-estado`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  ordenesAtrasadas.value = await $fetch(`${backend}/ordenes/atrasadas-hoy`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  produccionHoy.value = await $fetch(`${backend}/produccion/hoy`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  cumplimientoHoy.value = await $fetch(`${backend}/cumplimiento/hoy`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
 });
 
 // Utils

@@ -1,12 +1,6 @@
-// ----------------------------
-// Tipos base
-// ----------------------------
 export type Option = { value: string | number; label: string };
 export type SelectOption = { value: string; label: string };
 
-// ----------------------------
-// Opciones de selección
-// ----------------------------
 export type IncidenciaOptionsResult = {
   tiposIncidencia: Option[];
   estadosIncidencia: Option[];
@@ -71,14 +65,10 @@ export type ReservaOptionsResult = {
 export type ConversionOptionsResult = { unidadesMedida: SelectOption[] };
 export type TipoUnidadOptionsResult = { unidadesMedidaTipo: SelectOption[] };
 
-// ----------------------------
-// Resultados de creación
-// ----------------------------
 type CreateResult<T extends string> = {
   [K in T]: { id: string };
 };
 
-// Ejemplos de uso
 export type CreateEstacionResult = CreateResult<"createEstacionProduccion">;
 export type CreateEstadoIncidenciaResult =
   CreateResult<"createEstadoIncidencia">;
@@ -107,9 +97,6 @@ export type CreateConversionResult = CreateResult<"createUnidadConversion">;
 export type CreateUnidadResult = CreateResult<"createUnidadMedida">;
 export type CreateTipoResult = CreateResult<"createUnidadMedidaTipo">;
 
-// ----------------------------
-// DTOs de producción, costos y tiempos
-// ----------------------------
 export interface IndicadorProductividadDTO {
   ordenId: number;
   producto: string;
@@ -189,9 +176,6 @@ export interface PuntoGrafico {
   tipo: "Real" | "Proyectado";
 }
 
-// ----------------------------
-// Maquinas y depreciación
-// ----------------------------
 export interface Depreciacion {
   id: string;
   maquinaId: string;
@@ -219,9 +203,6 @@ export interface CentroCosto {
   nombre: string;
 }
 
-// ----------------------------
-// Incidencias y archivos
-// ----------------------------
 export interface Archivo {
   id: string;
   tipo: "FOTO" | "AUDIO";
@@ -241,9 +222,6 @@ export interface Incidencia {
   archivos: Archivo[];
 }
 
-// ----------------------------
-// Roles, tags y permisos
-// ----------------------------
 export interface Role {
   id: number;
   name: string;
@@ -256,4 +234,119 @@ export interface Permission {
   id: number;
   action: string;
   description: string;
+}
+
+export interface ConteoCiclico {
+  id: string;
+  producto_id: string;
+  bodega_id: string;
+  lote_id?: string;
+  cantidad_contada: number;
+  unidad_id: string;
+  fecha: string;
+  producto?: {
+    nombre: string;
+    codigo: string;
+  };
+  bodega?: {
+    nombre: string;
+  };
+  lote?: {
+    numero_lote: string;
+  };
+  unidad?: {
+    nombre: string;
+    abreviatura: string;
+  };
+}
+
+export interface QueryResult {
+  conteosCiclicos: ConteoCiclico[];
+}
+export interface Bodega {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  tipoBodegaId: string;
+  creadoEn: string;
+  tipo: {
+    nombre: string;
+  };
+}
+
+export interface CostoOrden {
+  id: string;
+  orden_id: string;
+  tipo_costo_id: string;
+  descripcion: string;
+  monto: number;
+  moneda: string;
+  registrado_en: string;
+  tipo_costo: {
+    nombre: string;
+    codigo: string;
+  };
+  orden?: {
+    numero_orden: string;
+  };
+}
+
+export interface DiscrepanciaInventario {
+  id: string;
+  conteo_id: string;
+  cantidad_sistema: number;
+  resuelto: boolean;
+  conteo: {
+    fecha: string;
+    cantidad_contada: number;
+    producto: {
+      nombre: string;
+      codigo: string;
+    };
+    unidad?: {
+      abreviatura: string;
+    };
+  };
+}
+
+export interface EstacionProduccion {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  orden: number;
+  creadoEn: string;
+}
+
+export interface EstadoIncidencia {
+  id: string;
+  nombre: string;
+  descripcion?: string;
+  orden: number;
+  estadoFinal: boolean;
+}
+
+export interface EstadoIncidenciaResult {
+  estadosIncidencia: EstadoIncidencia[];
+}
+
+export interface EstadoOrden {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  activo: boolean;
+  creadoEn?: string;
+}
+
+export interface Estructura {
+  id: string;
+  productoPadreNombre: string;
+  productoHijoNombre: string;
+  cantidad: number;
+  unidadNombre?: string;
+  version?: string;
+  activo: boolean;
+  creadoEn: string;
 }

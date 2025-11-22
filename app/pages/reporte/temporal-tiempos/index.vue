@@ -54,7 +54,7 @@
       icon="i-heroicons-clock"
       title="Cargando datos..."
       description="Cargando serie de tiempos."
-      color="blue"
+      color="success"
     />
   </div>
 </template>

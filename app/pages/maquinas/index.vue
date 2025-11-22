@@ -4,10 +4,10 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
 import { computed, h, ref, resolveComponent } from "vue";
+
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-// Consulta GraphQL para obtener máquinas
 const GetMaquinas = gql`
   query GetMaquinas {
     maquinas {

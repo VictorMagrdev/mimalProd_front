@@ -49,14 +49,14 @@ const GetIncidencias = gql`
   }
 `;
 
-interface IncidenciaArchivo {
+export interface IncidenciaArchivo {
   id: string;
   tipo: string;
   nombreOriginal: string;
   url: string;
 }
 
-interface Incidencia {
+export interface Incidencia {
   id: string;
   codigo: string;
   titulo: string;

@@ -143,7 +143,7 @@ const filteredData = computed(() => {
           <UDropdownMenu
             v-if="table?.tableApi"
             :items="
-              table.tableApi
+              table?.tableApi
                 .getAllColumns()
                 .filter((column: Column<TipoBodega>) => column.getCanHide())
                 .map((column: Column<TipoBodega>) => ({

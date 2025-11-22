@@ -1,27 +1,13 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { CostoOrden } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-export interface CostoOrden {
-  id: string;
-  orden_id: string;
-  tipo_costo_id: string;
-  descripcion: string;
-  monto: number;
-  moneda: string;
-  registrado_en: string;
-  tipo_costo: {
-    nombre: string;
-    codigo: string;
-  };
-  orden?: {
-    numero_orden: string;
-  };
-}
+
 
 interface QueryResult {
   costosOrden: CostoOrden[];

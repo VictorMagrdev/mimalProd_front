@@ -65,7 +65,7 @@
       icon="i-heroicons-clock"
       title="Cargando datos..."
       description="Por favor espere mientras se cargan los costos por orden."
-      color="blue"
+      color="success"
     />
   </div>
 </template>

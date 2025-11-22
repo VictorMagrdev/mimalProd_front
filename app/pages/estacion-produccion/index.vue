@@ -2,20 +2,11 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { computed, h, ref, resolveComponent } from "vue";
+import type { EstacionProduccion } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
-
-// Interface según esquema
-export interface EstacionProduccion {
-  id: string;
-  codigo: string;
-  nombre: string;
-  descripcion?: string;
-  orden: number;
-  creadoEn: string;
-}
 
 const query = gql`
   query getEstacionesProduccion {
