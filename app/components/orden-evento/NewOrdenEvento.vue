@@ -24,7 +24,7 @@ const EventoSchema = z.object({
   evento: z.string().min(1),
   descripcion: z.string().optional(),
   fecha: z.string().min(1),
-  orden_id: z.string().min(1),
+  ordenId: z.string().min(1),
 });
 type EventoInput = z.infer<typeof EventoSchema>;
 
@@ -32,7 +32,7 @@ const state = reactive<EventoInput>({
   evento: "",
   descripcion: undefined,
   fecha: "",
-  orden_id: "",
+  ordenId: "",
 });
 
 const CreateEventoMutation = gql`
@@ -51,7 +51,7 @@ function resetForm() {
   state.evento = "";
   state.descripcion = undefined;
   state.fecha = "";
-  state.orden_id = "";
+  state.ordenId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<EventoInput>) {
@@ -87,9 +87,9 @@ async function onSubmit(event: FormSubmitEvent<EventoInput>) {
         <UFormField label="Fecha" name="fecha">
           <UInput v-model="state.fecha" placeholder="YYYY-MM-DD" />
         </UFormField>
-        <UFormField label="Orden" name="orden_id">
+        <UFormField label="Orden" name="ordenId">
           <UInputMenu
-            v-model="state.orden_id"
+            v-model="state.ordenId"
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
