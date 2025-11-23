@@ -90,6 +90,7 @@ async function onSubmit(event: FormSubmitEvent<EventoInput>) {
         <UFormField label="Orden" name="orden_id">
           <UInputMenu
             v-model="state.orden_id"
+            value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
           />

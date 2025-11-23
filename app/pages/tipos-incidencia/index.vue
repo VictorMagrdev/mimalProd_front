@@ -3,7 +3,7 @@ import { ref, h, computed, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
-import NewTiposIncidencias from "@/components/tipos-incidencias/NewTiposIncidencias.vue
+import NewTiposIncidencias from "@/components/tipos-incidencias/NewTiposIncidencias.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");

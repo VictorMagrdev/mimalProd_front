@@ -111,6 +111,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
         <UFormField label="Producto Padre" name="productoPadreId">
           <UInputMenu
             v-model="state.productoPadreId"
+            value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto padre"
           />
@@ -119,6 +120,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
         <UFormField label="Producto Hijo" name="productoHijoId">
           <UInputMenu
             v-model="state.productoHijoId"
+            value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto hijo"
           />
@@ -135,6 +137,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
         <UFormField label="Unidad" name="unidadId">
           <UInputMenu
             v-model="state.unidadId"
+            value-key="value"
             :items="unidadesOptions"
             placeholder="Selecciona unidad"
           />

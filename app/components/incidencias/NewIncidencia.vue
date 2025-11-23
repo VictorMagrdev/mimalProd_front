@@ -302,16 +302,16 @@ const onSubmit = async () => {
             <template #files-bottom="{ removeFile, files }">
               <div class="flex justify-between items-center mt-3 w-full">
                 <span class="text-sm text-gray-500">
-                  {{ files.length }} imagen{{
-                    files.length !== 1 ? "es" : ""
+                  {{ files?.length }} imagen{{
+                    files?.length !== 1 ? "es" : ""
                   }}
-                  seleccionada{{ files.length !== 1 ? "s" : "" }}
+                  seleccionada{{ files?.length !== 1 ? "s" : "" }}
                 </span>
                 <UButton
-                  v-if="files.length"
+                  v-if="files?.length"
                   label="Eliminar todas"
                   icon="i-lucide-trash-2"
-                  color="red"
+                  color="error"
                   variant="ghost"
                   @click="removeFile()"
                 />

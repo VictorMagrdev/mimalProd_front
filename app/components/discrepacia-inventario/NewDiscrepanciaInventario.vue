@@ -88,6 +88,7 @@ async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
         <UFormField label="Conteo" name="conteo_id">
           <UInputMenu
             v-model="state.conteo_id"
+            value-key="value"
             :items="conteos"
             placeholder="Selecciona conteo"
           />

@@ -8,7 +8,6 @@ const emit = defineEmits<{ (e: "creado"): void }>();
 const toast = useToast();
 const open = ref(false);
 
-// Esquema de validación
 const EstadoIncidenciaSchema = z.object({
   nombre: z.string().min(1, "El nombre es requerido"),
   descripcion: z.string().optional(),
@@ -25,7 +24,6 @@ const state = reactive<EstadoIncidenciaInput>({
   estadoFinal: false,
 });
 
-// Mutación para crear estado de incidencia
 const CreateEstadoIncidenciaMutation = gql`
   mutation CreateEstadoIncidencia($input: EstadoIncidenciaRequest!) {
     createEstadoIncidencia(input: $input) {

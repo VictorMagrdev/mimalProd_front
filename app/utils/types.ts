@@ -1,5 +1,5 @@
 export type Option = { value: string | number; label: string };
-export type SelectOption = { value: string; label: string };
+export type SelectOption = { value: string | number; label: string };
 
 export type IncidenciaOptionsResult = {
   tiposIncidencia: Option[];

@@ -107,6 +107,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         <UFormField label="Bodega origen" name="bodega_origen_id">
           <UInputMenu
             v-model="state.bodega_origen_id"
+            value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega origen"
           />
@@ -114,6 +115,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         <UFormField label="Bodega destino" name="bodega_destino_id">
           <UInputMenu
             v-model="state.bodega_destino_id"
+            value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega destino"
           />
@@ -121,6 +123,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         <UFormField label="Tipo movimiento" name="tipo_movimiento_id">
           <UInputMenu
             v-model="state.tipo_movimiento_id"
+            value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
           />

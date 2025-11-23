@@ -94,6 +94,7 @@ async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
         <UFormField label="Tipo" name="tipo_id">
           <UInputMenu
             v-model="state.tipo_id"
+            value-key="value"
             :items="tiposOptions"
             placeholder="Selecciona tipo"
           />

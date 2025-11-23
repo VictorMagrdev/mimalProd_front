@@ -86,6 +86,7 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
         <UFormField label="Producto" name="productoId">
           <UInputMenu
             v-model="state.productoId"
+            value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto"
           />

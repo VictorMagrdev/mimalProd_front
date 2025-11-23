@@ -102,6 +102,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         <UFormField label="Orden" name="orden_id">
           <UInputMenu
             v-model="state.orden_id"
+            value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
           />
@@ -109,6 +110,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         <UFormField label="Producto" name="producto_id">
           <UInputMenu
             v-model="state.producto_id"
+            value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
@@ -116,6 +118,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         <UFormField label="Lote" name="lote_id">
           <UInputMenu
             v-model="state.lote_id"
+            value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
           />
@@ -123,6 +126,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         <UFormField label="Unidad" name="unidad_id">
           <UInputMenu
             v-model="state.unidad_id"
+            value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
           />

@@ -81,6 +81,7 @@ async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
         <UFormField label="Origen" name="origen_id">
           <UInputMenu
             v-model="state.origen_id"
+            value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad origen"
           />
@@ -88,6 +89,7 @@ async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
         <UFormField label="Destino" name="destino_id">
           <UInputMenu
             v-model="state.destino_id"
+            value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad destino"
           />

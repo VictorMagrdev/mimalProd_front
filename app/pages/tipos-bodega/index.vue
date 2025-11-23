@@ -215,10 +215,6 @@ const filteredData = computed(() => {
         <UPagination
           :page-count="pagination.pageSize"
           :total="filteredData.length"
-          :ui="{
-            wrapper: 'flex items-center gap-1',
-            base: 'min-w-8 w-8 h-8',
-          }"
         />
       </div>
     </div>

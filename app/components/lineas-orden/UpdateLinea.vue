@@ -155,7 +155,7 @@ async function onSubmit(event: FormSubmitEvent<LineaOrdenFormState>) {
           <USelectMenu
             v-model="state.idOrden"
             :items="ordenesOptions"
-            value-attribute="value"
+            value-key="value"
             option-attribute="label"
             :loading="ordenesLoading"
           />
@@ -169,7 +169,7 @@ async function onSubmit(event: FormSubmitEvent<LineaOrdenFormState>) {
           <USelectMenu
             v-model="state.idProductoComponente"
             :items="productosOptions"
-            value-attribute="value"
+            value-key="value"
             option-attribute="label"
             :loading="productosLoading"
           />
@@ -183,7 +183,7 @@ async function onSubmit(event: FormSubmitEvent<LineaOrdenFormState>) {
           <USelectMenu
             v-model="state.idUnidadComponente"
             :items="unidadesOptions"
-            value-attribute="value"
+            value-key="value"
             option-attribute="label"
             :loading="unidadesLoading"
           />

@@ -18,7 +18,7 @@
               { label: 'Diario', value: 'diario' },
               { label: 'Mensual', value: 'mensual' },
             ]"
-            variant="segmented"
+            variant="list"
           />
         </UFormField>
       </template>

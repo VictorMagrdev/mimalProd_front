@@ -109,6 +109,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
         <UFormField label="Tipo" name="tipo_id">
           <UInputMenu
             v-model="state.tipo_id"
+            value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
           />
@@ -116,6 +117,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
         <UFormField label="Método valoración" name="metodo_valoracion_id">
           <UInputMenu
             v-model="state.metodo_valoracion_id"
+            value-key="value"
             :items="metodos"
             placeholder="Selecciona método"
           />
@@ -123,6 +125,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
         <UFormField label="Unidad base" name="unidad_base_id">
           <UInputMenu
             v-model="state.unidad_base_id"
+            value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
           />
