@@ -40,21 +40,19 @@ const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
 const InventarioSchema = z.object({
   cantidad: z.number().min(0),
-  lote_id: z.string().min(1),
-  bodega_id: z.string().min(1),
-  producto_id: z.string().min(1),
-  unidad_id: z.string().min(1),
-  actualizado_en: z.string().optional(),
+  loteId: z.string().min(1),
+  bodegaId: z.string().min(1),
+  productoId: z.string().min(1),
+  unidadId: z.string().min(1),
 });
 type InventarioInput = z.infer<typeof InventarioSchema>;
 
 const state = reactive<InventarioInput>({
   cantidad: 0,
-  lote_id: "",
-  bodega_id: "",
-  producto_id: "",
-  unidad_id: "",
-  actualizado_en: undefined,
+  loteId: "",
+  bodegaId: "",
+  productoId: "",
+  unidadId: "",
 });
 
 const CreateInventarioMutation = gql`
@@ -71,11 +69,10 @@ const { mutate } = useMutation<CreateInventarioResult, CreateInventarioVars>(
 
 function resetForm() {
   state.cantidad = 0;
-  state.lote_id = "";
-  state.bodega_id = "";
-  state.producto_id = "";
-  state.unidad_id = "";
-  state.actualizado_en = undefined;
+  state.loteId = "";
+  state.bodegaId = "";
+  state.productoId = "";
+  state.unidadId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
@@ -102,33 +99,33 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Producto" name="producto_id">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
-            v-model="state.producto_id"
+            v-model="state.productoId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
         </UFormField>
-        <UFormField label="Lote" name="lote_id">
+        <UFormField label="Lote" name="loteId">
           <UInputMenu
-            v-model="state.lote_id"
+            v-model="state.loteId"
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
           />
         </UFormField>
-        <UFormField label="Bodega" name="bodega_id">
+        <UFormField label="Bodega" name="bodegaId">
           <UInputMenu
-            v-model="state.bodega_id"
+            v-model="state.bodegaId"
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega"
           />
         </UFormField>
-        <UFormField label="Unidad" name="unidad_id">
+        <UFormField label="Unidad" name="unidadId">
           <UInputMenu
-            v-model="state.unidad_id"
+            v-model="state.unidadId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
@@ -136,12 +133,6 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
         </UFormField>
         <UFormField label="Cantidad" name="cantidad">
           <UInputNumber v-model="state.cantidad" />
-        </UFormField>
-        <UFormField label="Actualizado en" name="actualizado_en">
-          <UInput
-            v-model="state.actualizado_en"
-            placeholder="YYYY-MM-DDTHH:mm:ss"
-          />
         </UFormField>
       </UForm>
     </template>

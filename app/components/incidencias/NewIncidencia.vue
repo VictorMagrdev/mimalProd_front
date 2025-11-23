@@ -54,7 +54,6 @@ const {
   estacionesProduccion,
 } = toRefs(options.value);
 
-// Esquema de validación
 const stringFromNumber = z.union([z.string(), z.number()]).transform(String);
 
 const IncidenciaSchema = z.object({

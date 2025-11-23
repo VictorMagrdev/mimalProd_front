@@ -12,7 +12,7 @@ const TipoMovimientoSchema = z.object({
   codigo: z.string().min(1),
   nombre: z.string().min(1),
   descripcion: z.string().optional(),
-  afecta_wip: z.boolean().optional(),
+  afectaWip: z.boolean().optional(),
 });
 type TipoMovimientoInput = z.infer<typeof TipoMovimientoSchema>;
 
@@ -20,7 +20,7 @@ const state = reactive<TipoMovimientoInput>({
   codigo: "",
   nombre: "",
   descripcion: undefined,
-  afecta_wip: false,
+  afectaWip: false,
 });
 
 const CreateTipoMovimientoMutation = gql`
@@ -40,7 +40,7 @@ function resetForm() {
   state.codigo = "";
   state.nombre = "";
   state.descripcion = undefined;
-  state.afecta_wip = false;
+  state.afectaWip = false;
 }
 
 async function onSubmit(event: FormSubmitEvent<TipoMovimientoInput>) {
@@ -76,8 +76,8 @@ async function onSubmit(event: FormSubmitEvent<TipoMovimientoInput>) {
         <UFormField label="Descripción" name="descripcion">
           <UInput v-model="state.descripcion" />
         </UFormField>
-        <UFormField label="Afecta WIP" name="afecta_wip">
-          <UCheckbox v-model="state.afecta_wip" />
+        <UFormField label="Afecta WIP" name="afectaWip">
+          <UCheckbox v-model="state.afectaWip" />
         </UFormField>
       </UForm>
     </template>

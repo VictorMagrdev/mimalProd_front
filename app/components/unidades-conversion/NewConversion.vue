@@ -25,15 +25,15 @@ const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
 const ConversionSchema = z.object({
   factor: z.number().min(0),
-  origen_id: z.string().min(1),
-  destino_id: z.string().min(1),
+  origenId: z.string().min(1),
+  destinoId: z.string().min(1),
 });
 type ConversionInput = z.infer<typeof ConversionSchema>;
 
 const state = reactive<ConversionInput>({
   factor: 1,
-  origen_id: "",
-  destino_id: "",
+  origenId: "",
+  destinoId: "",
 });
 
 const CreateConversionMutation = gql`
@@ -50,8 +50,8 @@ const { mutate } = useMutation<CreateConversionResult, CreateConversionVars>(
 
 function resetForm() {
   state.factor = 1;
-  state.origen_id = "";
-  state.destino_id = "";
+  state.origenId = "";
+  state.destinoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
@@ -78,17 +78,17 @@ async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Origen" name="origen_id">
+        <UFormField label="Origen" name="origenId">
           <UInputMenu
-            v-model="state.origen_id"
+            v-model="state.origenId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad origen"
           />
         </UFormField>
-        <UFormField label="Destino" name="destino_id">
+        <UFormField label="Destino" name="destinoId">
           <UInputMenu
-            v-model="state.destino_id"
+            v-model="state.destinoId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad destino"

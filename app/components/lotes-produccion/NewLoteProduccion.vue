@@ -21,18 +21,18 @@ const { result } = useQuery<LoteOptionsResult>(LoteOptions);
 const productos = computed(() => result.value?.productos ?? []);
 
 const LoteSchema = z.object({
-  numero_lote: z.string().min(1),
-  fabricado_en: z.string().optional(),
-  vence_en: z.string().optional(),
-  producto_id: z.string().min(1),
+  numeroLote: z.string().min(1),
+  fabricadoEn: z.string().optional(),
+  venceEn: z.string().optional(),
+  productoId: z.string().min(1),
 });
 type LoteInput = z.infer<typeof LoteSchema>;
 
 const state = reactive<LoteInput>({
-  numero_lote: "",
-  fabricado_en: undefined,
-  vence_en: undefined,
-  producto_id: "",
+  numeroLote: "",
+  fabricadoEn: undefined,
+  venceEn: undefined,
+  productoId: "",
 });
 
 const CreateLoteMutation = gql`
@@ -49,10 +49,10 @@ const { mutate } = useMutation<CreateLoteResult, CreateLoteVars>(
 );
 
 function resetForm() {
-  state.numero_lote = "";
-  state.fabricado_en = undefined;
-  state.vence_en = undefined;
-  state.producto_id = "";
+  state.numeroLote = "";
+  state.fabricadoEn = undefined;
+  state.venceEn = undefined;
+  state.productoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<LoteInput>) {
@@ -79,22 +79,22 @@ async function onSubmit(event: FormSubmitEvent<LoteInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Número de lote" name="numero_lote">
-          <UInput v-model="state.numero_lote" />
+        <UFormField label="Número de lote" name="numeroLote">
+          <UInput v-model="state.numeroLote" />
         </UFormField>
-        <UFormField label="Producto" name="producto_id">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
-            v-model="state.producto_id"
+            v-model="state.productoId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
         </UFormField>
-        <UFormField label="Fabricado en" name="fabricado_en">
-          <UInput v-model="state.fabricado_en" placeholder="YYYY-MM-DD" />
+        <UFormField label="Fabricado en" name="fabricadoEn">
+          <UInput v-model="state.fabricadoEn" placeholder="YYYY-MM-DD" />
         </UFormField>
-        <UFormField label="Vence en" name="vence_en">
-          <UInput v-model="state.vence_en" placeholder="YYYY-MM-DD" />
+        <UFormField label="Vence en" name="venceEn">
+          <UInput v-model="state.venceEn" placeholder="YYYY-MM-DD" />
         </UFormField>
       </UForm>
     </template>

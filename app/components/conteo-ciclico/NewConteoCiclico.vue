@@ -23,7 +23,7 @@ const ConteoCiclicoOptions = gql`
     }
     lotesProduccion {
       value: id
-      label: numero_lote
+      label: numeroLote
     }
     unidadesMedida {
       value: id
@@ -44,21 +44,21 @@ const lotes = computed(() => result.value?.lotesProduccion || []);
 const unidades = computed(() => result.value?.unidadesMedida || []);
 
 const ConteoSchema = z.object({
-  producto_id: z.string().min(1),
-  bodega_id: z.string().min(1),
-  lote_id: z.string().optional(),
-  cantidad_contada: z.number().min(0),
-  unidad_id: z.string().min(1),
+  productoId: z.string().min(1),
+  bodegaId: z.string().min(1),
+  loteId: z.string().optional(),
+  cantidadContada: z.number().min(0),
+  unidadId: z.string().min(1),
   fecha: z.string().min(1),
 });
 type ConteoInput = z.infer<typeof ConteoSchema>;
 
 const state = reactive<ConteoInput>({
-  producto_id: "",
-  bodega_id: "",
-  lote_id: undefined,
-  cantidad_contada: 0,
-  unidad_id: "",
+  productoId: "",
+  bodegaId: "",
+  loteId: undefined,
+  cantidadContada: 0,
+  unidadId: "",
   fecha: "",
 });
 
@@ -75,11 +75,11 @@ const { mutate } = useMutation<CreateConteoResult, CreateConteoVars>(
 );
 
 function resetForm() {
-  state.producto_id = "";
-  state.bodega_id = "";
-  state.lote_id = undefined;
-  state.cantidad_contada = 0;
-  state.unidad_id = "";
+  state.productoId = "";
+  state.bodegaId = "";
+  state.loteId = undefined;
+  state.cantidadContada = 0;
+  state.unidadId = "";
   state.fecha = "";
 }
 
@@ -108,7 +108,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
       >
         <UFormField label="Producto" name="producto_id">
           <UInputMenu
-            v-model="state.producto_id"
+            v-model="state.productoId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
@@ -116,7 +116,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
         </UFormField>
         <UFormField label="Bodega" name="bodega_id">
           <UInputMenu
-            v-model="state.bodega_id"
+            v-model="state.bodegaId"
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega"
@@ -124,18 +124,18 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
         </UFormField>
         <UFormField label="Lote" name="lote_id">
           <UInputMenu
-            v-model="state.lote_id"
+            v-model="state.loteId"
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
           />
         </UFormField>
         <UFormField label="Cantidad contada" name="cantidad_contada">
-          <UInputNumber v-model="state.cantidad_contada" />
+          <UInputNumber v-model="state.cantidadContada" />
         </UFormField>
         <UFormField label="Unidad" name="unidad_id">
           <UInputMenu
-            v-model="state.unidad_id"
+            v-model="state.unidadId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"

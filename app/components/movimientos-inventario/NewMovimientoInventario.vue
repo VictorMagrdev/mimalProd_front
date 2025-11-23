@@ -32,10 +32,10 @@ const MovimientoSchema = z.object({
   fecha: z.string().min(1),
   referencia: z.string().optional(),
   observaciones: z.string().optional(),
-  creado_por: z.string().optional(),
-  bodega_origen_id: z.string().min(1).optional(),
-  bodega_destino_id: z.string().min(1).optional(),
-  tipo_movimiento_id: z.string().min(1),
+  creadoPor: z.string().optional(),
+  bodegaOrigenId: z.string().min(1).optional(),
+  bodegaDestinoId: z.string().min(1).optional(),
+  tipoMovimientoId: z.string().min(1),
 });
 type MovimientoInput = z.infer<typeof MovimientoSchema>;
 
@@ -43,10 +43,10 @@ const state = reactive<MovimientoInput>({
   fecha: "",
   referencia: undefined,
   observaciones: undefined,
-  creado_por: undefined,
-  bodega_origen_id: undefined,
-  bodega_destino_id: undefined,
-  tipo_movimiento_id: "",
+  creadoPor: undefined,
+  bodegaOrigenId: undefined,
+  bodegaDestinoId: undefined,
+  tipoMovimientoId: "",
 });
 
 const CreateMovimientoMutation = gql`
@@ -65,10 +65,10 @@ function resetForm() {
   state.fecha = "";
   state.referencia = undefined;
   state.observaciones = undefined;
-  state.creado_por = undefined;
-  state.bodega_origen_id = undefined;
-  state.bodega_destino_id = undefined;
-  state.tipo_movimiento_id = "";
+  state.creadoPor = undefined;
+  state.bodegaOrigenId = undefined;
+  state.bodegaDestinoId = undefined;
+  state.tipoMovimientoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
@@ -104,25 +104,25 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />
         </UFormField>
-        <UFormField label="Bodega origen" name="bodega_origen_id">
+        <UFormField label="Bodega origen" name="bodegaOrigenId">
           <UInputMenu
-            v-model="state.bodega_origen_id"
+            v-model="state.bodegaOrigenId"
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega origen"
           />
         </UFormField>
-        <UFormField label="Bodega destino" name="bodega_destino_id">
+        <UFormField label="Bodega destino" name="bodegaDestinoId">
           <UInputMenu
-            v-model="state.bodega_destino_id"
+            v-model="state.bodegaDestinoId"
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega destino"
           />
         </UFormField>
-        <UFormField label="Tipo movimiento" name="tipo_movimiento_id">
+        <UFormField label="Tipo movimiento" name="tipoMovimientoId">
           <UInputMenu
-            v-model="state.tipo_movimiento_id"
+            v-model="state.tipoMovimientoId"
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"

@@ -30,9 +30,9 @@ const CostoSchema = z.object({
   descripcion: z.string().min(1),
   monto: z.number(),
   moneda: z.string().min(1),
-  registrado_en: z.string().min(1),
-  orden_id: z.string().optional(),
-  tipo_costo_id: z.string().min(1),
+  registradoEn: z.string().min(1),
+  ordenId: z.string().optional(),
+  tipoCostoId: z.string().min(1),
 });
 type CostoInput = z.infer<typeof CostoSchema>;
 
@@ -40,9 +40,9 @@ const state = reactive<CostoInput>({
   descripcion: "",
   monto: 0,
   moneda: "",
-  registrado_en: "",
-  orden_id: undefined,
-  tipo_costo_id: "",
+  registradoEn: "",
+  ordenId: undefined,
+  tipoCostoId: "",
 });
 
 const CreateCostoMutation = gql`
@@ -61,9 +61,9 @@ function resetForm() {
   state.descripcion = "";
   state.monto = 0;
   state.moneda = "";
-  state.registrado_en = "";
-  state.orden_id = undefined;
-  state.tipo_costo_id = "";
+  state.registradoEn = "";
+  state.ordenId = undefined;
+  state.tipoCostoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<CostoInput>) {
@@ -99,20 +99,20 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
         <UFormField label="Moneda" name="moneda">
           <UInput v-model="state.moneda" />
         </UFormField>
-        <UFormField label="Registrado en" name="registrado_en">
-          <UInput v-model="state.registrado_en" />
+        <UFormField label="Registrado en" name="registradoEn">
+          <UInput v-model="state.registradoEn" />
         </UFormField>
-        <UFormField label="Orden" name="orden_id">
+        <UFormField label="Orden" name="ordenId">
           <UInputMenu
-            v-model="state.orden_id"
+            v-model="state.ordenId"
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
           />
         </UFormField>
-        <UFormField label="Tipo costo" name="tipo_costo_id">
+        <UFormField label="Tipo costo" name="tipoCostoId">
           <UInputMenu
-            v-model="state.tipo_costo_id"
+            v-model="state.tipoCostoId"
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"

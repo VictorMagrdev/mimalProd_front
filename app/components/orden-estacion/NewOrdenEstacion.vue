@@ -34,26 +34,26 @@ const estaciones = computed(() => result.value?.estacionesProduccion ?? []);
 const estados = computed(() => result.value?.estadosOrdenEstacion ?? []);
 
 const OrdenEstacionSchema = z.object({
-  inicio_planificado: z.string().optional(),
-  fin_planificado: z.string().optional(),
-  inicio_real: z.string().optional(),
-  fin_real: z.string().optional(),
+  inicioPlanificado: z.string().optional(),
+  finPlanificado: z.string().optional(),
+  inicioReal: z.string().optional(),
+  finReal: z.string().optional(),
   observaciones: z.string().optional(),
-  orden_id: z.string().min(1),
-  estacion_id: z.string().min(1),
-  estado_id: z.string().min(1),
+  ordenId: z.string().min(1),
+  estacionId: z.string().min(1),
+  estadoId: z.string().min(1),
 });
 type OrdenEstacionInput = z.infer<typeof OrdenEstacionSchema>;
 
 const state = reactive<OrdenEstacionInput>({
-  inicio_planificado: undefined,
-  fin_planificado: undefined,
-  inicio_real: undefined,
-  fin_real: undefined,
+  inicioPlanificado: undefined,
+  finPlanificado: undefined,
+  inicioReal: undefined,
+  finReal: undefined,
   observaciones: undefined,
-  orden_id: "",
-  estacion_id: "",
-  estado_id: "",
+  ordenId: "",
+  estacionId: "",
+  estadoId: "",
 });
 
 const CreateOrdenEstacionMutation = gql`
@@ -70,14 +70,14 @@ const { mutate } = useMutation<
 >(CreateOrdenEstacionMutation);
 
 function resetForm() {
-  state.inicio_planificado = undefined;
-  state.fin_planificado = undefined;
-  state.inicio_real = undefined;
-  state.fin_real = undefined;
+  state.inicioPlanificado = undefined;
+  state.finPlanificado = undefined;
+  state.inicioReal = undefined;
+  state.finReal = undefined;
   state.observaciones = undefined;
-  state.orden_id = "";
-  state.estacion_id = "";
-  state.estado_id = "";
+  state.ordenId = "";
+  state.estacionId = "";
+  state.estadoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<OrdenEstacionInput>) {
@@ -104,35 +104,35 @@ async function onSubmit(event: FormSubmitEvent<OrdenEstacionInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden" name="orden_id">
+        <UFormField label="Orden" name="ordenId">
           <UInputMenu
-            v-model="state.orden_id"
+            v-model="state.ordenId"
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
           />
         </UFormField>
-        <UFormField label="Estación" name="estacion_id">
+        <UFormField label="Estación" name="estacionId">
           <UInputMenu
-            v-model="state.estacion_id"
+            v-model="state.estacionId"
             value-key="value"
             :items="estaciones"
             placeholder="Selecciona estación"
           />
         </UFormField>
-        <UFormField label="Estado" name="estado_id">
+        <UFormField label="Estado" name="estadoId">
           <UInputMenu
-            v-model="state.estado_id"
+            v-model="state.estadoId"
             value-key="value"
             :items="estados"
             placeholder="Selecciona estado"
           />
         </UFormField>
-        <UFormField label="Inicio planificado" name="inicio_planificado">
-          <UInput v-model="state.inicio_planificado" placeholder="YYYY-MM-DD" />
+        <UFormField label="Inicio planificado" name="inicioPlanificado">
+          <UInput v-model="state.inicioPlanificado" placeholder="YYYY-MM-DD" />
         </UFormField>
-        <UFormField label="Fin planificado" name="fin_planificado">
-          <UInput v-model="state.fin_planificado" placeholder="YYYY-MM-DD" />
+        <UFormField label="Fin planificado" name="finPlanificado">
+          <UInput v-model="state.finPlanificado" placeholder="YYYY-MM-DD" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />

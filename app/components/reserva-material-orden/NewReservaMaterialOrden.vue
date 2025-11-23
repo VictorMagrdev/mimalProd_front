@@ -36,22 +36,22 @@ const lotes = computed(() => result.value?.lotesProduccion ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
 const ReservaSchema = z.object({
-  cantidad_reservada: z.number().min(0),
-  fecha_reserva: z.string().min(1),
-  orden_id: z.string().min(1),
-  producto_id: z.string().min(1),
-  lote_id: z.string().optional(),
-  unidad_id: z.string().min(1),
+  cantidadReservada: z.number().min(0),
+  fechaReserva: z.string().min(1),
+  ordenId: z.string().min(1),
+  productoId: z.string().min(1),
+  loteId: z.string().optional(),
+  unidadId: z.string().min(1),
 });
 type ReservaInput = z.infer<typeof ReservaSchema>;
 
 const state = reactive<ReservaInput>({
-  cantidad_reservada: 0,
-  fecha_reserva: "",
-  orden_id: "",
-  producto_id: "",
-  lote_id: undefined,
-  unidad_id: "",
+  cantidadReservada: 0,
+  fechaReserva: "",
+  ordenId: "",
+  productoId: "",
+  loteId: undefined,
+  unidadId: "",
 });
 
 const CreateReservaMutation = gql`
@@ -67,12 +67,12 @@ const { mutate } = useMutation<CreateReservaResult, CreateReservaVars>(
 );
 
 function resetForm() {
-  state.cantidad_reservada = 0;
-  state.fecha_reserva = "";
-  state.orden_id = "";
-  state.producto_id = "";
-  state.lote_id = undefined;
-  state.unidad_id = "";
+  state.cantidadReservada = 0;
+  state.fechaReserva = "";
+  state.ordenId = "";
+  state.productoId = "";
+  state.loteId = undefined;
+  state.unidadId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
@@ -99,43 +99,43 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Orden" name="orden_id">
+        <UFormField label="Orden" name="ordenId">
           <UInputMenu
-            v-model="state.orden_id"
+            v-model="state.ordenId"
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
           />
         </UFormField>
-        <UFormField label="Producto" name="producto_id">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
-            v-model="state.producto_id"
+            v-model="state.productoId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
         </UFormField>
-        <UFormField label="Lote" name="lote_id">
+        <UFormField label="Lote" name="loteId">
           <UInputMenu
-            v-model="state.lote_id"
+            v-model="state.loteId"
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
           />
         </UFormField>
-        <UFormField label="Unidad" name="unidad_id">
+        <UFormField label="Unidad" name="unidadId">
           <UInputMenu
-            v-model="state.unidad_id"
+            v-model="state.unidadId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
           />
         </UFormField>
-        <UFormField label="Cantidad reservada" name="cantidad_reservada">
-          <UInputNumber v-model="state.cantidad_reservada" />
+        <UFormField label="Cantidad reservada" name="cantidadReservada">
+          <UInputNumber v-model="state.cantidadReservada" />
         </UFormField>
-        <UFormField label="Fecha reserva" name="fecha_reserva">
-          <UInput v-model="state.fecha_reserva" placeholder="YYYY-MM-DD" />
+        <UFormField label="Fecha reserva" name="fechaReserva">
+          <UInput v-model="state.fechaReserva" placeholder="YYYY-MM-DD" />
         </UFormField>
       </UForm>
     </template>

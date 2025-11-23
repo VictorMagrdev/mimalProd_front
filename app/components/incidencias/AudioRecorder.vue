@@ -91,7 +91,7 @@ watch(isRecording, (active) => {
 
     <div class="flex flex-col items-center gap-4">
       <UButton
-        :color="isRecording ? 'red' : 'green'"
+        :color="isRecording ? 'warning' : 'success'"
         :icon="
           isRecording ? 'i-heroicons-stop-circle' : 'i-heroicons-microphone'
         "
@@ -114,7 +114,7 @@ watch(isRecording, (active) => {
         <audio :src="audioUrl" controls class="w-full rounded-lg" />
         <UButton
           label="Regrabar"
-          color="yellow"
+          color="info"
           icon="i-heroicons-arrow-path"
           @click="resetRecording"
         />

@@ -26,18 +26,18 @@ const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
 const PuntoSchema = z.object({
-  stock_minimo: z.number().min(0),
-  stock_seguridad: z.number().min(0),
-  producto_id: z.string().min(1),
-  unidad_id: z.string().min(1),
+  stockMinimo: z.number().min(0),
+  stockSeguridad: z.number().min(0),
+  productoId: z.string().min(1),
+  unidadId: z.string().min(1),
 });
 type PuntoInput = z.infer<typeof PuntoSchema>;
 
 const state = reactive<PuntoInput>({
-  stock_minimo: 0,
-  stock_seguridad: 0,
-  producto_id: "",
-  unidad_id: "",
+  stockMinimo: 0,
+  stockSeguridad: 0,
+  productoId: "",
+  unidadId: "",
 });
 
 const CreatePuntoMutation = gql`
@@ -53,10 +53,10 @@ const { mutate } = useMutation<CreatePuntoResult, CreatePuntoVars>(
 );
 
 function resetForm() {
-  state.stock_minimo = 0;
-  state.stock_seguridad = 0;
-  state.producto_id = "";
-  state.unidad_id = "";
+  state.stockMinimo = 0;
+  state.stockSeguridad = 0;
+  state.productoId = "";
+  state.unidadId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<PuntoInput>) {
@@ -83,27 +83,27 @@ async function onSubmit(event: FormSubmitEvent<PuntoInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Producto" name="producto_id">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
-            v-model="state.producto_id"
+            v-model="state.productoId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
         </UFormField>
-        <UFormField label="Unidad" name="unidad_id">
+        <UFormField label="Unidad" name="unidadId">
           <UInputMenu
-            v-model="state.unidad_id"
+            v-model="state.unidadId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
           />
         </UFormField>
-        <UFormField label="Stock mínimo" name="stock_minimo">
-          <UInputNumber v-model="state.stock_minimo" />
+        <UFormField label="Stock mínimo" name="stockMinimo">
+          <UInputNumber v-model="state.stockMinimo" />
         </UFormField>
-        <UFormField label="Stock seguridad" name="stock_seguridad">
-          <UInputNumber v-model="state.stock_seguridad" />
+        <UFormField label="Stock seguridad" name="stockSeguridad">
+          <UInputNumber v-model="state.stockSeguridad" />
         </UFormField>
       </UForm>
     </template>

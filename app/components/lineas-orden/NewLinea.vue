@@ -26,28 +26,28 @@ const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 
 const LineaSchema = z.object({
-  numero_linea: z.number().optional(),
-  cantidad_requerida: z.number().min(0),
-  cantidad_usada: z.number().min(0).optional(),
-  costo_unitario: z.number().optional(),
-  costo_total: z.number().optional(),
+  numeroLinea: z.number().optional(),
+  cantidadRequerida: z.number().min(0),
+  cantidadUsada: z.number().min(0).optional(),
+  costoUnitario: z.number().optional(),
+  costoTotal: z.number().optional(),
   observaciones: z.string().optional(),
-  orden_id: z.string().min(1).optional(),
-  producto_componente_id: z.string().min(1),
-  unidad_componente_id: z.string().min(1),
+  ordenId: z.string().min(1).optional(),
+  productoComponenteId: z.string().min(1),
+  unidadComponenteId: z.string().min(1),
 });
 type LineaInput = z.infer<typeof LineaSchema>;
 
 const state = reactive<LineaInput>({
-  numero_linea: undefined,
-  cantidad_requerida: 0,
-  cantidad_usada: undefined,
-  costo_unitario: undefined,
-  costo_total: undefined,
+  numeroLinea: undefined,
+  cantidadRequerida: 0,
+  cantidadUsada: undefined,
+  costoUnitario: undefined,
+  costoTotal: undefined,
   observaciones: undefined,
-  orden_id: undefined,
-  producto_componente_id: "",
-  unidad_componente_id: "",
+  ordenId: undefined,
+  productoComponenteId: "",
+  unidadComponenteId: "",
 });
 
 const CreateLineaMutation = gql`
@@ -63,15 +63,15 @@ const { mutate } = useMutation<CreateLineaResult, CreateLineaVars>(
 );
 
 function resetForm() {
-  state.numero_linea = undefined;
-  state.cantidad_requerida = 0;
-  state.cantidad_usada = undefined;
-  state.costo_unitario = undefined;
-  state.costo_total = undefined;
+  state.numeroLinea = undefined;
+  state.cantidadRequerida = 0;
+  state.cantidadUsada = undefined;
+  state.costoUnitario = undefined;
+  state.costoTotal = undefined;
   state.observaciones = undefined;
-  state.orden_id = undefined;
-  state.producto_componente_id = "";
-  state.unidad_componente_id = "";
+  state.ordenId = undefined;
+  state.productoComponenteId = "";
+  state.unidadComponenteId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<LineaInput>) {
@@ -98,33 +98,33 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Producto componente" name="producto_componente_id">
+        <UFormField label="Producto componente" name="productoComponenteId">
           <UInputMenu
-            v-model="state.producto_componente_id"
+            v-model="state.productoComponenteId"
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
           />
         </UFormField>
-        <UFormField label="Unidad componente" name="unidad_componente_id">
+        <UFormField label="Unidad componente" name="unidadComponenteId">
           <UInputMenu
-            v-model="state.unidad_componente_id"
+            v-model="state.unidadComponenteId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
           />
         </UFormField>
-        <UFormField label="Cantidad requerida" name="cantidad_requerida">
-          <UInputNumber v-model="state.cantidad_requerida" />
+        <UFormField label="Cantidad requerida" name="cantidadRequerida">
+          <UInputNumber v-model="state.cantidadRequerida" />
         </UFormField>
-        <UFormField label="Cantidad usada" name="cantidad_usada">
-          <UInputNumber v-model="state.cantidad_usada" />
+        <UFormField label="Cantidad usada" name="cantidadUsada">
+          <UInputNumber v-model="state.cantidadUsada" />
         </UFormField>
-        <UFormField label="Costo unitario" name="costo_unitario">
-          <UInputNumber v-model="state.costo_unitario" />
+        <UFormField label="Costo unitario" name="costoUnitario">
+          <UInputNumber v-model="state.costoUnitario" />
         </UFormField>
-        <UFormField label="Costo total" name="costo_total">
-          <UInputNumber v-model="state.costo_total" />
+        <UFormField label="Costo total" name="costoTotal">
+          <UInputNumber v-model="state.costoTotal" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />

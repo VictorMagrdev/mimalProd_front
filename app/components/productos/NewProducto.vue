@@ -36,20 +36,20 @@ const unidades = computed(() => result.value?.unidadesMedida ?? []);
 const ProductoSchema = z.object({
   codigo: z.string().min(1),
   nombre: z.string().min(1),
-  costo_base: z.number().optional(),
-  tipo_id: z.string().min(1),
-  metodo_valoracion_id: z.string().min(1),
-  unidad_base_id: z.string().min(1),
+  costoBase: z.number().optional(),
+  tipoId: z.string().min(1),
+  metodoValoracionId: z.string().min(1),
+  unidadBaseId: z.string().min(1),
 });
 type ProductoInput = z.infer<typeof ProductoSchema>;
 
 const state = reactive<ProductoInput>({
   codigo: "",
   nombre: "",
-  costo_base: undefined,
-  tipo_id: "",
-  metodo_valoracion_id: "",
-  unidad_base_id: "",
+  costoBase: undefined,
+  tipoId: "",
+  metodoValoracionId: "",
+  unidadBaseId: "",
 });
 
 const CreateProductoMutation = gql`
@@ -67,10 +67,10 @@ const { mutate } = useMutation<CreateProductoResult, CreateProductoVars>(
 function resetForm() {
   state.codigo = "";
   state.nombre = "";
-  state.costo_base = undefined;
-  state.tipo_id = "";
-  state.metodo_valoracion_id = "";
-  state.unidad_base_id = "";
+  state.costoBase = undefined;
+  state.tipoId = "";
+  state.metodoValoracionId = "";
+  state.unidadBaseId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
@@ -103,28 +103,28 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
         <UFormField label="Nombre" name="nombre">
           <UInput v-model="state.nombre" />
         </UFormField>
-        <UFormField label="Costo base" name="costo_base">
-          <UInputNumber v-model="state.costo_base" />
+        <UFormField label="Costo base" name="costoBase">
+          <UInputNumber v-model="state.costoBase" />
         </UFormField>
-        <UFormField label="Tipo" name="tipo_id">
+        <UFormField label="Tipo" name="tipoId">
           <UInputMenu
-            v-model="state.tipo_id"
+            v-model="state.tipoId"
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
           />
         </UFormField>
-        <UFormField label="Método valoración" name="metodo_valoracion_id">
+        <UFormField label="Método valoración" name="metodoValoracionId">
           <UInputMenu
-            v-model="state.metodo_valoracion_id"
+            v-model="state.metodoValoracionId"
             value-key="value"
             :items="metodos"
             placeholder="Selecciona método"
           />
         </UFormField>
-        <UFormField label="Unidad base" name="unidad_base_id">
+        <UFormField label="Unidad base" name="unidadBaseId">
           <UInputMenu
-            v-model="state.unidad_base_id"
+            v-model="state.unidadBaseId"
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"

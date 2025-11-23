@@ -26,14 +26,14 @@ const conteos = computed(() => result.value?.conteosCiclico ?? []);
 const DiscrepanciaSchema = z.object({
   cantidad_sistema: z.number(),
   resuelto: z.boolean(),
-  conteo_id: z.string().min(1),
+  conteoId: z.string().min(1),
 });
 type DiscrepanciaInput = z.infer<typeof DiscrepanciaSchema>;
 
 const state = reactive<DiscrepanciaInput>({
   cantidad_sistema: 0,
   resuelto: false,
-  conteo_id: "",
+  conteoId: "",
 });
 
 const CreateDiscMutation = gql`
@@ -52,7 +52,7 @@ const { mutate } = useMutation<CreateDiscResult, CreateDiscVars>(
 function resetForm() {
   state.cantidad_sistema = 0;
   state.resuelto = false;
-  state.conteo_id = "";
+  state.conteoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
@@ -85,9 +85,9 @@ async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
         <UFormField label="Resuelto" name="resuelto">
           <UCheckbox v-model="state.resuelto" />
         </UFormField>
-        <UFormField label="Conteo" name="conteo_id">
+        <UFormField label="Conteo" name="conteoId">
           <UInputMenu
-            v-model="state.conteo_id"
+            v-model="state.conteoId"
             value-key="value"
             :items="conteos"
             placeholder="Selecciona conteo"
