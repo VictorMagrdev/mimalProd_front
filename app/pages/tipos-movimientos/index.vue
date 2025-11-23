@@ -3,6 +3,7 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
 import { computed, h, ref, resolveComponent } from "vue";
+import type NewTiposMovimiento from "~/components/tipos-moviento/NewTiposMovimiento.vue";
 
 const GetTiposMovimiento = gql`
   query GetTiposMovimiento {
@@ -33,7 +34,7 @@ interface TipoMovimientoResult {
   tiposMovimiento: TipoMovimiento[];
 }
 
-const { data, pending, error } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<TipoMovimientoResult>(GetTiposMovimiento);
 
 const tiposMovimiento = computed(() => data.value?.tiposMovimiento || []);
@@ -99,7 +100,6 @@ const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
 
 const selectedId = ref<string | null>(null);
-const isNewModalOpen = ref(false);
 
 function openUpdateModal(id: string) {
   selectedId.value = id;
@@ -148,11 +148,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-
-        <UButton
-          label="Nuevo Tipo de Movimiento"
-          @click="isNewModalOpen = true"
-        />
+        <NewTiposMovimiento @creado="refresh()" />
       </div>
     </div>
 

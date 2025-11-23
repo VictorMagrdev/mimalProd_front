@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref } from "vue";
-import NewParametroPlanificacion from "~/components/parametro-planificacion/NewParametroPlanificacion.vue";
 
 export interface ParametroPlanificacion {
   id: string;
@@ -34,7 +33,8 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<QueryResult>(query);
 const parametros = computed(() => data.value?.getAllParametros || []);
 
 const columns: TableColumn<ParametroPlanificacion>[] = [
@@ -87,11 +87,10 @@ const globalFilter = ref("");
   <div class="w-full space-y-4 pb-4">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-bold">Parámetros de Planificación</h1>
-      <NewParametroPlanificacion @creado="() => table?.tableApi?.reset()" />
     </div>
 
     <div
-      class="flex items-center gap-2 px-4 py-3.5 border-b border-accented overflow-x-auto"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
         v-model="globalFilter"
@@ -99,8 +98,38 @@ const globalFilter = ref("");
         placeholder="Filtrar parámetros..."
         @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
+      <div class="flex items-center space-x-2">
+        <UDropdownMenu
+          :items="
+            table?.tableApi
+              ?.getAllColumns()
+              .filter((column: any) => column.getCanHide())
+              .map((column: any) => ({
+                label: column.id,
+                type: 'checkbox' as const,
+                checked: column.getIsVisible(),
+                onUpdateChecked(checked: boolean) {
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
+                },
+                onSelect(e?: Event) {
+                  e?.preventDefault();
+                },
+              }))
+          "
+          :content="{ align: 'end' }"
+        >
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
+        </UDropdownMenu>
+        <ParametroPlanificacionNewParametroPlanificacion @creado="refresh()" />
+      </div>
     </div>
-
     <UTable
       ref="table"
       v-model:pagination="pagination"

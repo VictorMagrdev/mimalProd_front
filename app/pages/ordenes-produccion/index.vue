@@ -178,7 +178,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewOrdenProduccion @creado="refresh()" />
+        <OrdenesProduccionNewOrdenProduccion @creado="refresh()" />
       </div>
     </div>
 

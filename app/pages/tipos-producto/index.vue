@@ -131,7 +131,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <NewTipoProducto @creado="refresh()" />
+        <TiposProductoNewTipoProducto @creado="refresh()" />
       </div>
     </div>
 

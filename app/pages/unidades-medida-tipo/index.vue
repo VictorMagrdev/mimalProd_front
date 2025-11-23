@@ -132,7 +132,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <NewUnidadMedidaTipo @creado="refresh()" />
+        <UnidadesMedidaTipoNewUnidadMedidaTipo @creado="refresh()" />
       </div>
     </div>
 

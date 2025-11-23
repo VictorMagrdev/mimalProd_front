@@ -60,7 +60,7 @@ interface ProductosResult {
   productos: Producto[];
 }
 
-const { data, pending, error } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<ProductosResult>(GetProductos);
 const productos = computed(() => data.value?.productos ?? []);
 
@@ -185,7 +185,7 @@ const selectedProductoId = ref<string | null>(null);
           />
         </UDropdownMenu>
 
-        <NewProducto />
+        <ProductosNewProducto @creado="refresh()" />
       </div>
     </div>
 

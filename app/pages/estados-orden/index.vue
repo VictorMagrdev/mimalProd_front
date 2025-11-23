@@ -8,7 +8,6 @@ const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-
 const query = gql`
   query getEstadosOrden {
     estadosOrden {
@@ -22,7 +21,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<{
+const { data, pending, error, refresh } = await useAsyncQuery<{
   estadosOrden: EstadoOrden[];
 }>(query);
 
@@ -133,7 +132,7 @@ const globalFilter = ref();
           />
         </UDropdownMenu>
 
-        <NewEstadoOrden />
+        <EstadosOrdenNewEstadoOrden @creado="refresh()" />
       </div>
     </div>
 

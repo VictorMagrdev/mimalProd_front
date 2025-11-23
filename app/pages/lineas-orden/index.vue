@@ -221,7 +221,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <NewLinea @creado="refresh()" />
+        <LineasOrdenNewLinea @creado="refresh()" />
       </div>
     </div>
 

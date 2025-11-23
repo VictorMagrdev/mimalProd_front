@@ -180,7 +180,10 @@ const filteredData = computed(() => {
             @click="refresh()"
           />
 
-          <NewTipoBodega v-model="isNewModalOpen" @creado="refresh()" />
+          <TiposBodegaNewTipoBodega
+            v-model="isNewModalOpen"
+            @creado="refresh()"
+          />
         </div>
       </div>
 

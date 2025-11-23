@@ -9,7 +9,7 @@ const roles = ref<Role[]>([]);
 const roleOptions = computed(() =>
   roles.value.map((r) => ({ label: r.name, id: r.id.toString() })),
 );
-
+const emit = defineEmits<{ (e: "creado"): void }>();
 watch(open, async (isOpen) => {
   if (isOpen && roles.value.length === 0) {
     try {
@@ -57,7 +57,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
         Authorization: `Bearer ${auth.token}`,
       },
     });
-
+    emit("creado");
     toast.add({
       title: "Usuario creado",
       description: `El usuario fue registrado correctamente`,

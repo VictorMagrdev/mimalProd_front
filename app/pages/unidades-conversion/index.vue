@@ -2,6 +2,7 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { computed, h, ref, resolveComponent } from "vue";
+import NewConversion from "~/components/unidades-conversion/NewConversion.vue";
 
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -138,7 +139,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <NewUnidadConversion @creado="refresh()" />
+        <NewConversion @creado="refresh()" />
       </div>
     </div>
 

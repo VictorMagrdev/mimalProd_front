@@ -14,7 +14,6 @@
       @export-csv="handleExportCSV"
     />
 
-    <!-- Gráfico -->
     <UCard>
       <VisXYContainer
         :data="chartData"

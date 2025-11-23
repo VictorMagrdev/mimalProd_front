@@ -131,7 +131,6 @@ const globalFilter = ref("");
   <div class="w-full space-y-4 pb-4">
     <div class="flex justify-between items-center">
       <h1 class="text-2xl font-bold">Máquinas</h1>
-      <NewMaquinas @creada="refresh()" />
     </div>
 
     <div
@@ -171,6 +170,7 @@ const globalFilter = ref("");
           trailing-icon="i-lucide-chevron-down"
         />
       </UDropdownMenu>
+      <NewMaquinas @creada="refresh()" />
     </div>
 
     <UTable

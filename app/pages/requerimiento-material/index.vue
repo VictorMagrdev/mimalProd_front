@@ -39,7 +39,8 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<QueryResult>(query);
 const requerimientos = computed(() => data.value?.getAllRequerimientos || []);
 
 const columns: TableColumn<RequerimientoMaterial>[] = [
@@ -105,7 +106,6 @@ const globalFilter = ref("");
   <div class="w-full space-y-4 pb-4">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-bold">Requerimientos de Material</h1>
-      <NewRequerimientoMaterial @creado="() => table?.tableApi?.reset()" />
     </div>
 
     <div
@@ -117,6 +117,7 @@ const globalFilter = ref("");
         placeholder="Filtrar requerimientos..."
         @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
+      <NewRequerimientoMaterial @creado="refresh()" />
     </div>
 
     <UTable

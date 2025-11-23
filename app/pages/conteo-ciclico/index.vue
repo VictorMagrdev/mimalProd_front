@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { computed, h, ref, resolveComponent } from "vue";
+import NewConteoCiclico from "~/components/conteo-ciclico/NewConteoCiclico.vue";
 import type { ConteoCiclico, QueryResult } from "~/utils/types";
 
 const UButton = resolveComponent("UButton");
@@ -35,7 +36,8 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<QueryResult>(query);
 
 const conteosCiclicos = computed(() => data.value?.conteosCiclicos || []);
 
@@ -216,6 +218,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
+      <NewConteoCiclico @creado="refresh()" />
     </div>
 
     <UTable

@@ -249,7 +249,10 @@ const filteredData = computed(() => {
             @click="refresh()"
           />
 
-          <NewTipoCosto v-model="isNewModalOpen" @creado="refresh()" />
+          <TiposCostoNewTipoCosto
+            v-model="isNewModalOpen"
+            @creado="refresh()"
+          />
         </div>
       </div>
 

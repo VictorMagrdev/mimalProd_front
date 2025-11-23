@@ -277,18 +277,18 @@ export interface Bodega {
 
 export interface CostoOrden {
   id: string;
-  orden_id: string;
-  tipo_costo_id: string;
+  ordenId: string;
+  tipoCostoId: string;
   descripcion: string;
   monto: number;
   moneda: string;
-  registrado_en: string;
-  tipo_costo: {
+  registradoEn: string;
+  tipoCosto: {
     nombre: string;
     codigo: string;
   };
   orden?: {
-    numero_orden: string;
+    numeroOrden: string;
   };
 }
 

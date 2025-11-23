@@ -7,8 +7,6 @@ const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-
-
 interface QueryResult {
   costosOrden: CostoOrden[];
 }
@@ -34,7 +32,8 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<QueryResult>(query);
 
 const costosOrden = computed(() => data.value?.costosOrden || []);
 
@@ -47,7 +46,7 @@ const columns: TableColumn<CostoOrden>[] = [
         ? h(
             "div",
             { class: "font-mono text-sm" },
-            `#${row.original.orden.numero_orden}`,
+            `#${row.original.orden.numeroOrden}`,
           )
         : h("span", { class: "text-muted italic" }, "N/A"),
   },
@@ -62,7 +61,7 @@ const columns: TableColumn<CostoOrden>[] = [
           color: "primary",
           class: "capitalize",
         },
-        () => row.original.tipo_costo.nombre,
+        () => row.original.tipoCosto.nombre,
       ),
   },
   {
@@ -76,12 +75,12 @@ const columns: TableColumn<CostoOrden>[] = [
     header: "Monto",
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right font-mono font-medium" },
-        new Intl.NumberFormat("es-ES", {
-          style: "currency",
-          currency: row.original.moneda,
-        }).format(row.original.monto),
+        UBadge,
+        {
+          variant: "outline",
+          color: "neutral",
+        },
+        () => row.original.monto,
       ),
   },
   {
@@ -104,7 +103,7 @@ const columns: TableColumn<CostoOrden>[] = [
       h(
         "div",
         { class: "text-sm text-muted" },
-        new Date(row.original.registrado_en).toLocaleDateString("es-ES", {
+        new Date(row.original.registradoEn).toLocaleDateString("es-ES", {
           day: "numeric",
           month: "short",
           year: "numeric",
@@ -217,6 +216,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
+      <CostosOrdenNewCosto @creado="refresh()" />
     </div>
 
     <UTable

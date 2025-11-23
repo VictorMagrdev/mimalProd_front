@@ -22,7 +22,6 @@ const GetEstadosIncidencia = gql`
   }
 `;
 
-
 const { data, pending, error, refresh } =
   await useAsyncQuery<EstadoIncidenciaResult>(GetEstadosIncidencia);
 
@@ -108,6 +107,7 @@ const globalFilter = ref("");
           trailing-icon="i-lucide-chevron-down"
         />
       </UDropdownMenu>
+      <NewEstadosIncidencia @creado="refresh()" />
     </div>
 
     <UTable

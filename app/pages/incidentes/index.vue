@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NewIncidencia from "@/components/incidencias/NewIncidencia.vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
@@ -208,7 +207,6 @@ function getRowItems(incidencia: Incidencia) {
 }
 
 function openDetailsModal(id: string) {
-  // Navegar a página de detalles o abrir modal
   navigateTo(`/incidentes/${id}`);
 }
 
@@ -269,7 +267,7 @@ const globalFilter = ref("");
           trailing-icon="i-lucide-chevron-down"
         />
       </UDropdownMenu>
-      <NewIncidencia @creada="refresh()" />
+      <IncidenciasNewIncidencia @creada="refresh()" />
     </div>
 
     <UTable

@@ -100,10 +100,6 @@ function getRowItems(tipo: MetodoValoracion) {
   ];
 }
 
-function onCreated() {
-  refresh?.().catch((err) => console.error("Error refrescando:", err));
-}
-
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
@@ -156,7 +152,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewMetodoValoracion @creado="onCreated" />
+        <MetodoValoracionNewMetodoValoracion @creado="refresh()" />
       </div>
     </div>
 

@@ -2,6 +2,7 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { computed, ref } from "vue";
+import NewPuntoReorden from "~/components/punto-reorden/NewPuntoReorden.vue";
 
 const GetPuntosReorden = gql`
   query GetPuntosReorden {
@@ -27,7 +28,7 @@ interface PuntoReordenResult {
   puntosReorden: PuntoReorden[];
 }
 
-const { data, pending, error } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
 
 const puntosReorden = computed(() => data.value?.puntosReorden || []);
@@ -103,6 +104,7 @@ const globalFilter = ref();
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
+        <NewPuntoReorden @creado="refresh()" />
       </div>
     </div>
 

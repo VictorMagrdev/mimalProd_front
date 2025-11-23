@@ -163,7 +163,10 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <NewLoteProduccion v-model="isNewModalOpen" @creado="refresh()" />
+        <LotesProduccionNewLoteProduccion
+          v-model="isNewModalOpen"
+          @creado="refresh()"
+        />
       </div>
     </div>
 

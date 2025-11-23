@@ -12,7 +12,6 @@ const toast = useToast();
 const auth = useAuthStore();
 const router = useRouter();
 
-// Estados
 const selectedUserId = ref<number | null>(null);
 const selectedUserForRole = ref<number | null>(null);
 const selectedUserForDeleteRole = ref<number | null>(null);
@@ -424,7 +423,6 @@ const currentPage = computed({
       @role-removed="fetchUsers"
     />
 
-    <!-- Manejo de errores -->
     <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
       <div class="flex items-center gap-2 text-red-800">
         <UIcon name="i-lucide-alert-circle" class="w-5 h-5" />

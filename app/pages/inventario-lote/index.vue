@@ -62,7 +62,7 @@ export interface InventarioLoteResult {
   inventariosLote: InventarioLote[];
 }
 
-const { data, pending, error } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<InventarioLoteResult>(query);
 
 const inventariosLote = computed(() => data.value?.inventariosLote || []);
@@ -148,7 +148,7 @@ const globalFilter = ref();
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <InventarioLoteNewInventarioLote />
+        <InventarioLoteNewInventarioLote @creado="refresh()" />
       </div>
     </div>
 

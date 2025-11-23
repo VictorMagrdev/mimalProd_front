@@ -9,7 +9,6 @@ const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const globalFilter = ref("");
 
-
 interface QueryResult {
   getAllEstructuras: Estructura[];
 }
@@ -29,7 +28,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, execute } =
+const { data, pending, error, refresh } =
   await useAsyncQuery<QueryResult>(query);
 const estructuras = computed(() => data.value?.getAllEstructuras ?? []);
 
@@ -83,57 +82,52 @@ const columns: TableColumn<Estructura>[] = [
       ),
   },
 ];
-
-
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Estructuras de Producto</h1>
-      <NewEstructuraProducto @creado="execute" />
-    </div>
+    <h1 class="text-2xl font-bold">Estructuras de Producto</h1>
 
     <div
-      class="flex items-center gap-2 px-4 py-3.5 border-b border-accented overflow-x-auto"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
         v-model="globalFilter"
-        class="max-w-sm min-w-[12ch]"
+        class="max-w-sm"
         placeholder="Filtrar estructuras..."
-        @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
-
-      <UDropdownMenu
-        :items="
-          table?.tableApi
-            ?.getAllColumns()
-            .filter((column: any) => column.getCanHide())
-            .map((column: any) => ({
-              label: column.columnDef.header,
-              type: 'checkbox' as const,
-              checked: column.getIsVisible(),
-              onUpdateChecked(checked: boolean) {
-                table?.tableApi
-                  ?.getColumn(column.id)
-                  ?.toggleVisibility(!!checked);
-              },
-              onSelect(e?: Event) {
-                e?.preventDefault();
-              },
-            }))
-        "
-        :content="{ align: 'end' }"
-      >
-        <UButton
-          label="Columnas"
-          color="neutral"
-          variant="outline"
-          trailing-icon="i-lucide-chevron-down"
-        />
-      </UDropdownMenu>
+      <div class="flex items-center space-x-2">
+        <UDropdownMenu
+          :items="
+            table?.tableApi
+              ?.getAllColumns()
+              .filter((column: any) => column.getCanHide())
+              .map((column: any) => ({
+                label: column.columnDef.header,
+                type: 'checkbox' as const,
+                checked: column.getIsVisible(),
+                onUpdateChecked(checked: boolean) {
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(!!checked);
+                },
+                onSelect(e?: Event) {
+                  e?.preventDefault();
+                },
+              }))
+          "
+          :content="{ align: 'end' }"
+        >
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
+        </UDropdownMenu>
+        <NewEstructuraProducto @creado="refresh()" />
+      </div>
     </div>
-
     <UTable
       ref="table"
       v-model:pagination="pagination"

@@ -199,7 +199,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewMovimientoInventario @creado="refresh()" />
+        <MovimientosInventarioNewMovimientoInventario @creado="refresh()" />
       </div>
     </div>
 

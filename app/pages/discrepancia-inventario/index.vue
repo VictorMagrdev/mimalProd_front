@@ -8,8 +8,6 @@ const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UBadge = resolveComponent("UBadge");
 
-
-
 interface QueryResult {
   discrepanciasInventario: DiscrepanciaInventario[];
 }
@@ -36,7 +34,8 @@ const query = gql`
   }
 `;
 
-const { data, pending, error } = await useAsyncQuery<QueryResult>(query);
+const { data, pending, error, refresh } =
+  await useAsyncQuery<QueryResult>(query);
 
 const discrepanciasInventario = computed(
   () => data.value?.discrepanciasInventario || [],
@@ -204,6 +203,7 @@ const globalFilter = ref("");
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
+      <DiscrepaciaInventarioNewDiscrepanciaInventario @creado="refresh()" />
     </div>
 
     <UTable
