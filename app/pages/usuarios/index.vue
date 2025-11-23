@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
-import { h, onMounted, ref, resolveComponent } from "vue";
+import { h, ref, resolveComponent, computed } from "vue";
 import { useRouter } from "vue-router";
-import NewUser from "~/components/user/NewUser.vue";
-
-const UButton = resolveComponent("UButton");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UBadge = resolveComponent("UBadge");
 const toast = useToast();
 const auth = useAuthStore();
 const router = useRouter();
-
+const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UButton = resolveComponent("UButton");
 const selectedUserId = ref<number | null>(null);
 const selectedUserForRole = ref<number | null>(null);
 const selectedUserForDeleteRole = ref<number | null>(null);
@@ -38,57 +35,22 @@ interface UserUI {
   roles: RolResponse[];
 }
 
-const users = ref<UserUI[]>([]);
-const pending = ref(false);
-const error = ref<string | null>(null);
-
-const fetchUsers = async () => {
-  pending.value = true;
-  error.value = null;
-  try {
-    const { data, error: fetchError } = await useFetch<UserUI[]>(
-      "http://localhost:8080/api/users",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (fetchError.value) {
-      throw new Error(fetchError.value.message || "Error al cargar usuarios");
-    }
-
-    users.value = data.value || [];
-
-    toast.add({
-      title: "Datos cargados",
-      description: `${users.value.length} usuarios encontrados`,
-      color: "success",
-      duration: 3000,
-    });
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : "Error desconocido";
-    toast.add({
-      title: "Error",
-      description: error.value,
-      color: "error",
-      duration: 5000,
-    });
-  } finally {
-    pending.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchUsers();
+const {
+  data: users,
+  pending,
+  error,
+  refresh,
+} = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${auth.token}`,
+  },
+  default: () => [],
 });
 
 const desactivar = async (id: number) => {
   try {
-    const { error: fetchError } = await useFetch(
+    const { error } = await useFetch(
       `http://localhost:8080/api/users/${id}/deactivate`,
       {
         method: "POST",
@@ -99,10 +61,8 @@ const desactivar = async (id: number) => {
       },
     );
 
-    if (fetchError.value) {
-      throw new Error(
-        fetchError.value.message || "Error al desactivar usuario",
-      );
+    if (error) {
+      throw new Error(String(error) || "Error al desactivar usuario");
     }
 
     toast.add({
@@ -112,14 +72,11 @@ const desactivar = async (id: number) => {
       duration: 3000,
     });
 
-    // Actualizar la lista
-    await fetchUsers();
+    refresh();
   } catch (err) {
-    const errorMessage =
-      err instanceof Error ? err.message : "Error desconocido";
     toast.add({
       title: "Error",
-      description: errorMessage,
+      description: String(err),
       color: "error",
       duration: 5000,
     });
@@ -132,8 +89,24 @@ const getNombreCompleto = (user: UserUI) => {
   }
   return user.nombre || user.apellidos || "Sin nombre";
 };
+const parseDuration = (duration: string | number | undefined) => {
+  if (!duration) return null;
+  if (typeof duration === "number") return duration;
+  if (typeof duration === "string") {
+    const match = duration.match(/PT(\d+)H/);
+    if (match) {
+      return Number(match[1]);
+    }
 
-// Columnas de la tabla
+    const numericValue = Number(duration);
+    if (!isNaN(numericValue)) {
+      return numericValue;
+    }
+  }
+
+  return null;
+};
+
 const columns: TableColumn<UserUI>[] = [
   {
     accessorKey: "codigoEmpleado",
@@ -159,7 +132,7 @@ const columns: TableColumn<UserUI>[] = [
       h("span", { class: "font-medium" }, row.original.username),
   },
   {
-    accessorKey: "nombreCompleto",
+    id: "nombreCompleto",
     header: "Nombre Completo",
     cell: ({ row }: { row: Row<UserUI> }) =>
       h("span", { class: "text-gray-700" }, getNombreCompleto(row.original)),
@@ -181,19 +154,11 @@ const columns: TableColumn<UserUI>[] = [
   {
     accessorKey: "capacidadHorasDia",
     header: "Capacidad",
-    cell: ({ row }: { row: Row<UserUI> }) =>
-      row.original.capacidadHorasDia
-        ? h(
-            "span",
-            { class: "text-blue-600 font-medium" },
-            `${row.original.capacidadHorasDia} hrs/día`,
-          )
-        : h("span", { class: "text-gray-400 italic" }, "No definida"),
-    meta: {
-      class: {
-        th: "w-20",
-        td: "text-center",
-      },
+    cell: ({ row }) => {
+      const horas = parseDuration(row.original.capacidadHorasDia);
+      return horas
+        ? h("span", { class: "text-blue-600 font-medium" }, `${horas} hrs/día`)
+        : h("span", { class: "text-gray-400 italic" }, "No definida");
     },
   },
   {
@@ -276,7 +241,6 @@ const columns: TableColumn<UserUI>[] = [
   },
 ];
 
-// Items del dropdown de acciones
 function getRowItems(user: UserUI) {
   return [
     [
@@ -320,12 +284,10 @@ function getRowItems(user: UserUI) {
   ];
 }
 
-// Paginación y filtro
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const globalFilter = ref("");
 
-// Computed para paginación
 const currentPage = computed({
   get: () => pagination.value.pageIndex + 1,
   set: (page) => {
@@ -353,7 +315,6 @@ const currentPage = computed({
           v-model="globalFilter"
           class="max-w-sm"
           placeholder="Buscar por código, nombre, usuario..."
-          icon="i-lucide-search"
         />
 
         <div class="flex items-center gap-2">
@@ -363,14 +324,13 @@ const currentPage = computed({
             variant="outline"
             :loading="pending"
             aria-label="Refrescar datos"
-            @click="fetchUsers"
+            @click="refresh()"
           />
 
-          <NewUser @user-created="fetchUsers" />
+          <UserNewUser @user-created="refresh()" />
         </div>
       </div>
 
-      <!-- Tabla -->
       <UTable
         ref="table"
         v-model:pagination="pagination"
@@ -381,7 +341,6 @@ const currentPage = computed({
         class="w-full"
       />
 
-      <!-- Paginación -->
       <div
         class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50"
       >
@@ -399,28 +358,28 @@ const currentPage = computed({
     </div>
 
     <!-- Modales -->
-    <UpdateUser
+    <UserUpdateUser
       v-if="selectedUserId !== null"
       :user-id="selectedUserId"
       :open="true"
       @close="selectedUserId = null"
-      @user-updated="fetchUsers"
+      @user-updated="refresh()"
     />
 
-    <PutRoleUser
+    <UserPutRoleUser
       v-if="selectedUserForRole !== null"
       :user-id="selectedUserForRole"
       :open="true"
       @close="selectedUserForRole = null"
-      @role-updated="fetchUsers"
+      @role-updated="refresh()"
     />
 
-    <DeleteRoleUser
+    <UserDeleteRoleUser
       v-if="selectedUserForDeleteRole !== null"
       :user-id="selectedUserForDeleteRole"
       :open="true"
       @close="selectedUserForDeleteRole = null"
-      @role-removed="fetchUsers"
+      @role-removed="refresh()"
     />
 
     <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -430,11 +389,11 @@ const currentPage = computed({
       </div>
       <p class="text-red-600 text-sm mt-1">{{ error }}</p>
       <UButton
-        color="red"
+        color="warning"
         variant="outline"
         size="sm"
         class="mt-2"
-        @click="fetchUsers"
+        @click="refresh()"
       >
         Reintentar
       </UButton>
