@@ -107,11 +107,11 @@ const globalFilter = ref("");
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Requerimientos de Material</h1>
+      <h1 class="text-2xl font-bold pl-8 pt-4">Requerimientos de Material</h1>
     </div>
 
     <div
-      class="flex items-center gap-2 px-4 py-3.5 border-b border-accented overflow-x-auto"
+      class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
     >
       <UInput
         v-model="globalFilter"
@@ -119,7 +119,10 @@ const globalFilter = ref("");
         placeholder="Filtrar requerimientos..."
         @update:model-value="table?.tableApi?.setGlobalFilter($event)"
       />
-      <NewRequerimientoMaterial @creado="refresh()" />
+
+      <div class="flex items-center space-x-2">
+        <NewRequerimientoMaterial @creado="refresh()" />
+      </div>
     </div>
 
     <UTable

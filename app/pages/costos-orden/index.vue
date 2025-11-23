@@ -162,7 +162,7 @@ function openUpdateModal(id: string) {
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Costos de Orden</h1>
+      <h1 class="text-2xl font-bold pl-8 pt-4">Costos de Orden</h1>
     </div>
 
     <div

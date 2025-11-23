@@ -227,7 +227,7 @@ const globalFilter = ref("");
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">Incidencias</h1>
+      <h1 class="text-2xl font-bold pl-8 pt-4">Incidencias</h1>
     </div>
 
     <div
@@ -239,37 +239,38 @@ const globalFilter = ref("");
         placeholder="Filtrar incidencias..."
       />
 
-      <UDropdownMenu
-        :items="
-          table?.tableApi
-            ?.getAllColumns()
-            .filter((column: any) => column.getCanHide())
-            .map((column: any) => ({
-              label: column.id,
-              type: 'checkbox' as const,
-              checked: column.getIsVisible(),
-              onUpdateChecked(checked: boolean) {
-                table?.tableApi
-                  ?.getColumn(column.id)
-                  ?.toggleVisibility(checked);
-              },
-              onSelect(e?: Event) {
-                e?.preventDefault();
-              },
-            }))
-        "
-        :content="{ align: 'end' }"
-      >
-        <UButton
-          label="Columnas"
-          color="neutral"
-          variant="outline"
-          trailing-icon="i-lucide-chevron-down"
-        />
-      </UDropdownMenu>
-      <IncidenciasNewIncidencia @creada="refresh()" />
+      <div class="flex items-center space-x-2">
+        <UDropdownMenu
+          :items="
+            table?.tableApi
+              ?.getAllColumns()
+              .filter((column: any) => column.getCanHide())
+              .map((column: any) => ({
+                label: column.id,
+                type: 'checkbox' as const,
+                checked: column.getIsVisible(),
+                onUpdateChecked(checked: boolean) {
+                  table?.tableApi
+                    ?.getColumn(column.id)
+                    ?.toggleVisibility(checked);
+                },
+                onSelect(e?: Event) {
+                  e?.preventDefault();
+                },
+              }))
+          "
+          :content="{ align: 'end' }"
+        >
+          <UButton
+            label="Columnas"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-down"
+          />
+        </UDropdownMenu>
+        <IncidenciasNewIncidencia @creada="refresh()" />
+      </div>
     </div>
-
     <UTable
       ref="table"
       v-model:pagination="pagination"

@@ -105,7 +105,7 @@ const globalFilter = ref("");
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">Tipos de Incidencia</h1>
+      <h1 class="text-2xl font-bold pl-8 pt-4">Tipos de Incidencia</h1>
     </div>
 
     <div

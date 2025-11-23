@@ -299,12 +299,9 @@ const currentPage = computed({
 <template>
   <div class="w-full space-y-6">
     <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
-        <p class="text-gray-600 mt-1">
-          Administra los usuarios del sistema de producción
-        </p>
-      </div>
+      <h1 class="text-2xl font-bold text-gray-900 pl-8 pt-4">
+        Gestión de Usuarios
+      </h1>
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">

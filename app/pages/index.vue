@@ -1,15 +1,13 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-6">
     <UContainer>
-      <!-- HEADER -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">
+        <h1 class="text-3xl font-bold text-gray-900 pl-8 pt-4">
           Dashboard de Producción
         </h1>
         <p class="text-gray-600">Resumen general del rendimiento productivo</p>
       </div>
 
-      <!-- KPIs -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <UCard>
           <div class="flex items-center justify-between">

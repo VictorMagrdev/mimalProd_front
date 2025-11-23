@@ -86,7 +86,7 @@ const globalFilter = ref("");
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Parámetros de Planificación</h1>
+      <h1 class="text-2xl font-bold pl-8 pt-4">Parámetros de Planificación</h1>
     </div>
 
     <div

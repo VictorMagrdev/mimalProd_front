@@ -3,7 +3,6 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/vue-table";
 import { gql } from "graphql-tag";
 import { computed, h, ref, resolveComponent } from "vue";
-import type NewTiposMovimiento from "~/components/tipos-moviento/NewTiposMovimiento.vue";
 
 const GetTiposMovimiento = gql`
   query GetTiposMovimiento {
@@ -108,7 +107,7 @@ function openUpdateModal(id: string) {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Tipos de Movimiento</h1>
+    <h1 class="text-2xl font-bold pl-8 pt-4">Tipos de Movimiento</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
@@ -148,7 +147,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewTiposMovimiento @creado="refresh()" />
+        <TiposMovientoNewTiposMovimiento @creado="refresh()" />
       </div>
     </div>
 

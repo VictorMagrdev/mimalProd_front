@@ -183,12 +183,7 @@ const filteredData = computed(() => {
 <template>
   <div class="w-full space-y-6">
     <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Tipos de Costo</h1>
-        <p class="text-gray-600 mt-1">
-          Gestiona los diferentes tipos de costos para las órdenes de producción
-        </p>
-      </div>
+      <h1 class="text-2xl font-bold text-gray-900 pl-8 pt-4">Tipos de Costo</h1>
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 shadow-sm">

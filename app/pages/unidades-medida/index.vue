@@ -116,7 +116,7 @@ function openUpdateModal(id: string) {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <h1 class="text-2xl font-bold">Unidades de Medida</h1>
+    <h1 class="text-2xl font-bold pl-8 pt-4">Unidades de Medida</h1>
 
     <div
       class="flex justify-between items-center px-4 py-3.5 border-b border-accented"
