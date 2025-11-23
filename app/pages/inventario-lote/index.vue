@@ -5,7 +5,7 @@ import { computed, ref } from "vue";
 
 const query = gql`
   query {
-    inventariosLote {
+    inventarioLotes {
       id
       cantidad
       actualizadoEn
@@ -31,6 +31,7 @@ const query = gql`
 
 interface Lote {
   id: string;
+  numeroLote: string;
 }
 
 interface Producto {
@@ -54,25 +55,41 @@ export interface InventarioLote {
   producto?: Producto;
   bodega?: Bodega;
   unidad?: Unidad;
-  cantidad: number;
+  cantidad: string;
   actualizadoEn?: string;
 }
 
 export interface InventarioLoteResult {
-  inventariosLote: InventarioLote[];
+  inventarioLotes: InventarioLote[];
 }
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<InventarioLoteResult>(query);
 
-const inventariosLote = computed(() => data.value?.inventariosLote || []);
+const inventariosLote = computed(() => data.value?.inventarioLotes || []);
+
+const formatDecimal = (value: string | null | undefined): string => {
+  if (!value) return "-";
+  const num = parseFloat(value);
+  return isNaN(num)
+    ? "-"
+    : num.toLocaleString("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+};
+
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString) return "-";
+  return new Date(dateString).toLocaleDateString("es-ES");
+};
 
 const columns: TableColumn<InventarioLote>[] = [
   {
-    accessorKey: "lote.id",
+    accessorKey: "lote.numeroLote",
     header: "Lote",
     cell: ({ row }: { row: Row<InventarioLote> }) =>
-      row.original.lote?.id || "-",
+      row.original.lote?.numeroLote || "-",
   },
   {
     accessorKey: "producto.nombre",
@@ -92,18 +109,27 @@ const columns: TableColumn<InventarioLote>[] = [
   {
     accessorKey: "cantidad",
     header: "Cantidad",
-    cell: ({ row }) => row.original.cantidad,
+    cell: ({ row }) => formatDecimal(row.original.cantidad),
   },
   {
     accessorKey: "actualizadoEn",
     header: "Actualizado en",
-    cell: ({ row }) => row.original.actualizadoEn || "-",
+    cell: ({ row }) => formatDate(row.original.actualizadoEn),
   },
 ];
 
 const table = useTemplateRef("table");
 const pagination = ref({ pageIndex: 1, pageSize: 10 });
 const globalFilter = ref();
+
+watch(
+  data,
+  (newData) => {
+    console.log("Datos recibidos:", newData);
+    console.log("Número de registros:", newData?.inventarioLotes?.length);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -157,7 +183,7 @@ const globalFilter = ref();
         ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        :data="inventariosLote || []"
+        :data="inventariosLote"
         :columns="columns"
         :loading="pending"
       />
@@ -165,7 +191,7 @@ const globalFilter = ref();
         <UPagination
           v-model="pagination.pageIndex"
           :page-count="pagination.pageSize"
-          :total="inventariosLote?.length || 0"
+          :total="inventariosLote.length"
         />
       </div>
     </div>

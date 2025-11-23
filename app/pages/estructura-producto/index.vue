@@ -10,7 +10,7 @@ const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const globalFilter = ref("");
 
 interface QueryResult {
-  getAllEstructuras: Estructura[];
+  estructurasProductos: Estructura[];
 }
 
 const query = gql`
@@ -30,7 +30,7 @@ const query = gql`
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<QueryResult>(query);
-const estructuras = computed(() => data.value?.getAllEstructuras ?? []);
+const estructuras = computed(() => data.value?.estructurasProductos ?? []);
 
 const columns: TableColumn<Estructura>[] = [
   { accessorKey: "productoPadreNombre", header: "Padre" },

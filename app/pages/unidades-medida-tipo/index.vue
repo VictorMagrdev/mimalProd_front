@@ -9,7 +9,7 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const GetUnidadesMedidaTipo = gql`
   query unidadesMedidaTipos {
-    unidadesMedidaTipos {
+    unidadesMedidaTipo {
       id
       codigo
       nombre

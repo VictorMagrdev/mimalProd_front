@@ -64,7 +64,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
     header: "Cant. Sistema",
     cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h("div", { class: "text-right font-mono" }, [
-        h("span", row.original.cantidad_sistema.toString()),
+        h("span", row.original.cantidadSistema.toString()),
         row.original.conteo.unidad &&
           h(
             "span",
@@ -78,7 +78,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
     header: "Cant. Contada",
     cell: ({ row }: { row: Row<DiscrepanciaInventario> }) =>
       h("div", { class: "text-right font-mono" }, [
-        h("span", row.original.conteo.cantidad_contada.toString()),
+        h("span", row.original.conteo.cantidadContada.toString()),
         row.original.conteo.unidad &&
           h(
             "span",
@@ -92,7 +92,7 @@ const columns: TableColumn<DiscrepanciaInventario>[] = [
     header: "Diferencia",
     cell: ({ row }: { row: Row<DiscrepanciaInventario> }) => {
       const diferencia =
-        row.original.conteo.cantidad_contada - row.original.cantidad_sistema;
+        row.original.conteo.cantidadContada - row.original.cantidadSistema;
       const color =
         diferencia === 0 ? "neutral" : diferencia > 0 ? "success" : "error";
 

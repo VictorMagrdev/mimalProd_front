@@ -77,12 +77,8 @@ const columns: TableColumn<ConteoCiclico>[] = [
     accessorKey: "lote",
     header: "Lote",
     cell: ({ row }) =>
-      row.original.lote?.numero_lote
-        ? h(
-            UBadge,
-            { variant: "outline" },
-            () => row.original.lote?.numero_lote,
-          )
+      row.original.lote?.numeroLote
+        ? h(UBadge, { variant: "outline" }, () => row.original.lote?.numeroLote)
         : h("span", { class: "text-muted italic" }, "N/A"),
   },
   {
@@ -90,7 +86,7 @@ const columns: TableColumn<ConteoCiclico>[] = [
     header: "Cantidad",
     cell: ({ row }) =>
       h("div", { class: "text-right font-mono" }, [
-        h("span", row.original.cantidad_contada.toString()),
+        h("span", row.original.cantidadContada.toString()),
         h(
           "span",
           { class: "text-sm text-muted ml-1" },

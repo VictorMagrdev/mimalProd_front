@@ -22,7 +22,6 @@ const GetLineasOrden = gql`
       costoUnitario
       costoTotal
       observaciones
-      creadoEn
     }
   }
 `;
@@ -30,21 +29,7 @@ const GetLineasOrden = gql`
 const UButton = resolveComponent("UButton");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
-export interface LineaOrdenRaw {
-  id: string;
-  orden_id?: string | null;
-  numero_linea?: number | null;
-  producto_componente?: { id: string; nombre?: string } | null;
-  cantidad_requerida?: number | null;
-  unidad_componente?: { id: string; abreviatura?: string } | null;
-  cantidad_usada?: number | null;
-  costo_unitario?: number | null;
-  costo_total?: number | null;
-  observaciones?: string | null;
-  creadoEn?: string | null;
-}
-
-export interface LineaOrdenUI {
+export interface LineaOrden {
   id: string;
   ordenId?: string | null;
   numeroLinea?: number | null;
@@ -55,37 +40,20 @@ export interface LineaOrdenUI {
   costoUnitario?: number | null;
   costoTotal?: number | null;
   observaciones?: string | null;
-  creadoEn?: string | null;
 }
 
 interface LineasOrdenResult {
-  lineasOrden: LineaOrdenRaw[];
+  LineasOrden: LineaOrden[];
 }
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
-
-const rows = computed<LineaOrdenUI[]>(() =>
-  (data.value?.lineasOrden || []).map((l) => ({
-    id: l.id,
-    ordenId: l.orden_id ?? null,
-    numeroLinea: l.numero_linea ?? null,
-    productoComponente: l.producto_componente ?? null,
-    cantidadRequerida: l.cantidad_requerida ?? null,
-    unidadComponente: l.unidad_componente ?? null,
-    cantidadUsada: l.cantidad_usada ?? null,
-    costoUnitario: l.costo_unitario ?? null,
-    costoTotal: l.costo_total ?? null,
-    observaciones: l.observaciones ?? null,
-    creadoEn: l.creadoEn ?? null,
-  })),
-);
-
-const columns: TableColumn<LineaOrdenUI>[] = [
+const lineasOrden = computed(() => data.value?.LineasOrden || []);
+const columns: TableColumn<LineaOrden>[] = [
   {
     accessorKey: "ordenId",
     header: "Orden ID",
-    cell: ({ row }: { row: Row<LineaOrdenUI> }) => row.original.ordenId ?? "-",
+    cell: ({ row }: { row: Row<LineaOrden> }) => row.original.ordenId ?? "-",
   },
   {
     accessorKey: "numeroLinea",
@@ -128,14 +96,6 @@ const columns: TableColumn<LineaOrdenUI>[] = [
     cell: ({ row }) => row.original.observaciones ?? "-",
   },
   {
-    accessorKey: "creadoEn",
-    header: "Creado En",
-    cell: ({ row }) =>
-      row.original.creadoEn
-        ? new Date(row.original.creadoEn).toLocaleString()
-        : "-",
-  },
-  {
     id: "actions",
     header: "Acciones",
     cell: ({ row }) =>
@@ -156,7 +116,7 @@ const columns: TableColumn<LineaOrdenUI>[] = [
   },
 ];
 
-function getRowItems(linea: LineaOrdenUI) {
+function getRowItems(linea: LineaOrden) {
   return [
     [
       {
@@ -230,7 +190,7 @@ function openUpdateModal(id: string) {
         ref="table"
         v-model:pagination="pagination"
         v-model:global-filter="globalFilter"
-        :data="rows"
+        :data="lineasOrden"
         :columns="columns"
         :loading="pending"
       />
@@ -238,9 +198,12 @@ function openUpdateModal(id: string) {
         <UPagination
           v-model="pagination.pageIndex"
           :page-count="
-            Math.max(1, Math.ceil((rows?.length || 0) / pagination.pageSize))
+            Math.max(
+              1,
+              Math.ceil((lineasOrden?.length || 0) / pagination.pageSize),
+            )
           "
-          :total="rows?.length || 0"
+          :total="lineasOrden?.length || 0"
         />
       </div>
     </div>

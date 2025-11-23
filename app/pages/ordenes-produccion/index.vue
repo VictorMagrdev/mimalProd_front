@@ -23,8 +23,6 @@ const GetOrdenesProduccion = gql`
       finReal
       cantidadDesperdicio
       cantidadProducida
-      creadoEn
-      actualizadoEn
     }
   }
 `;
@@ -34,18 +32,16 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface OrdenProduccion {
   id: string;
-  numero_orden: string;
+  numeroOrden: string;
   cantidad?: number | null;
   unidad?: { id: string; abreviatura?: string } | null;
   estado?: { id: string; nombre?: string } | null;
-  inicio_planificado?: string | null;
-  fin_planificado?: string | null;
-  inicio_real?: string | null;
-  fin_real?: string | null;
-  cantidad_desperdicio?: number | null;
-  cantidad_producida?: number | null;
-  creadoEn?: string | null;
-  actualizado_en?: string | null;
+  inicioPlanificado?: string | null;
+  finPlanificado?: string | null;
+  inicioReal?: string | null;
+  finReal?: string | null;
+  cantidadDesperdicio?: number | null;
+  cantidadProducida?: number | null;
 }
 
 interface OrdenesProduccionResult {
@@ -63,7 +59,7 @@ const columns: TableColumn<OrdenProduccion>[] = [
   {
     accessorKey: "numero_orden",
     header: "N° Orden",
-    cell: ({ row }: { row: Row<OrdenProduccion> }) => row.original.numero_orden,
+    cell: ({ row }: { row: Row<OrdenProduccion> }) => row.original.numeroOrden,
   },
   {
     accessorKey: "cantidad",
@@ -84,16 +80,16 @@ const columns: TableColumn<OrdenProduccion>[] = [
     accessorKey: "inicio_planificado",
     header: "Inicio Plan.",
     cell: ({ row }) =>
-      row.original.inicio_planificado
-        ? new Date(row.original.inicio_planificado).toLocaleDateString()
+      row.original.inicioPlanificado
+        ? new Date(row.original.inicioPlanificado).toLocaleDateString()
         : "-",
   },
   {
     accessorKey: "fin_planificado",
     header: "Fin Plan.",
     cell: ({ row }) =>
-      row.original.fin_planificado
-        ? new Date(row.original.fin_planificado).toLocaleDateString()
+      row.original.finPlanificado
+        ? new Date(row.original.finPlanificado).toLocaleDateString()
         : "-",
   },
   {

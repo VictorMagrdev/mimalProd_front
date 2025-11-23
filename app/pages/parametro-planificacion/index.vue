@@ -15,7 +15,7 @@ export interface ParametroPlanificacion {
 }
 
 interface QueryResult {
-  getAllParametros: ParametroPlanificacion[];
+  parametrosClasificacion: ParametroPlanificacion[];
 }
 
 const query = gql`
@@ -35,7 +35,7 @@ const query = gql`
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<QueryResult>(query);
-const parametros = computed(() => data.value?.getAllParametros || []);
+const parametros = computed(() => data.value?.parametrosClasificacion || []);
 
 const columns: TableColumn<ParametroPlanificacion>[] = [
   {

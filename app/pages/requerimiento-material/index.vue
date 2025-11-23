@@ -20,7 +20,7 @@ export interface RequerimientoMaterial {
 }
 
 interface QueryResult {
-  getAllRequerimientos: RequerimientoMaterial[];
+  requerimientosMateriales: RequerimientoMaterial[];
 }
 
 const query = gql`
@@ -41,7 +41,9 @@ const query = gql`
 
 const { data, pending, error, refresh } =
   await useAsyncQuery<QueryResult>(query);
-const requerimientos = computed(() => data.value?.getAllRequerimientos || []);
+const requerimientos = computed(
+  () => data.value?.requerimientosMateriales || [],
+);
 
 const columns: TableColumn<RequerimientoMaterial>[] = [
   {

@@ -238,11 +238,11 @@ export interface Permission {
 
 export interface ConteoCiclico {
   id: string;
-  producto_id: string;
-  bodega_id: string;
-  lote_id?: string;
-  cantidad_contada: number;
-  unidad_id: string;
+  productoId: string;
+  bodegaId: string;
+  loteId?: string;
+  cantidadContada: number;
+  unidadId: string;
   fecha: string;
   producto?: {
     nombre: string;
@@ -252,7 +252,7 @@ export interface ConteoCiclico {
     nombre: string;
   };
   lote?: {
-    numero_lote: string;
+    numeroLote: string;
   };
   unidad?: {
     nombre: string;
@@ -294,12 +294,12 @@ export interface CostoOrden {
 
 export interface DiscrepanciaInventario {
   id: string;
-  conteo_id: string;
-  cantidad_sistema: number;
+  conteoId: string;
+  cantidadSistema: number;
   resuelto: boolean;
   conteo: {
     fecha: string;
-    cantidad_contada: number;
+    cantidadContada: number;
     producto: {
       nombre: string;
       codigo: string;
