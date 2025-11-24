@@ -42,14 +42,23 @@ const productos = computed(() => result.value?.productos || []);
 const bodegas = computed(() => result.value?.bodegas || []);
 const lotes = computed(() => result.value?.lotesProduccion || []);
 const unidades = computed(() => result.value?.unidadesMedida || []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const ConteoSchema = z.object({
   productoId: z.string().min(1),
   bodegaId: z.string().min(1),
   loteId: z.string().optional(),
   cantidadContada: z.number().min(0),
   unidadId: z.string().min(1),
-  fecha: z.string().min(1),
+  fecha: dateField,
 });
 type ConteoInput = z.infer<typeof ConteoSchema>;
 
@@ -142,7 +151,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
           />
         </UFormField>
         <UFormField label="Fecha" name="fecha">
-          <UInput v-model="state.fecha" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.fecha" />
         </UFormField>
       </UForm>
     </template>

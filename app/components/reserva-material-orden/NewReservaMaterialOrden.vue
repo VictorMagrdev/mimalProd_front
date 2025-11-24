@@ -34,10 +34,19 @@ const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
 const productos = computed(() => result.value?.productos ?? []);
 const lotes = computed(() => result.value?.lotesProduccion ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const ReservaSchema = z.object({
   cantidadReservada: z.number().min(0),
-  fechaReserva: z.string().min(1),
+  fechaReserva: dateField,
   ordenId: z.string().min(1),
   productoId: z.string().min(1),
   loteId: z.string().optional(),
@@ -135,7 +144,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
           <UInputNumber v-model="state.cantidadReservada" />
         </UFormField>
         <UFormField label="Fecha reserva" name="fechaReserva">
-          <UInput v-model="state.fechaReserva" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.fechaReserva" />
         </UFormField>
       </UForm>
     </template>

@@ -24,14 +24,14 @@ const { result } = useQuery<DiscrepanciaOptionsResult>(DiscrepanciaOptions);
 const conteos = computed(() => result.value?.conteosCiclico ?? []);
 
 const DiscrepanciaSchema = z.object({
-  cantidad_sistema: z.number(),
+  cantidadSistema: z.number(),
   resuelto: z.boolean(),
   conteoId: z.string().min(1),
 });
 type DiscrepanciaInput = z.infer<typeof DiscrepanciaSchema>;
 
 const state = reactive<DiscrepanciaInput>({
-  cantidad_sistema: 0,
+  cantidadSistema: 0,
   resuelto: false,
   conteoId: "",
 });
@@ -52,7 +52,7 @@ const { mutate } = useMutation<CreateDiscResult, CreateDiscVars>(
 );
 
 function resetForm() {
-  state.cantidad_sistema = 0;
+  state.cantidadSistema = 0;
   state.resuelto = false;
   state.conteoId = "";
 }
@@ -82,7 +82,7 @@ async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Cantidad sistema" name="cantidad_sistema">
-          <UInputNumber v-model="state.cantidad_sistema" />
+          <UInputNumber v-model="state.cantidadSistema" />
         </UFormField>
         <UFormField label="Resuelto" name="resuelto">
           <UCheckbox v-model="state.resuelto" />

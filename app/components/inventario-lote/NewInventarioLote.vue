@@ -19,7 +19,7 @@ const InventarioOptions = gql`
     }
     lotesProduccion {
       value: id
-      label: numero_lote
+      label: numeroLote
     }
     bodegas {
       value: id

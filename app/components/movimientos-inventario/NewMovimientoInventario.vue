@@ -27,9 +27,19 @@ const MovimientoOptions = gql`
 const { result } = useQuery<MovimientoOptionsResult>(MovimientoOptions);
 const bodegas = computed(() => result.value?.bodegas ?? []);
 const tipos = computed(() => result.value?.tiposMovimiento ?? []);
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 
 const MovimientoSchema = z.object({
-  fecha: z.string().min(1),
+  fecha: dateField,
   referencia: z.string().optional(),
   observaciones: z.string().optional(),
   creadoPor: z.string().optional(),
@@ -96,7 +106,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Fecha" name="fecha">
-          <UInput v-model="state.fecha" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.fecha" />
         </UFormField>
         <UFormField label="Referencia" name="referencia">
           <UInput v-model="state.referencia" />

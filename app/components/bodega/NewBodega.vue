@@ -40,7 +40,7 @@ const BodegaSchema = z.object({
   codigo: z.string().min(1),
   nombre: z.string().min(1),
   descripcion: z.string().optional(),
-  tipoId: z.string().min(1),
+  tipoBodegaId: z.string().min(1),
 });
 type BodegaInput = z.infer<typeof BodegaSchema>;
 
@@ -48,14 +48,14 @@ const state = reactive<BodegaInput>({
   codigo: "",
   nombre: "",
   descripcion: "",
-  tipoId: "",
+  tipoBodegaId: "",
 });
 
 function resetForm() {
   state.codigo = "";
   state.nombre = "";
   state.descripcion = "";
-  state.tipoId = "";
+  state.tipoBodegaId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
@@ -91,12 +91,12 @@ async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
         <UFormField label="Descripción" name="descripcion">
           <UInput v-model="state.descripcion" placeholder="Descripción" />
         </UFormField>
-        <UFormField label="Tipo" name="tipoId">
+        <UFormField label="Tipo" name="tipoBodegaId">
           <UInputMenu
-            v-model="state.tipoId"
+            v-model="state.tipoBodegaId"
             value-key="value"
             :items="tiposOptions"
-            placeholder="Selecciona tipo"
+            placeholder="Selecciona tipo de bodega"
           />
         </UFormField>
       </UForm>

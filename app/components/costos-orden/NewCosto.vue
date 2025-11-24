@@ -25,21 +25,11 @@ type CreateCostoVars = { input: CostoInput };
 const { result } = useQuery<CostoOptionsResult>(CostoOptions);
 const tipos = computed(() => result.value?.tiposCosto ?? []);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
-const dateField = z
-  .any()
-  .optional()
-  .transform((value) => {
-    if (!value) return undefined;
-    if (value?.toDate) {
-      return value.toDate().toISOString();
-    }
-    return value;
-  });
+
 const CostoSchema = z.object({
   descripcion: z.string().min(1),
   monto: z.number(),
   moneda: z.string().min(1),
-  registradoEn: dateField,
   ordenId: z.string().optional(),
   tipoCostoId: z.string().min(1),
 });
@@ -49,7 +39,6 @@ const state = reactive<CostoInput>({
   descripcion: "",
   monto: 0,
   moneda: "",
-  registradoEn: "",
   ordenId: undefined,
   tipoCostoId: "",
 });
@@ -70,7 +59,6 @@ function resetForm() {
   state.descripcion = "";
   state.monto = 0;
   state.moneda = "";
-  state.registradoEn = "";
   state.ordenId = undefined;
   state.tipoCostoId = "";
 }
@@ -107,9 +95,6 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
         </UFormField>
         <UFormField label="Moneda" name="moneda">
           <UInput v-model="state.moneda" />
-        </UFormField>
-        <UFormField label="Registrado en" name="registradoEn">
-          <UInputDate v-model="state.registradoEn" />
         </UFormField>
         <UFormField label="Orden" name="ordenId">
           <UInputMenu
