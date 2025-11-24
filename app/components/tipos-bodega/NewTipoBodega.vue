@@ -22,7 +22,7 @@ const state = reactive<TipoBodegaInput>({
 });
 
 const CreateTipoBodegaMutation = gql`
-  mutation createTipoBodega($input: TipoBodegaInput!) {
+  mutation createTipoBodega($input: TipoBodegaRequest!) {
     createTipoBodega(input: $input) {
       id
     }

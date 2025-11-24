@@ -55,7 +55,7 @@ const state = reactive<ReservaInput>({
 });
 
 const CreateReservaMutation = gql`
-  mutation createReservaMaterialOrden($input: ReservaMaterialOrdenInput!) {
+  mutation createReservaMaterialOrden($input: ReservaMaterialOrdenRequest!) {
     createReservaMaterialOrden(input: $input) {
       id
     }

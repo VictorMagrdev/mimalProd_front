@@ -36,7 +36,7 @@ const state = reactive<LoteInput>({
 });
 
 const CreateLoteMutation = gql`
-  mutation createLoteProduccion($input: LoteProduccionInput!) {
+  mutation createLoteProduccion($input: LoteProduccionRequest!) {
     createLoteProduccion(input: $input) {
       id
     }

@@ -60,7 +60,7 @@ const state = reactive<EstructuraInput>({
 });
 
 const CreateEstructuraMutation = gql`
-  mutation createEstructura($input: EstructuraProductoInput!) {
+  mutation createEstructura($input: EstructuraProductoRequest!) {
     createEstructura(input: $input) {
       id
     }

@@ -22,7 +22,7 @@ const state = reactive<TipoInput>({
 });
 
 const CreateTipoMutation = gql`
-  mutation createUnidadMedidaTipo($input: UnidadMedidaTipoInput!) {
+  mutation createUnidadMedidaTipo($input: UnidadMedidaTipoRequest!) {
     createUnidadMedidaTipo(input: $input) {
       id
     }

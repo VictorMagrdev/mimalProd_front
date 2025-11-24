@@ -16,7 +16,7 @@ const CostoOptions = gql`
     }
     ordenesProduccion {
       value: id
-      label: numero_orden
+      label: numeroOrden
     }
   }
 `;
@@ -25,12 +25,21 @@ type CreateCostoVars = { input: CostoInput };
 const { result } = useQuery<CostoOptionsResult>(CostoOptions);
 const tipos = computed(() => result.value?.tiposCosto ?? []);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const CostoSchema = z.object({
   descripcion: z.string().min(1),
   monto: z.number(),
   moneda: z.string().min(1),
-  registradoEn: z.string().min(1),
+  registradoEn: dateField,
   ordenId: z.string().optional(),
   tipoCostoId: z.string().min(1),
 });
@@ -46,7 +55,7 @@ const state = reactive<CostoInput>({
 });
 
 const CreateCostoMutation = gql`
-  mutation createCostoOrden($input: CostoOrdenInput!) {
+  mutation createCostoOrden($input: CostoOrdenRequest!) {
     createCostoOrden(input: $input) {
       id
     }
@@ -100,7 +109,7 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
           <UInput v-model="state.moneda" />
         </UFormField>
         <UFormField label="Registrado en" name="registradoEn">
-          <UInput v-model="state.registradoEn" />
+          <UInputDate v-model="state.registradoEn" />
         </UFormField>
         <UFormField label="Orden" name="ordenId">
           <UInputMenu

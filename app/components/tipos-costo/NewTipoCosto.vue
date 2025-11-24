@@ -24,7 +24,7 @@ const state = reactive<TipoCostoInput>({
 });
 
 const CreateTipoCostoMutation = gql`
-  mutation createTipoCosto($input: TipoCostoInput!) {
+  mutation createTipoCosto($input: TipoCostoRequest!) {
     createTipoCosto(input: $input) {
       id
     }

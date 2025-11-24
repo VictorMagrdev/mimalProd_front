@@ -23,7 +23,7 @@ const state = reactive<EstadoInput>({
 });
 
 const CreateEstadoMutation = gql`
-  mutation createEstadoOrden($input: EstadoOrdenInput!) {
+  mutation createEstadoOrden($input: EstadoOrdenRequest!) {
     createEstadoOrden(input: $input) {
       id
     }

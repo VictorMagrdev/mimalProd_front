@@ -37,7 +37,9 @@ const state = reactive<DiscrepanciaInput>({
 });
 
 const CreateDiscMutation = gql`
-  mutation createDiscrepanciaInventario($input: DiscrepanciaInventarioInput!) {
+  mutation createDiscrepanciaInventario(
+    $input: DiscrepanciaInventarioRequest!
+  ) {
     createDiscrepanciaInventario(input: $input) {
       id
     }

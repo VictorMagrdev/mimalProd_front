@@ -25,7 +25,7 @@ const { result } = useQuery<BodegaOptionsResult>(BodegaOptionsQuery);
 const tiposOptions = computed(() => result.value?.tiposBodega ?? []);
 
 const CreateBodegaMutation = gql`
-  mutation createBodega($input: BodegaInput!) {
+  mutation createBodega($input: BodegaRequest!) {
     createBodega(input: $input) {
       id
     }

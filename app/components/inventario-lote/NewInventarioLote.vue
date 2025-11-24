@@ -56,7 +56,7 @@ const state = reactive<InventarioInput>({
 });
 
 const CreateInventarioMutation = gql`
-  mutation createInventarioLote($input: InventarioLoteInput!) {
+  mutation createInventarioLote($input: InventarioLoteRequest!) {
     createInventarioLote(input: $input) {
       id
     }

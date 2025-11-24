@@ -12,18 +12,27 @@ const OrdenOptionsQuery = gql`
   query OrdenEventoOptions {
     ordenesProduccion {
       value: id
-      label: numero_orden
+      label: numeroOrden
     }
   }
 `;
 
 const { result } = useQuery<OrdenOptionsResult>(OrdenOptionsQuery);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const EventoSchema = z.object({
   evento: z.string().min(1),
   descripcion: z.string().optional(),
-  fecha: z.string().min(1),
+  fecha: dateField,
   ordenId: z.string().min(1),
 });
 type EventoInput = z.infer<typeof EventoSchema>;
@@ -36,7 +45,7 @@ const state = reactive<EventoInput>({
 });
 
 const CreateEventoMutation = gql`
-  mutation createOrdenEvento($input: OrdenEventoInput!) {
+  mutation createOrdenEvento($input: OrdenEventoRequest!) {
     createOrdenEvento(input: $input) {
       id
     }
@@ -85,7 +94,7 @@ async function onSubmit(event: FormSubmitEvent<EventoInput>) {
           <UInput v-model="state.descripcion" />
         </UFormField>
         <UFormField label="Fecha" name="fecha">
-          <UInput v-model="state.fecha" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.fecha" />
         </UFormField>
         <UFormField label="Orden" name="ordenId">
           <UInputMenu

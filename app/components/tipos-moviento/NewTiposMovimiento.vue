@@ -24,7 +24,7 @@ const state = reactive<TipoMovimientoInput>({
 });
 
 const CreateTipoMovimientoMutation = gql`
-  mutation createTipoMovimiento($input: TipoMovimientoInput!) {
+  mutation createTipoMovimiento($input: TipoMovimientoRequest!) {
     createTipoMovimiento(input: $input) {
       id
     }

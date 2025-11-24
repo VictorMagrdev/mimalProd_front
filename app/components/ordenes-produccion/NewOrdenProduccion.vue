@@ -17,51 +17,59 @@ const OrdenProdOptions = gql`
       value: id
       label: nombre
     }
-    productos {
-      value: id
-      label: nombre
-    }
   }
 `;
 
 const { result } = useQuery<OrdenProdOptionsResult>(OrdenProdOptions);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
 const estados = computed(() => result.value?.estadosOrden ?? []);
-const productos = computed(() => result.value?.productos ?? []);
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 
 const OrdenSchema = z.object({
-  numero_orden: z.string().min(1),
+  numeroOrden: z.string().min(1),
   cantidad: z.number().min(0),
   cantidadProducida: z.number().optional(),
   cantidadDesperdicio: z.number().optional(),
-  inicioPlanificado: z.string().optional(),
-  finPlanificado: z.string().optional(),
-  inicioReal: z.string().optional(),
-  finReal: z.string().optional(),
+
+  inicioPlanificado: dateField,
+  finPlanificado: dateField,
+  inicioReal: dateField,
+  finReal: dateField,
+
   observaciones: z.string().optional(),
-  productoId: z.string().min(1),
   unidadId: z.string().min(1),
   estadoId: z.string().min(1),
 });
+
 type OrdenInput = z.infer<typeof OrdenSchema>;
 
 const state = reactive<OrdenInput>({
-  numero_orden: "",
+  numeroOrden: "",
   cantidad: 0,
   cantidadProducida: undefined,
   cantidadDesperdicio: undefined,
+
   inicioPlanificado: undefined,
   finPlanificado: undefined,
   inicioReal: undefined,
   finReal: undefined,
+
   observaciones: undefined,
-  productoId: "",
   unidadId: "",
   estadoId: "",
 });
 
 const CreateOrdenMutation = gql`
-  mutation createOrdenProduccion($input: OrdenProduccionInput!) {
+  mutation createOrdenProduccion($input: OrdenProduccionRequest!) {
     createOrdenProduccion(input: $input) {
       id
     }
@@ -73,7 +81,7 @@ const { mutate } = useMutation<CreateOrdenResult, CreateOrdenVars>(
 );
 
 function resetForm() {
-  state.numero_orden = "";
+  state.numeroOrden = "";
   state.cantidad = 0;
   state.cantidadProducida = undefined;
   state.cantidadDesperdicio = undefined;
@@ -82,7 +90,6 @@ function resetForm() {
   state.inicioReal = undefined;
   state.finReal = undefined;
   state.observaciones = undefined;
-  state.productoId = "";
   state.unidadId = "";
   state.estadoId = "";
 }
@@ -112,15 +119,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Número orden" name="numero_orden">
-          <UInput v-model="state.numero_orden" />
-        </UFormField>
-        <UFormField label="Producto" name="productoId">
-          <UInputMenu
-            v-model="state.productoId"
-            value-key="value"
-            :items="productos"
-            placeholder="Selecciona producto"
-          />
+          <UInput v-model="state.numeroOrden" />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
           <UInputMenu
@@ -148,10 +147,10 @@ async function onSubmit(event: FormSubmitEvent<OrdenInput>) {
           />
         </UFormField>
         <UFormField label="Inicio planificado" name="inicioPlanificado">
-          <UInput v-model="state.inicioPlanificado" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.inicioPlanificado" />
         </UFormField>
         <UFormField label="Fin planificado" name="finPlanificado">
-          <UInput v-model="state.finPlanificado" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.finPlanificado" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />

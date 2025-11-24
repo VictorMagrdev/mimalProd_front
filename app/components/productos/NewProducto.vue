@@ -53,7 +53,7 @@ const state = reactive<ProductoInput>({
 });
 
 const CreateProductoMutation = gql`
-  mutation createProducto($input: ProductoInput!) {
+  mutation createProducto($input: ProductoRequest!) {
     createProducto(input: $input) {
       id
     }

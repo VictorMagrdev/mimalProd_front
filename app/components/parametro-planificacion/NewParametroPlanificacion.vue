@@ -38,7 +38,7 @@ const state = reactive<ParametroInput>({
 });
 
 const CreateParametroMutation = gql`
-  mutation createParametro($input: ParametroPlanificacionInput!) {
+  mutation createParametro($input: ParametroPlanificacionRequest!) {
     createParametro(input: $input) {
       id
     }

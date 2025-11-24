@@ -37,7 +37,7 @@ const state = reactive<ConversionInput>({
 });
 
 const CreateConversionMutation = gql`
-  mutation createUnidadConversion($input: UnidadConversionInput!) {
+  mutation createUnidadConversion($input: UnidadConversionRequest!) {
     createUnidadConversion(input: $input) {
       id
     }

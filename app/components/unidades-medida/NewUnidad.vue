@@ -43,7 +43,7 @@ const state = reactive<UnidadInput>({
 });
 
 const CreateUnidadMutation = gql`
-  mutation createUnidadMedida($input: UnidadMedidaInput!) {
+  mutation createUnidadMedida($input: UnidadMedidaRequest!) {
     createUnidadMedida(input: $input) {
       id
     }

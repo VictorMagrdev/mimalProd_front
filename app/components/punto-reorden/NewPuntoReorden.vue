@@ -41,7 +41,7 @@ const state = reactive<PuntoInput>({
 });
 
 const CreatePuntoMutation = gql`
-  mutation createPuntoReorden($input: PuntoReordenInput!) {
+  mutation createPuntoReorden($input: PuntoReordenRequest!) {
     createPuntoReorden(input: $input) {
       id
     }

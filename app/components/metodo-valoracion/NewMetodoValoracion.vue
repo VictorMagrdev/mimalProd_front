@@ -23,7 +23,7 @@ const state = reactive<MetodoInput>({
 });
 
 const CreateMetodoMutation = gql`
-  mutation createMetodoValoracion($input: MetodoValoracionInput!) {
+  mutation createMetodoValoracion($input: MetodoValoracionRequest!) {
     createMetodoValoracion(input: $input) {
       id
     }

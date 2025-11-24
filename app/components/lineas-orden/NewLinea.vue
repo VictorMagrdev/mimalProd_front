@@ -18,19 +18,22 @@ const LineaOptions = gql`
       value: id
       label: nombre
     }
+    ordenesProduccion {
+      value: id
+      label: numeroOrden
+    }
   }
 `;
 
 const { result } = useQuery<LineaOptionsResult>(LineaOptions);
 const productos = computed(() => result.value?.productos ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
-
+const ordenesProduccion = computed(() => result.value?.ordenesProduccion ?? []);
 const LineaSchema = z.object({
   numeroLinea: z.number().optional(),
   cantidadRequerida: z.number().min(0),
   cantidadUsada: z.number().min(0).optional(),
   costoUnitario: z.number().optional(),
-  costoTotal: z.number().optional(),
   observaciones: z.string().optional(),
   ordenId: z.string().min(1).optional(),
   productoComponenteId: z.string().min(1),
@@ -43,7 +46,6 @@ const state = reactive<LineaInput>({
   cantidadRequerida: 0,
   cantidadUsada: undefined,
   costoUnitario: undefined,
-  costoTotal: undefined,
   observaciones: undefined,
   ordenId: undefined,
   productoComponenteId: "",
@@ -51,7 +53,7 @@ const state = reactive<LineaInput>({
 });
 
 const CreateLineaMutation = gql`
-  mutation createLineaOrden($input: LineaOrdenInput!) {
+  mutation createLineaOrden($input: LineaOrdenRequest!) {
     createLineaOrden(input: $input) {
       id
     }
@@ -67,7 +69,6 @@ function resetForm() {
   state.cantidadRequerida = 0;
   state.cantidadUsada = undefined;
   state.costoUnitario = undefined;
-  state.costoTotal = undefined;
   state.observaciones = undefined;
   state.ordenId = undefined;
   state.productoComponenteId = "";
@@ -114,6 +115,14 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
             placeholder="Selecciona unidad"
           />
         </UFormField>
+        <UFormField label="Orden de produccion" name="ordenId">
+          <UInputMenu
+            v-model="state.ordenId"
+            value-key="value"
+            :items="ordenesProduccion"
+            placeholder="Selecciona orden"
+          />
+        </UFormField>
         <UFormField label="Cantidad requerida" name="cantidadRequerida">
           <UInputNumber v-model="state.cantidadRequerida" />
         </UFormField>
@@ -122,9 +131,6 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
         </UFormField>
         <UFormField label="Costo unitario" name="costoUnitario">
           <UInputNumber v-model="state.costoUnitario" />
-        </UFormField>
-        <UFormField label="Costo total" name="costoTotal">
-          <UInputNumber v-model="state.costoTotal" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />

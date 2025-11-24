@@ -30,6 +30,7 @@ export type InventarioOptionsResult = {
 export type LineaOptionsResult = {
   productos: SelectOption[];
   unidadesMedida: SelectOption[];
+  ordenesProduccion: SelectOption[];
 };
 export type LoteOptionsResult = { productos: SelectOption[] };
 export type MovimientoOptionsResult = {

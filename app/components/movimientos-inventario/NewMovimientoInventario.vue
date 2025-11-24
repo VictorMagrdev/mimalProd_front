@@ -50,7 +50,7 @@ const state = reactive<MovimientoInput>({
 });
 
 const CreateMovimientoMutation = gql`
-  mutation createMovimientoInventario($input: MovimientoInventarioInput!) {
+  mutation createMovimientoInventario($input: MovimientoInventarioRequest!) {
     createMovimientoInventario(input: $input) {
       id
     }

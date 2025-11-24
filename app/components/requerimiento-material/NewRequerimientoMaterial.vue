@@ -53,7 +53,7 @@ const state = reactive<RequerimientoInput>({
 
 // --- Mutación ---
 const CreateRequerimientoMutation = gql`
-  mutation createRequerimiento($input: RequerimientoMaterialInput!) {
+  mutation createRequerimiento($input: RequerimientoMaterialRequest!) {
     createRequerimiento(input: $input) {
       id
     }

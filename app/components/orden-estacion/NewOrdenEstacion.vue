@@ -57,7 +57,7 @@ const state = reactive<OrdenEstacionInput>({
 });
 
 const CreateOrdenEstacionMutation = gql`
-  mutation createOrdenEstacion($input: OrdenEstacionInput!) {
+  mutation createOrdenEstacion($input: OrdenEstacionRequest!) {
     createOrdenEstacion(input: $input) {
       id
     }
