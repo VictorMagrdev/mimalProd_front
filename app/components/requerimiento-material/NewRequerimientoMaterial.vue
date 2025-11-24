@@ -21,7 +21,7 @@ const OrdenesQuery = gql`
   query OrdenesProduccionOptions {
     ordenesProduccion {
       value: id
-      label: codigo
+      label: numeroOrden
     }
   }
 `;
@@ -51,7 +51,6 @@ const state = reactive<RequerimientoInput>({
   fechaNecesidad: "",
 });
 
-// --- Mutación ---
 const CreateRequerimientoMutation = gql`
   mutation createRequerimiento($input: RequerimientoMaterialRequest!) {
     createRequerimiento(input: $input) {

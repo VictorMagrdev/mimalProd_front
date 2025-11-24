@@ -84,6 +84,7 @@ async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad origen"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Destino" name="destinoId">
@@ -92,10 +93,11 @@ async function onSubmit(event: FormSubmitEvent<ConversionInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad destino"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Factor" name="factor">
-          <UInputNumber v-model="state.factor" />
+          <UInputNumber v-model="state.factor" class="w-full" />
         </UFormField>
       </UForm>
     </template>

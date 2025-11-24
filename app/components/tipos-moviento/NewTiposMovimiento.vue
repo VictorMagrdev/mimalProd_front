@@ -68,13 +68,13 @@ async function onSubmit(event: FormSubmitEvent<TipoMovimientoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" />
+          <UInput v-model="state.codigo" class="w-full" />
         </UFormField>
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" />
+          <UInput v-model="state.nombre" class="w-full" />
         </UFormField>
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" />
+          <UInput v-model="state.descripcion" class="w-full" />
         </UFormField>
         <UFormField label="Afecta WIP" name="afectaWip">
           <UCheckbox v-model="state.afectaWip" />

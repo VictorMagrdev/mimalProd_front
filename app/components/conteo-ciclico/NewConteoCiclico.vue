@@ -121,6 +121,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Bodega" name="bodega_id">
@@ -129,6 +130,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lote" name="lote_id">
@@ -137,10 +139,11 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad contada" name="cantidad_contada">
-          <UInputNumber v-model="state.cantidadContada" />
+          <UInputNumber v-model="state.cantidadContada" class="w-full" />
         </UFormField>
         <UFormField label="Unidad" name="unidad_id">
           <UInputMenu
@@ -148,10 +151,11 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Fecha" name="fecha">
-          <UInputDate v-model="state.fecha" />
+          <UInputDate v-model="state.fecha" class="w-full" />
         </UFormField>
       </UForm>
     </template>

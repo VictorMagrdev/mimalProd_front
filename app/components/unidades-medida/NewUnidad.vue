@@ -88,13 +88,13 @@ async function onSubmit(event: FormSubmitEvent<UnidadInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" />
+          <UInput v-model="state.codigo" class="w-full" />
         </UFormField>
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" />
+          <UInput v-model="state.nombre" class="w-full" />
         </UFormField>
         <UFormField label="Abreviatura" name="abreviatura">
-          <UInput v-model="state.abreviatura" />
+          <UInput v-model="state.abreviatura" class="w-full" />
         </UFormField>
         <UFormField label="Tipo" name="tipoId">
           <UInputMenu
@@ -102,13 +102,14 @@ async function onSubmit(event: FormSubmitEvent<UnidadInput>) {
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Activa" name="activa">
-          <UCheckbox v-model="state.activa" />
+          <UCheckbox v-model="state.activa" class="w-full" />
         </UFormField>
         <UFormField label="Base" name="base">
-          <UCheckbox v-model="state.base" />
+          <UCheckbox v-model="state.base" class="w-full" />
         </UFormField>
       </UForm>
     </template>

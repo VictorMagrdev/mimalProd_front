@@ -89,6 +89,7 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
             value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lead time (días)" name="leadTimeDias">
@@ -97,6 +98,7 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
             type="number"
             min="0"
             placeholder="Lead time"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lote mínimo" name="loteMinimo">
@@ -105,6 +107,7 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
             type="number"
             min="0"
             placeholder="Lote mínimo"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lote económico" name="loteEconomico">
@@ -113,12 +116,14 @@ async function onSubmit(event: FormSubmitEvent<ParametroInput>) {
             type="number"
             min="0"
             placeholder="Lote económico"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Política de inventario" name="politicaInventario">
           <UInput
             v-model="state.politicaInventario"
             placeholder="Ej: FIFO, LIFO, Just-in-time"
+            class="w-full"
           />
         </UFormField>
       </UForm>

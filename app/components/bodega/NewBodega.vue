@@ -83,13 +83,17 @@ async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" placeholder="Código" />
+          <UInput v-model="state.codigo" placeholder="Código" class="w-full" />
         </UFormField>
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" placeholder="Nombre" />
+          <UInput v-model="state.nombre" placeholder="Nombre" class="w-full" />
         </UFormField>
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" placeholder="Descripción" />
+          <UInput
+            v-model="state.descripcion"
+            placeholder="Descripción"
+            class="w-full"
+          />
         </UFormField>
         <UFormField label="Tipo" name="tipoBodegaId">
           <UInputMenu
@@ -97,6 +101,7 @@ async function onSubmit(event: FormSubmitEvent<BodegaInput>) {
             value-key="value"
             :items="tiposOptions"
             placeholder="Selecciona tipo de bodega"
+            class="w-full"
           />
         </UFormField>
       </UForm>

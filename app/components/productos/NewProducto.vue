@@ -98,13 +98,13 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" />
+          <UInput v-model="state.codigo" class="w-full" />
         </UFormField>
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" />
+          <UInput v-model="state.nombre" class="w-full" />
         </UFormField>
         <UFormField label="Costo base" name="costoBase">
-          <UInputNumber v-model="state.costoBase" />
+          <UInputNumber v-model="state.costoBase" class="w-full" />
         </UFormField>
         <UFormField label="Tipo" name="tipoId">
           <UInputMenu
@@ -112,6 +112,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Método valoración" name="metodoValoracionId">
@@ -120,6 +121,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
             value-key="value"
             :items="metodos"
             placeholder="Selecciona método"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Unidad base" name="unidadBaseId">
@@ -128,6 +130,7 @@ async function onSubmit(event: FormSubmitEvent<ProductoInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
       </UForm>

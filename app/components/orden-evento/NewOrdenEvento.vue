@@ -88,13 +88,13 @@ async function onSubmit(event: FormSubmitEvent<EventoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Evento" name="evento">
-          <UInput v-model="state.evento" />
+          <UInput v-model="state.evento" class="w-full" />
         </UFormField>
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" />
+          <UInput v-model="state.descripcion" class="w-full" />
         </UFormField>
         <UFormField label="Fecha" name="fecha">
-          <UInputDate v-model="state.fecha" />
+          <UInputDate v-model="state.fecha" class="w-full" />
         </UFormField>
         <UFormField label="Orden" name="ordenId">
           <UInputMenu
@@ -102,6 +102,7 @@ async function onSubmit(event: FormSubmitEvent<EventoInput>) {
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
+            class="w-full"
           />
         </UFormField>
       </UForm>

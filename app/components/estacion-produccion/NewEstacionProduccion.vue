@@ -69,16 +69,20 @@ async function onSubmit(event: FormSubmitEvent<EstacionInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Código" name="codigo">
-          <UInput v-model="state.codigo" placeholder="Código" />
+          <UInput v-model="state.codigo" placeholder="Código" class="w-full" />
         </UFormField>
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" placeholder="Nombre" />
+          <UInput v-model="state.nombre" placeholder="Nombre" class="w-full" />
         </UFormField>
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" placeholder="Descripción" />
+          <UInput
+            v-model="state.descripcion"
+            placeholder="Descripción"
+            class="w-full"
+          />
         </UFormField>
         <UFormField label="Orden" name="orden">
-          <UInputNumber v-model="state.orden" />
+          <UInputNumber v-model="state.orden" class="w-full" />
         </UFormField>
       </UForm>
     </template>

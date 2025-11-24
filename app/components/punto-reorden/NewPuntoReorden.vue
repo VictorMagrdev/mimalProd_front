@@ -89,6 +89,7 @@ async function onSubmit(event: FormSubmitEvent<PuntoInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
@@ -97,13 +98,14 @@ async function onSubmit(event: FormSubmitEvent<PuntoInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Stock mínimo" name="stockMinimo">
-          <UInputNumber v-model="state.stockMinimo" />
+          <UInputNumber v-model="state.stockMinimo" class="w-full" />
         </UFormField>
         <UFormField label="Stock seguridad" name="stockSeguridad">
-          <UInputNumber v-model="state.stockSeguridad" />
+          <UInputNumber v-model="state.stockSeguridad" class="w-full" />
         </UFormField>
       </UForm>
     </template>

@@ -19,11 +19,20 @@ const LoteOptions = gql`
 
 const { result } = useQuery<LoteOptionsResult>(LoteOptions);
 const productos = computed(() => result.value?.productos ?? []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const LoteSchema = z.object({
   numeroLote: z.string().min(1),
-  fabricadoEn: z.string().optional(),
-  venceEn: z.string().optional(),
+  fabricadoEn: dateField,
+  venceEn: dateField,
   productoId: z.string().min(1),
 });
 type LoteInput = z.infer<typeof LoteSchema>;
@@ -80,7 +89,7 @@ async function onSubmit(event: FormSubmitEvent<LoteInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Número de lote" name="numeroLote">
-          <UInput v-model="state.numeroLote" />
+          <UInput v-model="state.numeroLote" class="w-full" />
         </UFormField>
         <UFormField label="Producto" name="productoId">
           <UInputMenu
@@ -88,13 +97,14 @@ async function onSubmit(event: FormSubmitEvent<LoteInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Fabricado en" name="fabricadoEn">
-          <UInput v-model="state.fabricadoEn" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.fabricadoEn" class="w-full" />
         </UFormField>
         <UFormField label="Vence en" name="venceEn">
-          <UInput v-model="state.venceEn" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.venceEn" class="w-full" />
         </UFormField>
       </UForm>
     </template>

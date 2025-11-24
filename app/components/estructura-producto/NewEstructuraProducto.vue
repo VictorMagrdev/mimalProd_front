@@ -114,6 +114,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
             value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto padre"
+            class="w-full"
           />
         </UFormField>
 
@@ -123,6 +124,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
             value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto hijo"
+            class="w-full"
           />
         </UFormField>
 
@@ -131,6 +133,7 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
             v-model.number="state.cantidad"
             type="number"
             placeholder="Cantidad"
+            class="w-full"
           />
         </UFormField>
 
@@ -140,15 +143,20 @@ async function onSubmit(event: FormSubmitEvent<EstructuraInput>) {
             value-key="value"
             :items="unidadesOptions"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
 
         <UFormField label="Versión" name="version">
-          <UInput v-model="state.version" placeholder="Versión" />
+          <UInput
+            v-model="state.version"
+            placeholder="Versión"
+            class="w-full"
+          />
         </UFormField>
 
         <UFormField label="Activo" name="activo">
-          <UToggle v-model="state.activo" />
+          <UCheckbox v-model="state.activo" />
         </UFormField>
       </UForm>
     </template>

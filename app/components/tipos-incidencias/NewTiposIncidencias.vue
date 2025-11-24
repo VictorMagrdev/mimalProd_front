@@ -87,20 +87,27 @@ async function onSubmit(event: FormSubmitEvent<TipoIncidenciaInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <div class="grid grid-cols-2 gap-4">
-          <UFormField label="Código" name="codigo">
-            <UInput v-model="state.codigo" placeholder="TIPO-001" />
-          </UFormField>
+        <UFormField label="Código" name="codigo">
+          <UInput
+            v-model="state.codigo"
+            placeholder="TIPO-001"
+            class="w-full"
+          />
+        </UFormField>
 
-          <UFormField label="Nombre" name="nombre">
-            <UInput v-model="state.nombre" placeholder="Nombre del tipo" />
-          </UFormField>
-        </div>
+        <UFormField label="Nombre" name="nombre">
+          <UInput
+            v-model="state.nombre"
+            placeholder="Nombre del tipo"
+            class="w-full"
+          />
+        </UFormField>
 
         <UFormField label="Descripción" name="descripcion">
           <UTextarea
             v-model="state.descripcion"
             placeholder="Descripción del tipo..."
+            class="w-full"
           />
         </UFormField>
 
@@ -109,6 +116,7 @@ async function onSubmit(event: FormSubmitEvent<TipoIncidenciaInput>) {
             v-model="state.prioridadBase"
             :items="prioridades"
             placeholder="Seleccione prioridad"
+            class="w-full"
           />
         </UFormField>
       </UForm>

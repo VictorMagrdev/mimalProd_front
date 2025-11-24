@@ -81,35 +81,38 @@ async function onSubmit(event: FormSubmitEvent<EstadoIncidenciaInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Nombre" name="nombre">
-          <UInput v-model="state.nombre" placeholder="Nombre del estado" />
+          <UInput
+            v-model="state.nombre"
+            placeholder="Nombre del estado"
+            class="w-full"
+          />
         </UFormField>
 
         <UFormField label="Descripción" name="descripcion">
           <UTextarea
             v-model="state.descripcion"
             placeholder="Descripción del estado..."
+            class="w-full"
           />
         </UFormField>
 
-        <div class="grid grid-cols-2 gap-4">
-          <UFormField label="Orden" name="orden">
-            <UInput
-              v-model="state.orden"
-              type="number"
-              min="1"
-              placeholder="1"
-            />
-          </UFormField>
+        <UFormField label="Orden" name="orden">
+          <UInput
+            v-model="state.orden"
+            type="number"
+            min="1"
+            placeholder="1"
+            class="w-full"
+          />
+        </UFormField>
 
-          <UFormField label="Estado Final" name="estadoFinal">
-            <div class="pt-2">
-              <UCheckbox
-                v-model="state.estadoFinal"
-                label="Marcar como estado final"
-              />
-            </div>
-          </UFormField>
-        </div>
+        <UFormField label="Estado Final" name="estadoFinal">
+          <UCheckbox
+            v-model="state.estadoFinal"
+            label="Marcar como estado final"
+            class="w-full"
+          />
+        </UFormField>
       </UForm>
     </template>
 

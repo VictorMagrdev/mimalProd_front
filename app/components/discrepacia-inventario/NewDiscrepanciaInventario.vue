@@ -82,10 +82,10 @@ async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Cantidad sistema" name="cantidad_sistema">
-          <UInputNumber v-model="state.cantidadSistema" />
+          <UInputNumber v-model="state.cantidadSistema" class="w-full" />
         </UFormField>
         <UFormField label="Resuelto" name="resuelto">
-          <UCheckbox v-model="state.resuelto" />
+          <UCheckbox v-model="state.resuelto" class="w-full" />
         </UFormField>
         <UFormField label="Conteo" name="conteoId">
           <UInputMenu
@@ -93,6 +93,7 @@ async function onSubmit(event: FormSubmitEvent<DiscrepanciaInput>) {
             value-key="value"
             :items="conteos"
             placeholder="Selecciona conteo"
+            class="w-full"
           />
         </UFormField>
       </UForm>

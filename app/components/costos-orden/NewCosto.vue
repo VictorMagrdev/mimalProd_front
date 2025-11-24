@@ -88,13 +88,13 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Descripción" name="descripcion">
-          <UInput v-model="state.descripcion" />
+          <UInput v-model="state.descripcion" class="w-full" />
         </UFormField>
         <UFormField label="Monto" name="monto">
-          <UInputNumber v-model="state.monto" />
+          <UInputNumber v-model="state.monto" class="w-full" />
         </UFormField>
         <UFormField label="Moneda" name="moneda">
-          <UInput v-model="state.moneda" />
+          <UInput v-model="state.moneda" class="w-full" />
         </UFormField>
         <UFormField label="Orden" name="ordenId">
           <UInputMenu
@@ -102,6 +102,7 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Tipo costo" name="tipoCostoId">
@@ -110,6 +111,7 @@ async function onSubmit(event: FormSubmitEvent<CostoInput>) {
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
+            class="w-full"
           />
         </UFormField>
       </UForm>

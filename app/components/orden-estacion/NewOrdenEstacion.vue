@@ -32,12 +32,21 @@ const { result } = useQuery<OrdenEstacionOptionsResult>(OrdenEstacionOptions);
 const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
 const estaciones = computed(() => result.value?.estacionesProduccion ?? []);
 const estados = computed(() => result.value?.estadosOrdenEstacion ?? []);
-
+const dateField = z
+  .any()
+  .optional()
+  .transform((value) => {
+    if (!value) return undefined;
+    if (value?.toDate) {
+      return value.toDate().toISOString();
+    }
+    return value;
+  });
 const OrdenEstacionSchema = z.object({
-  inicioPlanificado: z.string().optional(),
-  finPlanificado: z.string().optional(),
-  inicioReal: z.string().optional(),
-  finReal: z.string().optional(),
+  inicioPlanificado: dateField,
+  finPlanificado: dateField,
+  inicioReal: dateField,
+  finReal: dateField,
   observaciones: z.string().optional(),
   ordenId: z.string().min(1),
   estacionId: z.string().min(1),
@@ -110,6 +119,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenEstacionInput>) {
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Estación" name="estacionId">
@@ -118,6 +128,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenEstacionInput>) {
             value-key="value"
             :items="estaciones"
             placeholder="Selecciona estación"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Estado" name="estadoId">
@@ -126,13 +137,14 @@ async function onSubmit(event: FormSubmitEvent<OrdenEstacionInput>) {
             value-key="value"
             :items="estados"
             placeholder="Selecciona estado"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Inicio planificado" name="inicioPlanificado">
-          <UInput v-model="state.inicioPlanificado" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.inicioPlanificado" class="w-full" />
         </UFormField>
         <UFormField label="Fin planificado" name="finPlanificado">
-          <UInput v-model="state.finPlanificado" placeholder="YYYY-MM-DD" />
+          <UInputDate v-model="state.finPlanificado" class="w-full" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" />

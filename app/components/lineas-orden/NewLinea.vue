@@ -105,6 +105,7 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Unidad componente" name="unidadComponenteId">
@@ -113,6 +114,7 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Orden de produccion" name="ordenId">
@@ -121,19 +123,20 @@ async function onSubmit(event: FormSubmitEvent<LineaInput>) {
             value-key="value"
             :items="ordenesProduccion"
             placeholder="Selecciona orden"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad requerida" name="cantidadRequerida">
-          <UInputNumber v-model="state.cantidadRequerida" />
+          <UInputNumber v-model="state.cantidadRequerida" class="w-full" />
         </UFormField>
         <UFormField label="Cantidad usada" name="cantidadUsada">
-          <UInputNumber v-model="state.cantidadUsada" />
+          <UInputNumber v-model="state.cantidadUsada" class="w-full" />
         </UFormField>
         <UFormField label="Costo unitario" name="costoUnitario">
-          <UInputNumber v-model="state.costoUnitario" />
+          <UInputNumber v-model="state.costoUnitario" class="w-full" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
-          <UInput v-model="state.observaciones" />
+          <UInput v-model="state.observaciones" class="w-full" />
         </UFormField>
       </UForm>
     </template>

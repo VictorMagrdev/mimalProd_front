@@ -12,7 +12,7 @@ const ReservaOptions = gql`
   query ReservaMaterialOrdenOptions {
     ordenesProduccion {
       value: id
-      label: numero_orden
+      label: numeroOrden
     }
     productos {
       value: id
@@ -20,7 +20,7 @@ const ReservaOptions = gql`
     }
     lotesProduccion {
       value: id
-      label: numero_lote
+      label: numeroLote
     }
     unidadesMedida {
       value: id

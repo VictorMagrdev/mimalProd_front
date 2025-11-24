@@ -106,13 +106,13 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Fecha" name="fecha">
-          <UInputDate v-model="state.fecha" />
+          <UInputDate v-model="state.fecha" class="w-full" />
         </UFormField>
         <UFormField label="Referencia" name="referencia">
-          <UInput v-model="state.referencia" />
+          <UInput v-model="state.referencia" class="w-full" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
-          <UInput v-model="state.observaciones" />
+          <UInput v-model="state.observaciones" class="w-full" />
         </UFormField>
         <UFormField label="Bodega origen" name="bodegaOrigenId">
           <UInputMenu
@@ -120,6 +120,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega origen"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Bodega destino" name="bodegaDestinoId">
@@ -128,6 +129,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega destino"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Tipo movimiento" name="tipoMovimientoId">
@@ -136,6 +138,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"
+            class="w-full"
           />
         </UFormField>
       </UForm>

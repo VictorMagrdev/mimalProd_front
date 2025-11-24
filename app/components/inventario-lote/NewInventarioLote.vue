@@ -105,6 +105,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lote" name="loteId">
@@ -113,6 +114,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Bodega" name="bodegaId">
@@ -121,6 +123,7 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
             value-key="value"
             :items="bodegas"
             placeholder="Selecciona bodega"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
@@ -129,10 +132,11 @@ async function onSubmit(event: FormSubmitEvent<InventarioInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad" name="cantidad">
-          <UInputNumber v-model="state.cantidad" />
+          <UInputNumber v-model="state.cantidad" class="w-full" />
         </UFormField>
       </UForm>
     </template>

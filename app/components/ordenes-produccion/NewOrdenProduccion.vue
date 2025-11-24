@@ -119,7 +119,7 @@ async function onSubmit(event: FormSubmitEvent<OrdenInput>) {
         @submit="onSubmit"
       >
         <UFormField label="Número orden" name="numero_orden">
-          <UInput v-model="state.numeroOrden" />
+          <UInput v-model="state.numeroOrden" class="w-full" />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
           <UInputMenu
@@ -127,16 +127,17 @@ async function onSubmit(event: FormSubmitEvent<OrdenInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad" name="cantidad">
-          <UInputNumber v-model="state.cantidad" />
+          <UInputNumber v-model="state.cantidad" class="w-full" />
         </UFormField>
         <UFormField label="Cantidad producida" name="cantidadProducida">
-          <UInputNumber v-model="state.cantidadProducida" />
+          <UInputNumber v-model="state.cantidadProducida" class="w-full" />
         </UFormField>
         <UFormField label="Desperdicio" name="cantidadDesperdicio">
-          <UInputNumber v-model="state.cantidadDesperdicio" />
+          <UInputNumber v-model="state.cantidadDesperdicio" class="w-full" />
         </UFormField>
         <UFormField label="Estado" name="estadoId">
           <UInputMenu
@@ -144,16 +145,17 @@ async function onSubmit(event: FormSubmitEvent<OrdenInput>) {
             value-key="value"
             :items="estados"
             placeholder="Selecciona estado"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Inicio planificado" name="inicioPlanificado">
-          <UInputDate v-model="state.inicioPlanificado" />
+          <UInputDate v-model="state.inicioPlanificado" class="w-full" />
         </UFormField>
         <UFormField label="Fin planificado" name="finPlanificado">
-          <UInputDate v-model="state.finPlanificado" />
+          <UInputDate v-model="state.finPlanificado" class="w-full" />
         </UFormField>
         <UFormField label="Observaciones" name="observaciones">
-          <UInput v-model="state.observaciones" />
+          <UInput v-model="state.observaciones" class="w-full" />
         </UFormField>
       </UForm>
     </template>
