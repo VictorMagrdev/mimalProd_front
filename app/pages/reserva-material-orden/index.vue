@@ -19,12 +19,12 @@ const GetReservasMaterialOrden = gql`
 
 export interface ReservaMaterialOrden {
   id: string;
-  orden_id: string | null;
-  producto_id: string | null;
-  lote_id: string | null;
-  cantidad_reservada: number;
-  unidad_id: string | null;
-  fecha_reserva: string | null;
+  ordenId: string | null;
+  productoId: string | null;
+  loteId: string | null;
+  cantidadReservada: number;
+  unidadId: string | null;
+  fechaReserva: string | null;
 }
 
 interface ReservaMaterialOrdenResult {
@@ -40,35 +40,35 @@ const reservasMaterialOrden = computed(
 
 const columns: TableColumn<ReservaMaterialOrden>[] = [
   {
-    accessorKey: "orden_id",
+    accessorKey: "ordenId",
     header: "ID Orden",
     cell: ({ row }: { row: Row<ReservaMaterialOrden> }) =>
-      row.original.orden_id || "-",
+      row.original.ordenId || "-",
   },
   {
-    accessorKey: "producto_id",
+    accessorKey: "productoId",
     header: "ID Producto",
-    cell: ({ row }) => row.original.producto_id || "-",
+    cell: ({ row }) => row.original.productoId || "-",
   },
   {
-    accessorKey: "lote_id",
+    accessorKey: "loteId",
     header: "ID Lote",
-    cell: ({ row }) => row.original.lote_id || "-",
+    cell: ({ row }) => row.original.loteId || "-",
   },
   {
-    accessorKey: "cantidad_reservada",
+    accessorKey: "cantidadReservada",
     header: "Cantidad Reservada",
-    cell: ({ row }) => row.original.cantidad_reservada,
+    cell: ({ row }) => row.original.cantidadReservada,
   },
   {
-    accessorKey: "unidad_id",
+    accessorKey: "unidadId",
     header: "Unidad",
-    cell: ({ row }) => row.original.unidad_id || "-",
+    cell: ({ row }) => row.original.unidadId || "-",
   },
   {
-    accessorKey: "fecha_reserva",
+    accessorKey: "fechaReserva",
     header: "Fecha Reserva",
-    cell: ({ row }) => row.original.fecha_reserva || "-",
+    cell: ({ row }) => row.original.fechaReserva || "-",
   },
 ];
 

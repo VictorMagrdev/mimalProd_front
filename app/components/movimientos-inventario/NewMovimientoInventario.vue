@@ -8,8 +8,28 @@ import type {
 } from "~/utils/types";
 
 const emit = defineEmits<{ (e: "creado"): void }>();
+const auth = useAuthStore();
 const toast = useToast();
 const open = ref(false);
+
+type UserMinimal = { id: number; nombre?: string; username: string };
+
+const users = ref<{ value: number; label: string }[]>([]);
+
+const { data: usersData } = await useFetch<UserMinimal[]>(
+  "http://localhost:8080/api/users",
+  {
+    method: "GET",
+    headers: { Authorization: `Bearer ${auth.token}` },
+    default: () => [],
+  },
+);
+
+users.value =
+  usersData.value?.map((u) => ({
+    value: u.id,
+    label: u.nombre ?? u.username ?? "Sin nombre",
+  })) ?? [];
 
 const MovimientoOptions = gql`
   query MovimientoInventarioOptions {
@@ -27,14 +47,13 @@ const MovimientoOptions = gql`
 const { result } = useQuery<MovimientoOptionsResult>(MovimientoOptions);
 const bodegas = computed(() => result.value?.bodegas ?? []);
 const tipos = computed(() => result.value?.tiposMovimiento ?? []);
+
 const dateField = z
   .any()
   .optional()
   .transform((value) => {
     if (!value) return undefined;
-    if (value?.toDate) {
-      return value.toDate().toISOString();
-    }
+    if (value?.toDate) return value.toDate().toISOString();
     return value;
   });
 
@@ -42,11 +61,12 @@ const MovimientoSchema = z.object({
   fecha: dateField,
   referencia: z.string().optional(),
   observaciones: z.string().optional(),
-  creadoPor: z.string().optional(),
-  bodegaOrigenId: z.string().min(1).optional(),
-  bodegaDestinoId: z.string().min(1).optional(),
+  creadoPor: z.number().optional(),
+  bodegaOrigenId: z.string().optional(),
+  bodegaDestinoId: z.string().optional(),
   tipoMovimientoId: z.string().min(1),
 });
+
 type MovimientoInput = z.infer<typeof MovimientoSchema>;
 
 const state = reactive<MovimientoInput>({
@@ -66,19 +86,22 @@ const CreateMovimientoMutation = gql`
     }
   }
 `;
+
 type CreateMovimientoVars = { input: MovimientoInput };
 const { mutate } = useMutation<CreateMovimientoResult, CreateMovimientoVars>(
   CreateMovimientoMutation,
 );
 
 function resetForm() {
-  state.fecha = "";
-  state.referencia = undefined;
-  state.observaciones = undefined;
-  state.creadoPor = undefined;
-  state.bodegaOrigenId = undefined;
-  state.bodegaDestinoId = undefined;
-  state.tipoMovimientoId = "";
+  Object.assign(state, {
+    fecha: "",
+    referencia: undefined,
+    observaciones: undefined,
+    creadoPor: undefined,
+    bodegaOrigenId: undefined,
+    bodegaDestinoId: undefined,
+    tipoMovimientoId: "",
+  });
 }
 
 async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
@@ -97,6 +120,7 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
 <template>
   <UModal v-model:open="open" title="Crear movimiento de inventario">
     <UButton label="Nuevo movimiento" color="neutral" variant="subtle" />
+
     <template #body>
       <UForm
         id="form-movimiento"
@@ -105,44 +129,59 @@ async function onSubmit(event: FormSubmitEvent<MovimientoInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
+        <UFormField label="Creado por" name="creadoPor">
+          <UInputMenu
+            v-model="state.creadoPor"
+            :items="users"
+            value-key="value"
+            class="w-full"
+          />
+        </UFormField>
+
         <UFormField label="Fecha" name="fecha">
           <UInputDate v-model="state.fecha" class="w-full" />
         </UFormField>
+
         <UFormField label="Referencia" name="referencia">
           <UInput v-model="state.referencia" class="w-full" />
         </UFormField>
+
         <UFormField label="Observaciones" name="observaciones">
           <UInput v-model="state.observaciones" class="w-full" />
         </UFormField>
+
         <UFormField label="Bodega origen" name="bodegaOrigenId">
           <UInputMenu
             v-model="state.bodegaOrigenId"
-            value-key="value"
             :items="bodegas"
+            value-key="value"
             placeholder="Selecciona bodega origen"
             class="w-full"
           />
         </UFormField>
+
         <UFormField label="Bodega destino" name="bodegaDestinoId">
           <UInputMenu
             v-model="state.bodegaDestinoId"
-            value-key="value"
             :items="bodegas"
+            value-key="value"
             placeholder="Selecciona bodega destino"
             class="w-full"
           />
         </UFormField>
+
         <UFormField label="Tipo movimiento" name="tipoMovimientoId">
           <UInputMenu
             v-model="state.tipoMovimientoId"
-            value-key="value"
             :items="tipos"
+            value-key="value"
             placeholder="Selecciona tipo"
             class="w-full"
           />
         </UFormField>
       </UForm>
     </template>
+
     <template #footer="{ close }">
       <UButton
         label="Cancelar"

@@ -40,20 +40,19 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 export interface MovimientoInventarioDetalle {
   id: string;
-  producto_id?: string | null;
+  productoId?: string | null;
   cantidad?: number | null;
-  unidad_id?: string | null;
+  unidadId?: string | null;
 }
 
 export interface MovimientoInventario {
   id: string;
   fecha?: string | null;
-  bodega_origen?: { id: string; nombre?: string } | null;
-  bodega_destino?: { id: string; nombre?: string } | null;
-  tipo_movimiento?: { id: string; nombre?: string } | null;
+  bodegaOrigen?: { id: string; nombre?: string } | null;
+  bodegaDestino?: { id: string; nombre?: string } | null;
+  tipoMovimiento?: { id: string; nombre?: string } | null;
   referencia?: string | null;
   observaciones?: string | null;
-  creado_por?: string | null;
   creadoEn?: string | null;
   detalles?: MovimientoInventarioDetalle[] | null;
 }
@@ -82,19 +81,19 @@ const columns: TableColumn<MovimientoInventario>[] = [
       row.original.fecha ? new Date(row.original.fecha).toLocaleString() : "-",
   },
   {
-    accessorKey: "bodega_origen.nombre",
+    accessorKey: "bodegaOrigen.nombre",
     header: "Bodega Origen",
-    cell: ({ row }) => row.original.bodega_origen?.nombre ?? "-",
+    cell: ({ row }) => row.original.bodegaOrigen?.nombre ?? "-",
   },
   {
-    accessorKey: "bodega_destino.nombre",
+    accessorKey: "bodegaDestino.nombre",
     header: "Bodega Destino",
-    cell: ({ row }) => row.original.bodega_destino?.nombre ?? "-",
+    cell: ({ row }) => row.original.bodegaDestino?.nombre ?? "-",
   },
   {
-    accessorKey: "tipo_movimiento.nombre",
+    accessorKey: "tipoMovimiento.nombre",
     header: "Tipo Movimiento",
-    cell: ({ row }) => row.original.tipo_movimiento?.nombre ?? "-",
+    cell: ({ row }) => row.original.tipoMovimiento?.nombre ?? "-",
   },
   {
     accessorKey: "referencia",

@@ -6,8 +6,17 @@ import type { Role } from "~/utils/types";
 const auth = useAuthStore();
 const open = ref(false);
 const roles = ref<Role[]>([]);
+const centrosCosto = ref<CentrosCosto[]>([]);
+export interface CentrosCosto {
+  id: number;
+  codigo: string;
+  nombre: string;
+}
 const roleOptions = computed(() =>
   roles.value.map((r) => ({ label: r.name, id: r.id.toString() })),
+);
+const centrosCostoOptions = computed(() =>
+  centrosCosto.value.map((r) => ({ label: r.nombre, id: r.id.toString() })),
 );
 const emit = defineEmits<{ (e: "creado"): void }>();
 watch(open, async (isOpen) => {
@@ -17,6 +26,13 @@ watch(open, async (isOpen) => {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       roles.value = rolesRes || [];
+      const centrosCostoRes = await $fetch<CentrosCosto[]>(
+        "http://localhost:8080/api/v1/centros-costo",
+        {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        },
+      );
+      centrosCosto.value = centrosCostoRes || [];
     } catch (err) {
       console.error("Error cargando roles:", err);
     }
@@ -27,7 +43,13 @@ const UserSchemaInitialState = {
   username: "",
   email: "",
   password: "",
-  active: true,
+  telefono: "",
+  codigoEmpleado: "",
+  nombre: "",
+  apellidos: "",
+  centroCostoId: undefined,
+  capacidadHorasDia: "PT8H",
+  activo: true,
   roleIds: [] as string[],
 };
 
@@ -47,6 +69,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
   const payload = {
     ...event.data,
     roleIds: event.data.roleIds.map((id) => Number(id)),
+    capacidadHorasDia: `PT${event.data.capacidadHorasDia}H`,
   };
 
   try {
@@ -111,7 +134,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
         </UFormField>
 
         <UFormField
-          label="password"
+          label="Contraseña"
           name="password"
           :rules="[
             (v: any) => !!v || 'La contraseña es obligatoria',
@@ -127,9 +150,43 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
           />
         </UFormField>
 
-        <UFormField label="Activo" name="active">
-          <UCheckbox v-model="state.active" class="w-full" />
+        <UFormField label="Activo" name="activo">
+          <UCheckbox v-model="state.activo" class="w-full" />
         </UFormField>
+
+        <UFormField label="Nombre" name="nombre">
+          <UInput v-model="state.nombre" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Apellidos" name="apellidos">
+          <UInput v-model="state.apellidos" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Teléfono" name="telefono">
+          <UInput v-model="state.telefono" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Código empleado" name="codigoEmpleado">
+          <UInput v-model="state.codigoEmpleado" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Centro de costo" name="centroCostoId">
+          <UInputMenu
+            v-model="state.centroCostoId"
+            :items="centrosCostoOptions"
+            value-key="id"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Capacidad horas/día" name="capacidadHorasDia">
+          <UInput
+            v-model="state.capacidadHorasDia"
+            type="number"
+            class="w-full"
+          />
+        </UFormField>
+
         <UFormField label="Roles" name="roleIds">
           <UInputMenu
             v-model="state.roleIds"

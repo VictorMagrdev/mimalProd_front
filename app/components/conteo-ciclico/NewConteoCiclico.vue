@@ -115,7 +115,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Producto" name="producto_id">
+        <UFormField label="Producto" name="productoId">
           <UInputMenu
             v-model="state.productoId"
             value-key="value"
@@ -124,7 +124,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Bodega" name="bodega_id">
+        <UFormField label="Bodega" name="bodegaId">
           <UInputMenu
             v-model="state.bodegaId"
             value-key="value"
@@ -133,7 +133,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Lote" name="lote_id">
+        <UFormField label="Lote" name="loteId">
           <UInputMenu
             v-model="state.loteId"
             value-key="value"
@@ -145,7 +145,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
         <UFormField label="Cantidad contada" name="cantidad_contada">
           <UInputNumber v-model="state.cantidadContada" class="w-full" />
         </UFormField>
-        <UFormField label="Unidad" name="unidad_id">
+        <UFormField label="Unidad" name="unidadId">
           <UInputMenu
             v-model="state.unidadId"
             value-key="value"

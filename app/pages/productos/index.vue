@@ -49,11 +49,11 @@ export interface Producto {
   id: string;
   codigo: string | null;
   nombre: string;
-  costo_base: number | null;
+  costoBase: number | null;
   creadoEn: string;
   tipo: TipoProducto | null;
-  metodo_valoracion: MetodoValoracion | null;
-  unidad_base: UnidadMedida | null;
+  metodoValoracion: MetodoValoracion | null;
+  unidadBase: UnidadMedida | null;
 }
 
 interface ProductosResult {
@@ -100,17 +100,17 @@ const columns: TableColumn<Producto>[] = [
   {
     accessorKey: "metodo_valoracion.nombre",
     header: "Método de Valoración",
-    cell: ({ row }) => row.original.metodo_valoracion?.nombre ?? "-",
+    cell: ({ row }) => row.original.metodoValoracion?.nombre ?? "-",
   },
   {
     accessorKey: "unidad_base.nombre",
     header: "Unidad Base",
-    cell: ({ row }) => row.original.unidad_base?.nombre ?? "-",
+    cell: ({ row }) => row.original.unidadBase?.nombre ?? "-",
   },
   {
     accessorKey: "costo_base",
     header: "Costo Base",
-    cell: ({ row }) => row.original.costo_base ?? "-",
+    cell: ({ row }) => row.original.costoBase ?? "-",
   },
   {
     accessorKey: "creadoEn",

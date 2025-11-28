@@ -7,8 +7,8 @@ const emit = defineEmits<{ (e: "create"): void }>();
 const auth = useAuthStore();
 
 const RoleSchemaInitialState = {
-  name: "",
-  description: "",
+  nombre: "",
+  descripcion: "",
 };
 
 const state = reactive({ ...RoleSchemaInitialState });
@@ -73,17 +73,17 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
 
     <template #body>
       <UForm id="roleForm" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Nombre" name="name">
+        <UFormField label="Nombre" name="nombre">
           <UInput
-            v-model="state.name"
+            v-model="state.nombre"
             class="w-full"
             placeholder="Nombre del rol"
           />
         </UFormField>
 
-        <UFormField label="Descripción" name="description">
+        <UFormField label="Descripción" name="descripcion">
           <UInput
-            v-model="state.description"
+            v-model="state.descripcion"
             class="w-full"
             placeholder="Descripción del rol"
           />

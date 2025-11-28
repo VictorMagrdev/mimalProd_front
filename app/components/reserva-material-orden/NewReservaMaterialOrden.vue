@@ -34,19 +34,9 @@ const ordenes = computed(() => result.value?.ordenesProduccion ?? []);
 const productos = computed(() => result.value?.productos ?? []);
 const lotes = computed(() => result.value?.lotesProduccion ?? []);
 const unidades = computed(() => result.value?.unidadesMedida ?? []);
-const dateField = z
-  .any()
-  .optional()
-  .transform((value) => {
-    if (!value) return undefined;
-    if (value?.toDate) {
-      return value.toDate().toISOString();
-    }
-    return value;
-  });
+
 const ReservaSchema = z.object({
   cantidadReservada: z.number().min(0),
-  fechaReserva: dateField,
   ordenId: z.string().min(1),
   productoId: z.string().min(1),
   loteId: z.string().optional(),
@@ -56,7 +46,6 @@ type ReservaInput = z.infer<typeof ReservaSchema>;
 
 const state = reactive<ReservaInput>({
   cantidadReservada: 0,
-  fechaReserva: "",
   ordenId: "",
   productoId: "",
   loteId: undefined,
@@ -77,7 +66,6 @@ const { mutate } = useMutation<CreateReservaResult, CreateReservaVars>(
 
 function resetForm() {
   state.cantidadReservada = 0;
-  state.fechaReserva = "";
   state.ordenId = "";
   state.productoId = "";
   state.loteId = undefined;
@@ -114,6 +102,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             value-key="value"
             :items="ordenes"
             placeholder="Selecciona orden"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Producto" name="productoId">
@@ -122,6 +111,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             value-key="value"
             :items="productos"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Lote" name="loteId">
@@ -130,6 +120,7 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             value-key="value"
             :items="lotes"
             placeholder="Selecciona lote"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
@@ -138,13 +129,11 @@ async function onSubmit(event: FormSubmitEvent<ReservaInput>) {
             value-key="value"
             :items="unidades"
             placeholder="Selecciona unidad"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad reservada" name="cantidadReservada">
-          <UInputNumber v-model="state.cantidadReservada" />
-        </UFormField>
-        <UFormField label="Fecha reserva" name="fechaReserva">
-          <UInputDate v-model="state.fechaReserva" />
+          <UInputNumber v-model="state.cantidadReservada" class="w-full" />
         </UFormField>
       </UForm>
     </template>

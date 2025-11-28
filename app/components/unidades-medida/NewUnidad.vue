@@ -29,7 +29,7 @@ const UnidadSchema = z.object({
   abreviatura: z.string().min(1),
   activa: z.boolean().optional(),
   base: z.boolean().optional(),
-  tipoId: z.string().min(1),
+  unidadMedidaTipoId: z.string().min(1),
 });
 type UnidadInput = z.infer<typeof UnidadSchema>;
 
@@ -39,7 +39,7 @@ const state = reactive<UnidadInput>({
   abreviatura: "",
   activa: true,
   base: false,
-  tipoId: "",
+  unidadMedidaTipoId: "",
 });
 
 const CreateUnidadMutation = gql`
@@ -60,7 +60,7 @@ function resetForm() {
   state.abreviatura = "";
   state.activa = true;
   state.base = false;
-  state.tipoId = "";
+  state.unidadMedidaTipoId = "";
 }
 
 async function onSubmit(event: FormSubmitEvent<UnidadInput>) {
@@ -98,7 +98,7 @@ async function onSubmit(event: FormSubmitEvent<UnidadInput>) {
         </UFormField>
         <UFormField label="Tipo" name="tipoId">
           <UInputMenu
-            v-model="state.tipoId"
+            v-model="state.unidadMedidaTipoId"
             value-key="value"
             :items="tipos"
             placeholder="Selecciona tipo"

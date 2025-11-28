@@ -103,6 +103,7 @@ async function onSubmit(event: FormSubmitEvent<RequerimientoInput>) {
             value-key="value"
             :items="productosOptions"
             placeholder="Selecciona producto"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Orden de Producción" name="ordenProduccionId">
@@ -111,6 +112,7 @@ async function onSubmit(event: FormSubmitEvent<RequerimientoInput>) {
             value-key="value"
             :items="ordenesOptions"
             placeholder="Selecciona orden (opcional)"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad requerida" name="cantidadRequerida">
@@ -119,6 +121,7 @@ async function onSubmit(event: FormSubmitEvent<RequerimientoInput>) {
             type="number"
             min="0"
             placeholder="Cantidad requerida"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Cantidad disponible" name="cantidadDisponible">
@@ -127,10 +130,11 @@ async function onSubmit(event: FormSubmitEvent<RequerimientoInput>) {
             type="number"
             min="0"
             placeholder="Cantidad disponible"
+            class="w-full"
           />
         </UFormField>
         <UFormField label="Fecha de necesidad" name="fechaNecesidad">
-          <UInput v-model="state.fechaNecesidad" type="date" />
+          <UInput v-model="state.fechaNecesidad" type="date" class="w-full" />
         </UFormField>
       </UForm>
     </template>

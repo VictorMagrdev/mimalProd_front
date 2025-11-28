@@ -11,15 +11,15 @@ const open = ref(false);
 const error = ref<string | null>(null);
 
 const state = reactive({
-  roleId: undefined as number | undefined,
+  rolId: undefined as number | undefined,
   tagId: undefined as number | undefined,
-  permissionId: undefined as number | undefined,
+  permisoId: undefined as number | undefined,
 });
 
 function resetForm() {
-  state.roleId = undefined;
+  state.rolId = undefined;
   state.tagId = undefined;
-  state.permissionId = undefined;
+  state.permisoId = undefined;
 }
 
 const toast = useToast();
@@ -118,9 +118,9 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Rol" name="roleId">
+        <UFormField label="Rol" name="rolId">
           <UInputMenu
-            v-model="state.roleId"
+            v-model="state.rolId"
             value-key="id"
             :items="roleOptions"
             class="w-full"
@@ -138,9 +138,9 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
           />
         </UFormField>
 
-        <UFormField label="Permiso" name="permissionId">
+        <UFormField label="Permiso" name="permisoId">
           <UInputMenu
-            v-model="state.permissionId"
+            v-model="state.permisoId"
             value-key="id"
             :items="permissionOptions"
             class="w-full"
