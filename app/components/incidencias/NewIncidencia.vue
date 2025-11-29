@@ -260,23 +260,12 @@ const onSubmit = async () => {
         </UFormField>
 
         <UFormField label="Fecha de Cierre" name="fechaCierre">
-          <UInput
-            v-model="state.fechaCierre"
-            type="datetime-local"
-            class="w-full"
-          />
+          <UInputDateTime v-model="state.fechaCierre" />
         </UFormField>
         <UFormField label="Tiempo de Parada (horas)" name="tiempoParada">
-          <UInput
-            v-model="state.tiempoParada"
-            type="number"
-            step="0.1"
-            placeholder="0.0"
-            class="w-full"
-          />
+          <UInput type="number" step="0.1" placeholder="0.0" class="w-full" />
         </UFormField>
 
-        <!-- FOTOS -->
         <UFormField label="Fotos (mínimo 1)">
           <UFileUpload
             v-model="fotos"
