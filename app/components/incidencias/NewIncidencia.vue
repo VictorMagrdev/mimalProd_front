@@ -7,7 +7,7 @@ import AudioRecorder from "./AudioRecorder.vue";
 const emit = defineEmits<{ (e: "creada"): void }>();
 const toast = useToast();
 const open = ref(false);
-
+const auth = useAuthStore();
 const IncidenciaOptions = gql`
   query IncidenciaOptions {
     tiposIncidencia {
@@ -34,6 +34,30 @@ const IncidenciaOptions = gql`
 `;
 
 const { result } = useQuery<IncidenciaOptionsResult>(IncidenciaOptions);
+const tiposIncidencia = computed(() => options.value.tiposIncidencia);
+const estadosIncidencia = computed(() => options.value.estadosIncidencia);
+const maquinas = computed(() => options.value.maquinas);
+const ordenesProduccion = computed(() => options.value.ordenesProduccion);
+const estacionesProduccion = computed(() => options.value.estacionesProduccion);
+
+type UserMinimal = { id: number; nombre?: string; username: string };
+
+const users = ref<{ value: number; label: string }[]>([]);
+
+const { data: usersData } = await useFetch<UserMinimal[]>(
+  "http://localhost:8080/api/users",
+  {
+    method: "GET",
+    headers: { Authorization: `Bearer ${auth.token}` },
+    default: () => [],
+  },
+);
+
+users.value =
+  usersData.value?.map((u) => ({
+    value: u.id,
+    label: u.nombre ?? u.username ?? "Sin nombre",
+  })) ?? [];
 
 const options = computed(
   () =>
@@ -45,14 +69,6 @@ const options = computed(
       estacionesProduccion: [],
     },
 );
-
-const {
-  tiposIncidencia,
-  estadosIncidencia,
-  maquinas,
-  ordenesProduccion,
-  estacionesProduccion,
-} = toRefs(options.value);
 
 const stringFromNumber = z.union([z.string(), z.number()]).transform(String);
 
@@ -71,8 +87,10 @@ const IncidenciaSchema = z.object({
   maquinaId: stringFromNumber.optional(),
   ordenId: stringFromNumber.optional(),
   estacionId: stringFromNumber.optional(),
+  asignadoA: stringFromNumber.optional(),
+  reportadoPor: stringFromNumber.optional(),
   fechaCierre: z.string().optional(),
-  tiempoParada: z.string().optional(),
+  tiempoParada: stringFromNumber.optional(),
 });
 
 type IncidenciaInput = z.infer<typeof IncidenciaSchema>;
@@ -86,14 +104,11 @@ const state = reactive<IncidenciaInput>({
   maquinaId: "",
   ordenId: "",
   estacionId: "",
+  asignadoA: "",
+  reportadoPor: "",
   fechaCierre: "",
   tiempoParada: "",
 });
-
-// Archivos
-const fotos = ref<File[]>([]);
-const audioUrl = ref<string | null>(null);
-const audioBlob = ref<Blob | null>(null);
 
 const resetForm = () => {
   Object.assign(state, {
@@ -105,6 +120,8 @@ const resetForm = () => {
     maquinaId: "",
     ordenId: "",
     estacionId: "",
+    asignadoA: "",
+    reportadoPor: "",
     fechaCierre: "",
     tiempoParada: "",
   });
@@ -112,8 +129,11 @@ const resetForm = () => {
   audioUrl.value = null;
   audioBlob.value = null;
 };
+// Archivos
+const fotos = ref<File[]>([]);
+const audioUrl = ref<string | null>(null);
+const audioBlob = ref<Blob | null>(null);
 
-// Envío del formulario
 const onSubmit = async () => {
   try {
     if (fotos.value.length === 0) {
@@ -121,28 +141,36 @@ const onSubmit = async () => {
       return;
     }
 
-    if (!audioBlob.value) {
-      toast.add({ title: "Debe grabar un audio", color: "error" });
+    if (!audioBlob.value || audioBlob.value.size === 0) {
+      toast.add({
+        title: "El audio está vacío o no se grabó correctamente",
+        color: "error",
+      });
       return;
     }
 
     const formData = new FormData();
-
+    const payload = {
+      codigo: state.codigo,
+      titulo: state.titulo,
+      descripcion: state.descripcion || null,
+      tipoIncidenciaId: parseInt(state.tipoIncidenciaId),
+      estadoId: parseInt(state.estadoId),
+      maquinaId: state.maquinaId ? parseInt(state.maquinaId) : null,
+      ordenId: state.ordenId ? parseInt(state.ordenId) : null,
+      estacionId: state.estacionId ? parseInt(state.estacionId) : null,
+      reportadoPor: state.reportadoPor ? parseInt(state.reportadoPor) : null,
+      asignadoA: state.asignadoA ? parseInt(state.asignadoA) : null,
+      fechaCierre: state.fechaCierre
+        ? new Date(state.fechaCierre).toISOString()
+        : null,
+      tiempoParada: state.tiempoParada
+        ? `PT${Math.floor(parseFloat(state.tiempoParada))}H${Math.round((parseFloat(state.tiempoParada) % 1) * 60)}M`
+        : null,
+    };
     formData.append(
       "incidencia",
-      new Blob(
-        [
-          JSON.stringify({
-            ...state,
-            tipoIncidenciaId: parseInt(state.tipoIncidenciaId),
-            estadoId: parseInt(state.estadoId),
-            maquinaId: state.maquinaId ? parseInt(state.maquinaId) : null,
-            ordenId: state.ordenId ? parseInt(state.ordenId) : null,
-            estacionId: state.estacionId ? parseInt(state.estacionId) : null,
-          }),
-        ],
-        { type: "application/json" },
-      ),
+      new Blob([JSON.stringify(payload)], { type: "application/json" }),
     );
 
     fotos.value.forEach((f) => formData.append("archivos", f));
@@ -151,7 +179,7 @@ const onSubmit = async () => {
       new File([audioBlob.value], "grabacion.webm", { type: "audio/webm" }),
     );
 
-    await $fetch("/api/incidencias/con-archivos", {
+    await $fetch("http://localhost:8080/api/incidencias/con-archivos", {
       method: "POST",
       body: formData,
       headers: {
@@ -215,7 +243,22 @@ const onSubmit = async () => {
             class="w-full"
           />
         </UFormField>
-
+        <UFormField label="reportado por" name="reportadoPor">
+          <UInputMenu
+            v-model="state.reportadoPor as unknown as number"
+            :items="users"
+            value-key="value"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField label="asignado A" name="asignadoA">
+          <UInputMenu
+            v-model="state.asignadoA as unknown as number"
+            :items="users"
+            value-key="value"
+            class="w-full"
+          />
+        </UFormField>
         <UFormField label="Tipo de Incidencia" name="tipoIncidenciaId">
           <USelect
             v-model="state.tipoIncidenciaId"
@@ -263,7 +306,13 @@ const onSubmit = async () => {
           <UInputDateTime v-model="state.fechaCierre" />
         </UFormField>
         <UFormField label="Tiempo de Parada (horas)" name="tiempoParada">
-          <UInput type="number" step="0.1" placeholder="0.0" class="w-full" />
+          <UInput
+            v-model="state.tiempoParada"
+            type="number"
+            step="0.1"
+            placeholder="0.0"
+            class="w-full"
+          />
         </UFormField>
 
         <UFormField label="Fotos (mínimo 1)">
@@ -335,7 +384,6 @@ const onSubmit = async () => {
         type="submit"
         form="form-incidencia"
         color="primary"
-        :disabled="fotos.length === 0 || !audioBlob"
       />
     </template>
   </UModal>

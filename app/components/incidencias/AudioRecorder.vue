@@ -10,6 +10,7 @@ const audioUrl = ref<string | null>(null);
 const mediaRecorder = ref<MediaRecorder | null>(null);
 const chunks = ref<Blob[]>([]);
 const timer = ref(0);
+const emit = defineEmits(["update:audio-url", "update:audio-blob"]);
 
 const MAX_SECONDS = 120;
 
@@ -21,6 +22,7 @@ const { pause, resume } = useIntervalFn(
   1000,
   { immediate: false },
 );
+const audioBlob = ref<Blob | null>(null);
 
 const startRecording = async () => {
   try {
@@ -30,7 +32,6 @@ const startRecording = async () => {
     mediaRecorder.value = recorder;
     chunks.value = [];
     timer.value = 0;
-
     recorder.ondataavailable = (e) => chunks.value.push(e.data);
 
     recorder.onstop = () => {
@@ -38,6 +39,9 @@ const startRecording = async () => {
       const url = URL.createObjectURL(blob);
       if (audioUrl.value) URL.revokeObjectURL(audioUrl.value);
       audioUrl.value = url;
+      audioBlob.value = blob;
+      emit("update:audio-url", url);
+      emit("update:audio-blob", blob);
       stream.getTracks().forEach((t) => t.stop());
     };
 
@@ -67,7 +71,10 @@ const resetRecording = () => {
   audioUrl.value = null;
   chunks.value = [];
   timer.value = 0;
+  audioBlob.value = null;
 
+  emit("update:audio-url", null);
+  emit("update:audio-blob", null);
   toast.add({
     title: "Reinicio",
     description: "Grabación reiniciada.",

@@ -74,31 +74,45 @@ const descargarArchivo = (archivo: Archivo) => {
 
       <!-- Loader -->
       <div v-if="pending" class="flex justify-center py-10">
-        <ULoader size="lg" color="primary" />
+        <div>Cargando...</div>
       </div>
 
       <!-- Contenido -->
       <div v-else-if="incidencia" class="space-y-6">
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <UDescription label="Código" :value="incidencia.codigo" />
-          <UDescription
-            label="Tipo"
-            :value="incidencia.tipoIncidenciaId || 'N/A'"
-          />
-          <UDescription
-            label="Máquina"
-            :value="incidencia.maquinaId || 'N/A'"
-          />
-          <UDescription
-            label="Creado"
-            :value="new Date(incidencia.creadoEn).toLocaleString()"
-          />
+          <!-- Reemplazo de UDescription -->
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">Código</span>
+            <span class="font-medium">{{ incidencia.codigo }}</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">Tipo</span>
+            <span class="font-medium">{{
+              incidencia.tipoIncidenciaId || "N/A"
+            }}</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">Máquina</span>
+            <span class="font-medium">{{ incidencia.maquinaId || "N/A" }}</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">Creado</span>
+            <span class="font-medium">{{
+              new Date(incidencia.creadoEn).toLocaleString()
+            }}</span>
+          </div>
         </div>
 
-        <UDescription
-          label="Descripción"
-          :value="incidencia.descripcion || 'Sin descripción'"
-        />
+        <!-- Descripción -->
+        <div class="flex flex-col">
+          <span class="text-sm text-gray-500">Descripción</span>
+          <span class="font-medium">{{
+            incidencia.descripcion || "Sin descripción"
+          }}</span>
+        </div>
 
         <!-- Archivos -->
         <div v-if="incidencia?.archivos?.length">

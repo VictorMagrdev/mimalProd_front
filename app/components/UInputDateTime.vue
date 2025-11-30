@@ -17,6 +17,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 const inputDateRef = useTemplateRef("inputDateRef");
 
+// Inicializa con la fecha y hora actuales
 const now = new Date();
 const zoned = fromDate(now, "UTC");
 
@@ -25,6 +26,7 @@ const date = shallowRef<CalendarDate>(
 );
 const time = shallowRef<Time>(new Time(zoned.hour, zoned.minute, zoned.second));
 
+// Si viene valor inicial del backend, parsearlo
 if (props.modelValue) {
   try {
     const js = new Date(props.modelValue);
@@ -38,6 +40,7 @@ if (props.modelValue) {
   }
 }
 
+// Computed que genera el formato correcto para backend: YYYY-MM-DDTHH:mm
 const datetimeString = computed(() => {
   try {
     const dt = new CalendarDateTime(
@@ -46,9 +49,8 @@ const datetimeString = computed(() => {
       date.value.day,
       time.value.hour,
       time.value.minute,
-      time.value.second,
+      0,
     );
-
     const js = dt.toDate("UTC");
     return js.toISOString().slice(0, 16);
   } catch (error) {
