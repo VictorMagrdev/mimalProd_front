@@ -178,6 +178,8 @@ function openUpdateModal(id: string) {
         :data="lotesProduccion || []"
         :columns="columns"
         :loading="pending"
+        sticky
+        class="flex-1 overflow-auto h-96"
       />
       <div class="sticky bottom-8 w-full bg-white z-10 mt-4">
         <UPagination

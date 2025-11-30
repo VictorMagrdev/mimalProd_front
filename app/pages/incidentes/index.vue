@@ -278,7 +278,8 @@ const globalFilter = ref("");
       :data="incidencias"
       :columns="columns"
       :loading="pending"
-      class="flex-1"
+      sticky
+      class="flex-1 overflow-auto h-96"
     />
 
     <div v-if="error" class="text-red-600">Error: {{ error.message }}</div>

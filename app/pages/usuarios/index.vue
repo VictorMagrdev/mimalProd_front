@@ -335,7 +335,8 @@ const currentPage = computed({
         :data="users"
         :columns="columns"
         :loading="pending"
-        class="w-full"
+        sticky
+        class="flex-1 overflow-auto h-96"
       />
 
       <div

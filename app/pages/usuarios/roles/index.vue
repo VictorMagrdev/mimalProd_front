@@ -103,6 +103,8 @@ const globalFilter = ref();
         :data="roles || []"
         :columns="columns"
         :loading="pending"
+        sticky
+        class="flex-1 overflow-auto h-96"
       />
       <div class="sticky bottom-8 z-10 mt-4 w-full bg-white">
         <UPagination

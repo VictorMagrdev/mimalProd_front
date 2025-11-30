@@ -10,7 +10,7 @@ const UBadge = resolveComponent("UBadge");
 
 const query = gql`
   query conteosCiclicos {
-    conteosCiclico {
+    conteosCiclicos {
       id
       productoId
       bodegaId
@@ -224,7 +224,8 @@ function openUpdateModal(id: string) {
       :data="conteosCiclicos"
       :columns="columns"
       :loading="pending"
-      class="flex-1"
+      sticky
+      class="flex-1 overflow-auto h-96"
     />
 
     <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">

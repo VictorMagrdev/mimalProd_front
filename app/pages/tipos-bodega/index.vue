@@ -191,7 +191,8 @@ const filteredData = computed(() => {
         :data="filteredData"
         :columns="columns"
         :loading="pending"
-        class="w-full"
+        sticky
+        class="flex-1 overflow-auto h-96"
         :ui="{
           tbody: 'divide-y divide-gray-200',
           td: 'px-4 py-3 text-sm',

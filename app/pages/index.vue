@@ -8,7 +8,9 @@
         <p class="text-gray-600">Resumen general del rendimiento productivo</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 flex-1 overflow-auto"
+      >
         <UCard>
           <div class="flex items-center justify-between">
             <div>

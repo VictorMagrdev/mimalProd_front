@@ -68,7 +68,7 @@ const state = reactive<ConteoInput>({
   loteId: undefined,
   cantidadContada: 0,
   unidadId: "",
-  fecha: "",
+  fecha: undefined,
 });
 
 const CreateConteoMutation = gql`
@@ -89,12 +89,13 @@ function resetForm() {
   state.loteId = undefined;
   state.cantidadContada = 0;
   state.unidadId = "";
-  state.fecha = "";
+  state.fecha = undefined;
 }
 
 async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
   try {
     await mutate({ input: event.data });
+    toast.add({ title: "exito", description: "creado", color: "success" });
     emit("creado");
     resetForm();
     open.value = false;
@@ -142,7 +143,7 @@ async function onSubmit(event: FormSubmitEvent<ConteoInput>) {
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Cantidad contada" name="cantidad_contada">
+        <UFormField label="Cantidad contada" name="cantidadContada">
           <UInputNumber v-model="state.cantidadContada" class="w-full" />
         </UFormField>
         <UFormField label="Unidad" name="unidadId">
