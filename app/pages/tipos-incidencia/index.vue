@@ -33,7 +33,7 @@ interface TipoIncidenciaResult {
   tiposIncidencia: TipoIncidencia[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<TipoIncidenciaResult>(GetTiposIncidencia);
 
 const tiposIncidencia = computed(() => data.value?.tiposIncidencia || []);
@@ -145,7 +145,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewTiposIncidencias @creado="refresh()" />
+        <NewTiposIncidencias @creado="execute()" />
       </div>
     </div>
     <UTable

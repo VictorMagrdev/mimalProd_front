@@ -33,7 +33,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 const parametros = computed(() => data.value?.parametrosClasificacion || []);
 
@@ -127,7 +127,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <ParametroPlanificacionNewParametroPlanificacion @creado="refresh()" />
+        <ParametroPlanificacionNewParametroPlanificacion @creado="execute()" />
       </div>
     </div>
     <UTable

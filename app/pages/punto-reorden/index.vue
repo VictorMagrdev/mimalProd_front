@@ -28,7 +28,7 @@ interface PuntoReordenResult {
   puntosReorden: PuntoReorden[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<PuntoReordenResult>(GetPuntosReorden);
 
 const puntosReorden = computed(() => data.value?.puntosReorden || []);
@@ -104,7 +104,7 @@ const globalFilter = ref();
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewPuntoReorden @creado="refresh()" />
+        <NewPuntoReorden @creado="execute()" />
       </div>
     </div>
 

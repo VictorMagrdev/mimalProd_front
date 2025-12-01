@@ -49,7 +49,7 @@ interface OrdenesEstacionResult {
   ordenesEstacion: OrdenEstacion[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<OrdenesEstacionResult>(GetOrdenesEstacion);
 
 const ordenesEstacion = computed(() => data.value?.ordenesEstacion || []);
@@ -169,7 +169,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <OrdenEstacionNewOrdenEstacion @creado="refresh()" />
+        <OrdenEstacionNewOrdenEstacion @creado="execute()" />
       </div>
     </div>
 

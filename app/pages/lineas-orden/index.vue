@@ -46,7 +46,7 @@ interface LineasOrdenResult {
   LineasOrden: LineaOrden[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<LineasOrdenResult>(GetLineasOrden);
 const lineasOrden = computed(() => data.value?.LineasOrden || []);
 const columns: TableColumn<LineaOrden>[] = [
@@ -181,7 +181,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <LineasOrdenNewLinea @creado="refresh()" />
+        <LineasOrdenNewLinea @creado="execute()" />
       </div>
     </div>
 

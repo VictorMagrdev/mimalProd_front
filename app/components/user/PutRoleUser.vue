@@ -4,7 +4,7 @@ import { computed, defineEmits, defineProps, reactive, ref, watch } from "vue";
 
 interface Role {
   id: number;
-  name: string;
+  nombre: string;
 }
 
 const props = defineProps<{
@@ -31,7 +31,7 @@ const toast = useToast();
 const roles = ref<Role[]>([]);
 
 const roleOptions = computed(() =>
-  roles.value.map((r) => ({ label: r.name, id: r.id })),
+  roles.value.map((r) => ({ label: r.nombre, id: r.id })),
 );
 
 async function fetchRoles() {

@@ -34,7 +34,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 
 const discrepanciasInventario = computed(
@@ -203,7 +203,7 @@ const globalFilter = ref("");
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <DiscrepaciaInventarioNewDiscrepanciaInventario @creado="refresh()" />
+      <DiscrepaciaInventarioNewDiscrepanciaInventario @creado="execute()" />
     </div>
 
     <UTable

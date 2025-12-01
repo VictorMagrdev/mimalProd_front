@@ -33,7 +33,7 @@ interface TiposCostoResult {
   tiposCosto: TipoCosto[];
 }
 
-const { data, pending, error, refresh } = await useAsyncQuery<TiposCostoResult>(
+const { data, pending, error, execute } = await useAsyncQuery<TiposCostoResult>(
   GetTiposCosto,
   {},
 );
@@ -236,17 +236,17 @@ const filteredData = computed(() => {
           </UDropdownMenu>
 
           <UButton
-            icon="i-lucide-refresh-cw"
+            icon="i-lucide-execute-cw"
             color="neutral"
             variant="outline"
             :loading="pending"
             aria-label="Refrescar datos"
-            @click="refresh()"
+            @click="execute()"
           />
 
           <TiposCostoNewTipoCosto
             v-model="isNewModalOpen"
-            @creado="refresh()"
+            @creado="execute()"
           />
         </div>
       </div>
@@ -298,7 +298,7 @@ const filteredData = computed(() => {
         variant="outline"
         size="sm"
         class="mt-2"
-        @click="refresh()"
+        @click="execute()"
       >
         Reintentar
       </UButton>

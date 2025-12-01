@@ -39,7 +39,7 @@ interface UnidadesMedidaResult {
   unidadesMedida: UnidadMedida[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<UnidadesMedidaResult>(GetUnidadesMedida);
 
 const unidades = computed(() => data.value?.unidadesMedida || []);
@@ -157,7 +157,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <UnidadesMedidaNewUnidad @creado="refresh()" />
+        <UnidadesMedidaNewUnidad @creado="execute()" />
       </div>
     </div>
 

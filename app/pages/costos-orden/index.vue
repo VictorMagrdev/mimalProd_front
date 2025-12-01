@@ -32,7 +32,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 
 const costosOrden = computed(() => data.value?.costosOrden || []);
@@ -216,7 +216,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <CostosOrdenNewCosto @creado="refresh()" />
+      <CostosOrdenNewCosto @creado="execute()" />
     </div>
 
     <UTable

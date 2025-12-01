@@ -44,7 +44,7 @@ interface MaquinaResult {
   maquinas: Maquina[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<MaquinaResult>(GetMaquinas);
 
 const maquinas = computed(() => data.value?.maquinas || []);
@@ -171,7 +171,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewMaquinas @creada="refresh()" />
+        <NewMaquinas @creada="execute()" />
       </div>
     </div>
     <UTable

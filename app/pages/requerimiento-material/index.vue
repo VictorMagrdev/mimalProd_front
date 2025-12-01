@@ -7,11 +7,10 @@ const UBadge = resolveComponent("UBadge");
 
 export interface RequerimientoMaterial {
   id: string;
-  productoId: string;
   productoCodigo: string;
   productoNombre: string;
   ordenProduccionId?: string;
-  ordenProduccionCodigo?: string;
+  ordenProduccionNumero?: string;
   cantidadRequerida: number;
   cantidadDisponible: number;
   cantidadAPedir: number;
@@ -39,7 +38,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 const requerimientos = computed(
   () => data.value?.requerimientosMateriales || [],
@@ -59,10 +58,10 @@ const columns: TableColumn<RequerimientoMaterial>[] = [
       h("div", { class: "font-medium" }, row.original.productoNombre),
   },
   {
-    accessorKey: "ordenProduccionCodigo",
+    accessorKey: "ordenProduccionNumero",
     header: "Orden Prod.",
     cell: ({ row }) =>
-      row.original.ordenProduccionCodigo ||
+      row.original.ordenProduccionNumero ||
       h("span", { class: "text-muted italic" }, "N/A"),
   },
   {
@@ -149,7 +148,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewRequerimientoMaterial @creado="refresh()" />
+        <NewRequerimientoMaterial @creado="execute()" />
       </div>
     </div>
 

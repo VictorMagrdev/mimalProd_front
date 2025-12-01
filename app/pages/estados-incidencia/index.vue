@@ -22,7 +22,7 @@ const GetEstadosIncidencia = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<EstadoIncidenciaResult>(GetEstadosIncidencia);
 
 const estadosIncidencia = computed(() => data.value?.estadosIncidencia || []);
@@ -107,7 +107,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewEstadosIncidencia @creado="refresh()" />
+        <NewEstadosIncidencia @creado="execute()" />
       </div>
     </div>
 

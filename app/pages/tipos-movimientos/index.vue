@@ -33,7 +33,7 @@ interface TipoMovimientoResult {
   tiposMovimiento: TipoMovimiento[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<TipoMovimientoResult>(GetTiposMovimiento);
 
 const tiposMovimiento = computed(() => data.value?.tiposMovimiento || []);
@@ -147,7 +147,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <TiposMovientoNewTiposMovimiento @creado="refresh()" />
+        <TiposMovientoNewTiposMovimiento @creado="execute()" />
       </div>
     </div>
 

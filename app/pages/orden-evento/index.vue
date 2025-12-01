@@ -31,7 +31,7 @@ interface OrdenEventoResult {
   ordenesEvento: OrdenEvento[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<OrdenEventoResult>(GetOrdenesEvento);
 
 const ordenesEvento = computed(() => data.value?.ordenesEvento || []);
@@ -139,7 +139,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <OrdenEventoNewOrdenEvento @creado="refresh()" />
+        <OrdenEventoNewOrdenEvento @creado="execute()" />
       </div>
     </div>
 

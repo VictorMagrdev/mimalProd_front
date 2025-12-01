@@ -48,7 +48,7 @@ interface OrdenesProduccionResult {
   ordenesProduccion: OrdenProduccion[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<OrdenesProduccionResult>(GetOrdenesProduccion);
 
 const rows = computed<OrdenProduccion[]>(
@@ -174,7 +174,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <OrdenesProduccionNewOrdenProduccion @creado="refresh()" />
+        <OrdenesProduccionNewOrdenProduccion @creado="execute()" />
       </div>
     </div>
 

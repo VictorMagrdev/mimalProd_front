@@ -36,7 +36,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 
 const conteosCiclicos = computed(() => data.value?.conteosCiclicos || []);
@@ -214,7 +214,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <NewConteoCiclico @creado="refresh()" />
+      <NewConteoCiclico @creado="execute()" />
     </div>
 
     <UTable

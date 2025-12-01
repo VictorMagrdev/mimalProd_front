@@ -37,7 +37,7 @@ interface LotesProduccionResult {
   lotesProduccion: LoteProduccion[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<LotesProduccionResult>(GetLotesProduccion);
 
 const lotesProduccion = computed(() => data.value?.lotesProduccion || []);
@@ -165,7 +165,7 @@ function openUpdateModal(id: string) {
 
         <LotesProduccionNewLoteProduccion
           v-model="isNewModalOpen"
-          @creado="refresh()"
+          @creado="execute()"
         />
       </div>
     </div>

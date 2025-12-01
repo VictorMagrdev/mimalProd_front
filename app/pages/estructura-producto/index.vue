@@ -28,7 +28,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 const estructuras = computed(() => data.value?.estructurasProductos ?? []);
 
@@ -125,7 +125,7 @@ const columns: TableColumn<Estructura>[] = [
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <NewEstructuraProducto @creado="refresh()" />
+        <NewEstructuraProducto @creado="execute()" />
       </div>
     </div>
     <UTable

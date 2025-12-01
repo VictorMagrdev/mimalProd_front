@@ -27,7 +27,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 
 const bodegas = computed(() => data.value?.bodegas || []);
@@ -181,7 +181,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <BodegaNewBodega @creado="refresh()" />
+      <BodegaNewBodega @creado="execute()" />
     </div>
 
     <UTable

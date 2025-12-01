@@ -61,7 +61,7 @@ interface MovimientoInventarioResult {
   movimientosInventario: MovimientoInventario[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<MovimientoInventarioResult>(GetMovimientosInventario);
 
 const movimientosInventario = computed(
@@ -198,7 +198,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <MovimientosInventarioNewMovimientoInventario @creado="refresh()" />
+        <MovimientosInventarioNewMovimientoInventario @creado="execute()" />
       </div>
     </div>
 

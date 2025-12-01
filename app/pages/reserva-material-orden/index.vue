@@ -31,7 +31,7 @@ interface ReservaMaterialOrdenResult {
   reservasMaterialOrden: ReservaMaterialOrden[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<ReservaMaterialOrdenResult>(GetReservasMaterialOrden);
 
 const reservasMaterialOrden = computed(
@@ -120,7 +120,7 @@ const globalFilter = ref();
           />
         </UDropdownMenu>
 
-        <ReservaMaterialOrdenNewReservaMaterialOrden @creado="refresh()" />
+        <ReservaMaterialOrdenNewReservaMaterialOrden @creado="execute()" />
       </div>
     </div>
 

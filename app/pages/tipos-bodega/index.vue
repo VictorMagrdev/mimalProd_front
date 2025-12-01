@@ -28,7 +28,7 @@ interface TiposBodegaResult {
   tiposBodega: TipoBodega[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<TiposBodegaResult>(GetTiposBodega, {});
 
 const tiposBodega = computed(() => data.value?.tiposBodega || []);
@@ -170,16 +170,16 @@ const filteredData = computed(() => {
           </UDropdownMenu>
 
           <UButton
-            icon="i-lucide-refresh-cw"
+            icon="i-lucide-execute-cw"
             color="neutral"
             variant="outline"
             :loading="pending"
-            @click="refresh()"
+            @click="execute()"
           />
 
           <TiposBodegaNewTipoBodega
             v-model="isNewModalOpen"
-            @creado="refresh()"
+            @creado="execute()"
           />
         </div>
       </div>
@@ -231,7 +231,7 @@ const filteredData = computed(() => {
         variant="outline"
         size="sm"
         class="mt-2"
-        @click="refresh()"
+        @click="execute()"
       >
         Reintentar
       </UButton>

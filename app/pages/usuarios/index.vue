@@ -39,7 +39,7 @@ const {
   data: users,
   pending,
   error,
-  refresh,
+  execute,
 } = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
   method: "GET",
   headers: {
@@ -72,7 +72,7 @@ const desactivar = async (id: number) => {
       duration: 3000,
     });
 
-    refresh();
+    execute();
   } catch (err) {
     toast.add({
       title: "Error",
@@ -316,15 +316,15 @@ const currentPage = computed({
 
         <div class="flex items-center gap-2">
           <UButton
-            icon="i-lucide-refresh-cw"
+            icon="i-lucide-execute-cw"
             color="neutral"
             variant="outline"
             :loading="pending"
             aria-label="Refrescar datos"
-            @click="refresh()"
+            @click="execute()"
           />
 
-          <UserNewUser @user-created="refresh()" />
+          <UserNewUser @user-created="execute()" />
         </div>
       </div>
 
@@ -361,7 +361,7 @@ const currentPage = computed({
       :user-id="selectedUserId"
       :open="true"
       @close="selectedUserId = null"
-      @user-updated="refresh()"
+      @user-updated="execute()"
     />
 
     <UserPutRoleUser
@@ -369,7 +369,7 @@ const currentPage = computed({
       :user-id="selectedUserForRole"
       :open="true"
       @close="selectedUserForRole = null"
-      @role-updated="refresh()"
+      @role-updated="execute()"
     />
 
     <UserDeleteRoleUser
@@ -377,7 +377,7 @@ const currentPage = computed({
       :user-id="selectedUserForDeleteRole"
       :open="true"
       @close="selectedUserForDeleteRole = null"
-      @role-removed="refresh()"
+      @role-removed="execute()"
     />
 
     <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -391,7 +391,7 @@ const currentPage = computed({
         variant="outline"
         size="sm"
         class="mt-2"
-        @click="refresh()"
+        @click="execute()"
       >
         Reintentar
       </UButton>

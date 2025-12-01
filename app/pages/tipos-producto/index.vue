@@ -28,7 +28,7 @@ interface TipoProductoResult {
   tiposProducto: TipoProducto[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<TipoProductoResult>(GetTiposProducto);
 
 const tiposProducto = computed(() => data.value?.tiposProducto || []);
@@ -131,7 +131,7 @@ function openUpdateModal(id: string) {
           />
         </UDropdownMenu>
 
-        <TiposProductoNewTipoProducto @creado="refresh()" />
+        <TiposProductoNewTipoProducto @creado="execute()" />
       </div>
     </div>
 

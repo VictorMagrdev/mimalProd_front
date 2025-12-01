@@ -25,7 +25,7 @@ interface QueryResult {
   estacionesProduccion: EstacionProduccion[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<QueryResult>(query);
 
 const estacionesProduccion = computed(
@@ -177,7 +177,7 @@ function openUpdateModal(id: string) {
           aria-label="Columns select dropdown"
         />
       </UDropdownMenu>
-      <EstacionProduccionNewEstacionProduccion @creado="refresh()" />
+      <EstacionProduccionNewEstacionProduccion @creado="execute()" />
     </div>
 
     <UTable

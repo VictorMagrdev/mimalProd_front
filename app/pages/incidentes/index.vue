@@ -75,7 +75,7 @@ interface IncidenciaResult {
   incidencias: Incidencia[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<IncidenciaResult>(GetIncidencias);
 
 const incidencias = computed(() => data.value?.incidencias || []);
@@ -268,7 +268,7 @@ const globalFilter = ref("");
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <IncidenciasNewIncidencia @creada="refresh()" />
+        <IncidenciasNewIncidencia @creada="execute()" />
       </div>
     </div>
     <UTable

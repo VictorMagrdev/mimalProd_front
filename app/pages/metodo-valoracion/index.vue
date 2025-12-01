@@ -38,7 +38,7 @@ interface MetodoValoracionResult {
   metodosValoracion: MetodoValoracion[];
 }
 
-const { data, pending, error, refresh } =
+const { data, pending, error, execute } =
   await useAsyncQuery<MetodoValoracionResult>(GetMetodosValoracion);
 
 const metodosValoracion = computed(() => data.value?.metodosValoracion || []);
@@ -152,7 +152,7 @@ function openUpdateModal(id: string) {
             trailing-icon="i-lucide-chevron-down"
           />
         </UDropdownMenu>
-        <MetodoValoracionNewMetodoValoracion @creado="refresh()" />
+        <MetodoValoracionNewMetodoValoracion @creado="execute()" />
       </div>
     </div>
 

@@ -21,7 +21,7 @@ const query = gql`
   }
 `;
 
-const { data, pending, error, refresh } = await useAsyncQuery<{
+const { data, pending, error, execute } = await useAsyncQuery<{
   estadosOrden: EstadoOrden[];
 }>(query);
 
@@ -132,7 +132,7 @@ const globalFilter = ref();
           />
         </UDropdownMenu>
 
-        <EstadosOrdenNewEstadoOrden @creado="refresh()" />
+        <EstadosOrdenNewEstadoOrden @creado="execute()" />
       </div>
     </div>
 
