@@ -1,3 +1,5 @@
+packages:
+  - "app"
 onlyBuiltDependencies:
   - "@apollo/protobufjs"
   - core-js
