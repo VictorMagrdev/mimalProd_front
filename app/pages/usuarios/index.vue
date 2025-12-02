@@ -40,7 +40,7 @@ const {
   pending,
   error,
   execute,
-} = await useFetch<UserUI[]>("http://localhost:8080/api/users", {
+} = await useFetch<UserUI[]>("https://api.minimalprod.space/api/users", {
   method: "GET",
   headers: {
     Authorization: `Bearer ${auth.token}`,
@@ -51,7 +51,7 @@ const {
 const desactivar = async (id: number) => {
   try {
     const { error } = await useFetch(
-      `http://localhost:8080/api/users/${id}/deactivate`,
+      `https://api.minimalprod.space/api/users/${id}/deactivate`,
       {
         method: "POST",
         headers: {

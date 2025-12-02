@@ -17,7 +17,7 @@ const {
   data: policies,
   pending,
   error,
-} = await useFetch<PolicyUI[]>("http://localhost:8080/api/policies", {
+} = await useFetch<PolicyUI[]>("https://api.minimalprod.space/api/policies", {
   method: "GET",
   headers: {
     Authorization: `Bearer ${auth.token}`,
@@ -35,7 +35,7 @@ async function deletePolicy(policy: PolicyUI) {
     return;
 
   const { error: fetchError } = await useFetch(
-    `http://localhost:8080/api/policies/${policy.id}`,
+    `https://api.minimalprod.space/api/policies/${policy.id}`,
     {
       method: "DELETE",
       headers: {

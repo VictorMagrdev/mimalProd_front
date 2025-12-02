@@ -19,7 +19,7 @@ const {
   data: roles,
   pending,
   error,
-} = await useFetch<RoleUI[]>("http://localhost:8080/api/roles", {
+} = await useFetch<RoleUI[]>("https://api.minimalprod.space/api/roles", {
   method: "GET",
   headers: {
     Authorization: `Bearer ${auth.token}`,

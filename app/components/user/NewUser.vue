@@ -22,12 +22,15 @@ const emit = defineEmits<{ (e: "creado"): void }>();
 watch(open, async (isOpen) => {
   if (isOpen && roles.value.length === 0) {
     try {
-      const rolesRes = await $fetch<Role[]>("http://localhost:8080/api/roles", {
-        headers: { Authorization: `Bearer ${auth.token}` },
-      });
+      const rolesRes = await $fetch<Role[]>(
+        "https://api.minimalprod.space/api/roles",
+        {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        },
+      );
       roles.value = rolesRes || [];
       const centrosCostoRes = await $fetch<CentrosCosto[]>(
-        "http://localhost:8080/api/v1/centros-costo",
+        "https://api.minimalprod.space/api/v1/centros-costo",
         {
           headers: { Authorization: `Bearer ${auth.token}` },
         },
@@ -73,7 +76,7 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
   };
 
   try {
-    await $fetch("http://localhost:8080/api/users", {
+    await $fetch("https://api.minimalprod.space/api/users", {
       method: "POST",
       body: payload,
       headers: {

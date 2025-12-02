@@ -47,13 +47,13 @@ watch(open, async (val) => {
   ) {
     try {
       const [rolesRes, tagsRes, permsRes] = await Promise.all([
-        $fetch<Role[]>("http://localhost:8080/api/roles", {
+        $fetch<Role[]>("https://api.minimalprod.space/api/roles", {
           headers: { Authorization: `Bearer ${auth.token}` },
         }),
-        $fetch<Tag[]>("http://localhost:8080/api/tags", {
+        $fetch<Tag[]>("https://api.minimalprod.space/api/tags", {
           headers: { Authorization: `Bearer ${auth.token}` },
         }),
-        $fetch<Permission[]>("http://localhost:8080/api/permissions", {
+        $fetch<Permission[]>("https://api.minimalprod.space/api/permissions", {
           headers: { Authorization: `Bearer ${auth.token}` },
         }),
       ]);
@@ -74,7 +74,7 @@ watch(open, async (val) => {
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
   error.value = null;
   const { error: fetchError } = await useFetch(
-    "http://localhost:8080/api/policies",
+    "https://api.minimalprod.space/api/policies",
     {
       method: "POST",
       body: event.data,

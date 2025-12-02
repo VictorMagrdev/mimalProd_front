@@ -45,7 +45,7 @@ type UserMinimal = { id: number; nombre?: string; username: string };
 const users = ref<{ value: number; label: string }[]>([]);
 
 const { data: usersData } = await useFetch<UserMinimal[]>(
-  "http://localhost:8080/api/users",
+  "https://api.minimalprod.space/api/users",
   {
     method: "GET",
     headers: { Authorization: `Bearer ${auth.token}` },
@@ -179,7 +179,7 @@ const onSubmit = async () => {
       new File([audioBlob.value], "grabacion.webm", { type: "audio/webm" }),
     );
 
-    await $fetch("http://localhost:8080/api/incidencias/con-archivos", {
+    await $fetch("https://api.minimalprod.space/api/incidencias/con-archivos", {
       method: "POST",
       body: formData,
       headers: {

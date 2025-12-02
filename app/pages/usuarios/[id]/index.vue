@@ -17,7 +17,7 @@ const {
   pending,
   error,
 } = useAsyncData("user", () =>
-  $fetch<User>(`http://localhost:8080/api/users/${userId}`, {
+  $fetch<User>(`https://api.minimalprod.space/api/users/${userId}`, {
     headers: { Authorization: `Bearer ${auth.token}` },
   }),
 );

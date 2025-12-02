@@ -36,9 +36,12 @@ const roleOptions = computed(() =>
 
 async function fetchRoles() {
   try {
-    roles.value = await $fetch<Role[]>("http://localhost:8080/api/roles", {
-      headers: { Authorization: `Bearer ${auth.token}` },
-    });
+    roles.value = await $fetch<Role[]>(
+      "https://api.minimalprod.space/api/roles",
+      {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      },
+    );
   } catch (err) {
     toast.add({ title: "Error", description: String(err), color: "error" });
   }
@@ -59,11 +62,14 @@ async function onSubmit() {
   if (!props.userId) return;
 
   try {
-    await $fetch(`http://localhost:8080/api/users/${props.userId}/roles`, {
-      method: "POST",
-      body: { roleId: state.roleId },
-      headers: { Authorization: `Bearer ${auth.token}` },
-    });
+    await $fetch(
+      `https://api.minimalprod.space/api/users/${props.userId}/roles`,
+      {
+        method: "POST",
+        body: { roleId: state.roleId },
+        headers: { Authorization: `Bearer ${auth.token}` },
+      },
+    );
 
     toast.add({
       title: "Rol asignado",

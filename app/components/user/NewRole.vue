@@ -24,7 +24,7 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
 
   const { data, error: fetchError } = await useFetch(
-    "http://localhost:8080/api/roles",
+    "https://api.minimalprod.space/api/roles",
     {
       method: "POST",
       body: event.data,

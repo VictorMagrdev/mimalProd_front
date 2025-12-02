@@ -19,7 +19,7 @@ const centrosCosto = ref<SelectOption[]>([]);
 const cargarCentrosCosto = async () => {
   try {
     const { data, error } = await useFetch<CentroCosto[]>(
-      "http://localhost:8080/api/v1/centros-costo",
+      "https://api.minimalprod.space/api/v1/centros-costo",
       {
         headers: { Authorization: `Bearer ${auth.token}` },
       },

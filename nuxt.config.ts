@@ -28,7 +28,7 @@ export default defineNuxtConfig({
   apollo: {
     clients: {
       default: {
-        httpEndpoint: "http://localhost:8080/graphql",
+        httpEndpoint: "https://api.minimalprod.space/graphql",
         tokenStorage: "localStorage",
         authHeader: "Authorization",
         authType: "Bearer",

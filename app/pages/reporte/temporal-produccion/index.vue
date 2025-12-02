@@ -82,7 +82,7 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   "serie-produccion",
   async () => {
     const { data } = await useFetch<SerieTemporalDTO[]>(
-      "http://localhost:8080/api/dashboard/produccion/serie",
+      "https://api.minimalprod.space/api/dashboard/produccion/serie",
       {
         method: "GET",
         headers: { Authorization: `Bearer ${auth.token}` },
