@@ -1,5 +1,5 @@
 export default defineNuxtPlugin((nuxtApp) => {
-  const BASE_URL = "https://api.minimalprod.space";
+  const BASE_URL = "https://obvolutive-angelica-nonnotably.ngrok-free.dev";
 
   const auth = useAuthStore();
 

@@ -40,18 +40,21 @@ const {
   pending,
   error,
   execute,
-} = await useFetch<UserUI[]>("https://api.minimalprod.space/api/users", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${auth.token}`,
+} = await useFetch<UserUI[]>(
+  "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/users",
+  {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    default: () => [],
   },
-  default: () => [],
-});
+);
 
 const desactivar = async (id: number) => {
   try {
     const { error } = await useFetch(
-      `https://api.minimalprod.space/api/users/${id}/deactivate`,
+      `https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/users/${id}/deactivate`,
       {
         method: "POST",
         headers: {

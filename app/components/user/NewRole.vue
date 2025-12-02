@@ -24,7 +24,7 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
 
   const { data, error: fetchError } = await useFetch(
-    "https://api.minimalprod.space/api/roles",
+    "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/roles",
     {
       method: "POST",
       body: event.data,

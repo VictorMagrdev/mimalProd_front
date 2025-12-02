@@ -28,7 +28,7 @@ El sistema sigue una **arquitectura cliente-servidor**:
 - **Framework:** **Nuxt.js 4.1.0** (un framework sobre Vue.js).
 - **Renderizado:** Configurado como `ssr: false`, lo que la convierte en una aplicación de lado del cliente (Client-Side Rendering).
 - **Lenguaje:** TypeScript.
-- **Comunicación API:** **Apollo Client** (`@nuxtjs/apollo`) se utiliza para consumir la API GraphQL del backend. La configuración en `nuxt.config.ts` apunta a `https://api.minimalprod.space/graphql`.
+- **Comunicación API:** **Apollo Client** (`@nuxtjs/apollo`) se utiliza para consumir la API GraphQL del backend. La configuración en `nuxt.config.ts` apunta a `https://obvolutive-angelica-nonnotably.ngrok-free.dev/graphql`.
 - **Gestión de Estado:** **Pinia** (`@pinia/nuxt`) para un manejo de estado centralizado y reactivo. `pinia-plugin-persistedstate` se usa para mantener el estado en el almacenamiento local del navegador.
 - **UI/UX:**
   - **Componentes:** **Nuxt UI**, una librería de componentes basada en Tailwind CSS.
