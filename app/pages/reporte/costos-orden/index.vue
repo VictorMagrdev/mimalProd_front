@@ -111,7 +111,7 @@ const { data: costosData, pending } = useAsyncData<ReporteCostoOrdenDTO[]>(
   "costos-orden",
   async () => {
     const { data } = await useFetch<ReporteCostoOrdenDTO[]>(
-      "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/reportes/costos/orden",
+      "https://api.minimalprod.space/api/reportes/costos/orden",
       {
         method: "GET",
         headers: {

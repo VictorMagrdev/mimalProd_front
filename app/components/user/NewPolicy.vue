@@ -47,24 +47,15 @@ watch(open, async (val) => {
   ) {
     try {
       const [rolesRes, tagsRes, permsRes] = await Promise.all([
-        $fetch<Role[]>(
-          "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/roles",
-          {
-            headers: { Authorization: `Bearer ${auth.token}` },
-          },
-        ),
-        $fetch<Tag[]>(
-          "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/tags",
-          {
-            headers: { Authorization: `Bearer ${auth.token}` },
-          },
-        ),
-        $fetch<Permission[]>(
-          "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/permissions",
-          {
-            headers: { Authorization: `Bearer ${auth.token}` },
-          },
-        ),
+        $fetch<Role[]>("https://api.minimalprod.space/api/roles", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+        $fetch<Tag[]>("https://api.minimalprod.space/api/tags", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+        $fetch<Permission[]>("https://api.minimalprod.space/api/permissions", {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
       ]);
 
       roles.value = rolesRes || [];
@@ -83,7 +74,7 @@ watch(open, async (val) => {
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
   error.value = null;
   const { error: fetchError } = await useFetch(
-    "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/policies",
+    "https://api.minimalprod.space/api/policies",
     {
       method: "POST",
       body: event.data,

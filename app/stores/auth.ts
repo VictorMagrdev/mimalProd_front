@@ -35,7 +35,7 @@ export const useAuthStore = defineStore("auth", () => {
   const { execute: login } = useAsyncState(
     async (username: string, password: string) => {
       const response = await $fetch<LoginResponse>(
-        "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/auth/login",
+        "https://api.minimalprod.space/api/auth/login",
         {
           method: "POST",
           body: { username, password },

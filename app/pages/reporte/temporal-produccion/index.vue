@@ -82,7 +82,7 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   "serie-produccion",
   async () => {
     const { data } = await useFetch<SerieTemporalDTO[]>(
-      "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/dashboard/produccion/serie",
+      "https://api.minimalprod.space/api/dashboard/produccion/serie",
       {
         method: "GET",
         headers: { Authorization: `Bearer ${auth.token}` },

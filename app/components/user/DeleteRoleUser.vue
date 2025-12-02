@@ -39,7 +39,7 @@ watch(
     if (isOpen && props.userId) {
       try {
         const rolesRes = await $fetch<Role[]>(
-          `https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/users/${props.userId}/roles`,
+          `https://api.minimalprod.space/api/users/${props.userId}/roles`,
           {
             headers: { Authorization: `Bearer ${auth.token}` },
           },
@@ -62,7 +62,7 @@ async function onSubmit() {
 
   try {
     await $fetch(
-      `https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/users/${props.userId}/roles/${state.roleId}`,
+      `https://api.minimalprod.space/api/users/${props.userId}/roles/${state.roleId}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${auth.token}` },

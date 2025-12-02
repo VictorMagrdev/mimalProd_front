@@ -19,16 +19,13 @@ const {
   data: roles,
   pending,
   error,
-} = await useFetch<RoleUI[]>(
-  "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/roles",
-  {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-    },
-    default: () => [],
+} = await useFetch<RoleUI[]>("https://api.minimalprod.space/api/roles", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${auth.token}`,
   },
-);
+  default: () => [],
+});
 
 const columns: TableColumn<RoleUI>[] = [
   {

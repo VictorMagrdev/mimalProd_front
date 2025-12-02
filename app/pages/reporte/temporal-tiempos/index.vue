@@ -97,8 +97,8 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   async () => {
     const path =
       groupBy.value === "mensual"
-        ? "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/dashboard/tiempos/serie-mensual"
-        : "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/dashboard/tiempos/serie";
+        ? "https://api.minimalprod.space/api/dashboard/tiempos/serie-mensual"
+        : "https://api.minimalprod.space/api/dashboard/tiempos/serie";
     const { data } = await useFetch<SerieTemporalDTO[]>(path, {
       method: "GET",
       headers: { Authorization: `Bearer ${auth.token}` },

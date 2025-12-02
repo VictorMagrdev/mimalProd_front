@@ -100,7 +100,7 @@ const { data: productividadData, pending } = useAsyncData<
   IndicadorProductividadDTO[]
 >("productividad", async () => {
   const { data } = await useFetch<IndicadorProductividadDTO[]>(
-    "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/reportes/productividad",
+    "https://api.minimalprod.space/api/reportes/productividad",
     {
       method: "GET",
       headers: {
@@ -170,7 +170,7 @@ watch(
 const handleExportPDF = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/reportes/productividad/pdf",
+      "https://api.minimalprod.space/api/reportes/productividad/pdf",
       "indicadores_productividad.pdf",
     );
   } catch (error) {
@@ -186,7 +186,7 @@ const handleExportPDF = async (): Promise<void> => {
 const handleExportCSV = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/reportes/productividad/csv",
+      "https://api.minimalprod.space/api/reportes/productividad/csv",
       "indicadores_productividad.csv",
       "CSV",
     );

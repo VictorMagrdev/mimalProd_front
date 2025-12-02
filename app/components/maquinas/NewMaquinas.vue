@@ -19,7 +19,7 @@ const centrosCosto = ref<SelectOption[]>([]);
 const cargarCentrosCosto = async () => {
   try {
     const { data, error } = await useFetch<CentroCosto[]>(
-      "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/v1/centros-costo",
+      "https://api.minimalprod.space/api/v1/centros-costo",
       {
         headers: { Authorization: `Bearer ${auth.token}` },
       },

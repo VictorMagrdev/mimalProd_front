@@ -147,8 +147,7 @@ const ordenesAtrasadas = ref(0);
 const produccionHoy = ref(0);
 const cumplimientoHoy = ref(0);
 
-const backend: string =
-  "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/dashboard";
+const backend: string = "https://api.minimalprod.space/api/dashboard";
 const auth = useAuthStore();
 onMounted(async () => {
   produccion7Dias.value = await $fetch(`${backend}/produccion/7-dias`, {

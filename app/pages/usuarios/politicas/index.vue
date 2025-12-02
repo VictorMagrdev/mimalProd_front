@@ -17,16 +17,13 @@ const {
   data: policies,
   pending,
   error,
-} = await useFetch<PolicyUI[]>(
-  "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/policies",
-  {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-    },
-    default: () => [],
+} = await useFetch<PolicyUI[]>("https://api.minimalprod.space/api/policies", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${auth.token}`,
   },
-);
+  default: () => [],
+});
 const toast = useToast();
 
 async function deletePolicy(policy: PolicyUI) {
@@ -38,7 +35,7 @@ async function deletePolicy(policy: PolicyUI) {
     return;
 
   const { error: fetchError } = await useFetch(
-    `https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/policies/${policy.id}`,
+    `https://api.minimalprod.space/api/policies/${policy.id}`,
     {
       method: "DELETE",
       headers: {

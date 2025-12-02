@@ -17,7 +17,7 @@ type UserMinimal = { id: number; nombre?: string; username: string };
 const users = ref<{ value: number; label: string }[]>([]);
 
 const { data: usersData } = await useFetch<UserMinimal[]>(
-  "https://obvolutive-angelica-nonnotably.ngrok-free.dev/api/users",
+  "https://api.minimalprod.space/api/users",
   {
     method: "GET",
     headers: { Authorization: `Bearer ${auth.token}` },
