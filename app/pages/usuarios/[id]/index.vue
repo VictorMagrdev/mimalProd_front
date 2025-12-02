@@ -17,9 +17,12 @@ const {
   pending,
   error,
 } = useAsyncData("user", () =>
-  $fetch<User>(`https://api.minimalprod.space/api/users/${userId}`, {
-    headers: { Authorization: `Bearer ${auth.token}` },
-  }),
+  $fetch<User>(
+    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    },
+  ),
 );
 </script>
 

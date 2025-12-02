@@ -45,7 +45,7 @@ type UserMinimal = { id: number; nombre?: string; username: string };
 const users = ref<{ value: number; label: string }[]>([]);
 
 const { data: usersData } = await useFetch<UserMinimal[]>(
-  "https://api.minimalprod.space/api/users",
+  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/users",
   {
     method: "GET",
     headers: { Authorization: `Bearer ${auth.token}` },
@@ -179,13 +179,16 @@ const onSubmit = async () => {
       new File([audioBlob.value], "grabacion.webm", { type: "audio/webm" }),
     );
 
-    await $fetch("https://api.minimalprod.space/api/incidencias/con-archivos", {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    await $fetch(
+      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/incidencias/con-archivos",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       },
-    });
+    );
 
     toast.add({ title: "Incidencia creada exitosamente", color: "success" });
     emit("creada");

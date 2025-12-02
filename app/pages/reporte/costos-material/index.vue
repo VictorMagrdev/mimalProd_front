@@ -114,7 +114,7 @@ const { data: costosMaterialData, pending } = useAsyncData<
   ReporteCostoMaterialDTO[]
 >("costos-material", async () => {
   const { data } = await useFetch<ReporteCostoMaterialDTO[]>(
-    "https://api.minimalprod.space/api/reportes/costos/material",
+    "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/costos/material",
     {
       method: "GET",
       headers: {
@@ -186,7 +186,7 @@ watchEffect(() => {
 const handleExportPDF = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://api.minimalprod.space/api/reportes/costos/material/pdf",
+      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/costos/material/pdf",
       "reporte_costos_material.pdf",
     );
   } catch (error) {
@@ -201,7 +201,7 @@ const handleExportPDF = async (): Promise<void> => {
 const handleExportCSV = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://api.minimalprod.space/api/reportes/costos/material/csv",
+      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/costos/material/csv",
       "reporte_costos_material.csv",
       "CSV",
     );

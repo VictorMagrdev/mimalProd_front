@@ -37,7 +37,7 @@ watch(
   async (newUserId) => {
     if (newUserId) {
       const { data, error: fetchError } = await useFetch<UserUpdateState>(
-        `https://api.minimalprod.space/api/users/${newUserId}`,
+        `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${newUserId}`,
         {
           headers: { Authorization: `Bearer ${auth.token}` },
         },
@@ -69,7 +69,7 @@ async function onSubmit(event: FormSubmitEvent<UserUpdateState>) {
   if (!props.userId) return;
 
   const { error: fetchError } = await useFetch(
-    `https://api.minimalprod.space/api/users/${props.userId}`,
+    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${props.userId}`,
     {
       method: "PUT",
       body: event.data,
@@ -100,7 +100,7 @@ async function deactivateUser() {
   if (!props.userId) return;
 
   const { error: fetchError } = await useFetch(
-    `https://api.minimalprod.space/api/users/${props.userId}/deactivate`,
+    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${props.userId}/deactivate`,
     {
       method: "POST",
       headers: { Authorization: `Bearer ${auth.token}` },

@@ -97,8 +97,8 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   async () => {
     const path =
       groupBy.value === "mensual"
-        ? "https://api.minimalprod.space/api/dashboard/tiempos/serie-mensual"
-        : "https://api.minimalprod.space/api/dashboard/tiempos/serie";
+        ? "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard/tiempos/serie-mensual"
+        : "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard/tiempos/serie";
     const { data } = await useFetch<SerieTemporalDTO[]>(path, {
       method: "GET",
       headers: { Authorization: `Bearer ${auth.token}` },

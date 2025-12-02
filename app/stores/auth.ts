@@ -35,7 +35,7 @@ export const useAuthStore = defineStore("auth", () => {
   const { execute: login } = useAsyncState(
     async (username: string, password: string) => {
       const response = await $fetch<LoginResponse>(
-        "https://api.minimalprod.space/api/auth/login",
+        "https://engagement-roommate-martha-brunette.trycloudflare.com/api/auth/login",
         {
           method: "POST",
           body: { username, password },

@@ -39,7 +39,7 @@ watch(
     if (isOpen && props.userId) {
       try {
         const rolesRes = await $fetch<Role[]>(
-          `https://api.minimalprod.space/api/users/${props.userId}/roles`,
+          `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${props.userId}/roles`,
           {
             headers: { Authorization: `Bearer ${auth.token}` },
           },
@@ -62,7 +62,7 @@ async function onSubmit() {
 
   try {
     await $fetch(
-      `https://api.minimalprod.space/api/users/${props.userId}/roles/${state.roleId}`,
+      `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${props.userId}/roles/${state.roleId}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${auth.token}` },

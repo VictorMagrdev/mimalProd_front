@@ -37,7 +37,7 @@ const roleOptions = computed(() =>
 async function fetchRoles() {
   try {
     roles.value = await $fetch<Role[]>(
-      "https://api.minimalprod.space/api/roles",
+      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/roles",
       {
         headers: { Authorization: `Bearer ${auth.token}` },
       },
@@ -63,7 +63,7 @@ async function onSubmit() {
 
   try {
     await $fetch(
-      `https://api.minimalprod.space/api/users/${props.userId}/roles`,
+      `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${props.userId}/roles`,
       {
         method: "POST",
         body: { roleId: state.roleId },

@@ -17,13 +17,16 @@ const {
   data: policies,
   pending,
   error,
-} = await useFetch<PolicyUI[]>("https://api.minimalprod.space/api/policies", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${auth.token}`,
+} = await useFetch<PolicyUI[]>(
+  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/policies",
+  {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    default: () => [],
   },
-  default: () => [],
-});
+);
 const toast = useToast();
 
 async function deletePolicy(policy: PolicyUI) {
@@ -35,7 +38,7 @@ async function deletePolicy(policy: PolicyUI) {
     return;
 
   const { error: fetchError } = await useFetch(
-    `https://api.minimalprod.space/api/policies/${policy.id}`,
+    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/policies/${policy.id}`,
     {
       method: "DELETE",
       headers: {

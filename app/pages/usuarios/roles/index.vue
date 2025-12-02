@@ -19,13 +19,16 @@ const {
   data: roles,
   pending,
   error,
-} = await useFetch<RoleUI[]>("https://api.minimalprod.space/api/roles", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${auth.token}`,
+} = await useFetch<RoleUI[]>(
+  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/roles",
+  {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    default: () => [],
   },
-  default: () => [],
-});
+);
 
 const columns: TableColumn<RoleUI>[] = [
   {
