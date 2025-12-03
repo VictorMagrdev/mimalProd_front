@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint:
-          "https://engagement-roommate-martha-brunette.trycloudflare.com/graphql",
+          "https://three-assured-ian-impressive.trycloudflare.com/graphql",
         tokenStorage: "localStorage",
         authHeader: "Authorization",
         authType: "Bearer",

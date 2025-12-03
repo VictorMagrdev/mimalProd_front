@@ -97,8 +97,8 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   async () => {
     const path =
       groupBy.value === "mensual"
-        ? "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard/costos/serie-mensual"
-        : "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard/costos/serie";
+        ? "https://three-assured-ian-impressive.trycloudflare.com/api/dashboard/costos/serie-mensual"
+        : "https://three-assured-ian-impressive.trycloudflare.com/api/dashboard/costos/serie";
     const { data } = await useFetch<SerieTemporalDTO[]>(path, {
       method: "GET",
       headers: { Authorization: `Bearer ${auth.token}` },

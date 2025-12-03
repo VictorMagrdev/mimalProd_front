@@ -40,21 +40,18 @@ const {
   pending,
   error,
   execute,
-} = await useFetch<UserUI[]>(
-  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/users",
-  {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-    },
-    default: () => [],
+} = await useFetch<UserUI[]>("https://three-assured-ian-impressive.trycloudflare.com/api/users", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${auth.token}`,
   },
-);
+  default: () => [],
+});
 
 const desactivar = async (id: number) => {
   try {
     const { error } = await useFetch(
-      `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${id}/deactivate`,
+      `https://three-assured-ian-impressive.trycloudflare.com/api/users/${id}/deactivate`,
       {
         method: "POST",
         headers: {

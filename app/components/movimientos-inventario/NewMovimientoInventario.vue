@@ -17,7 +17,7 @@ type UserMinimal = { id: number; nombre?: string; username: string };
 const users = ref<{ value: number; label: string }[]>([]);
 
 const { data: usersData } = await useFetch<UserMinimal[]>(
-  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/users",
+  "https://three-assured-ian-impressive.trycloudflare.com/api/users",
   {
     method: "GET",
     headers: { Authorization: `Bearer ${auth.token}` },

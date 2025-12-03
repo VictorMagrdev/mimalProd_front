@@ -35,7 +35,7 @@ export const useAuthStore = defineStore("auth", () => {
   const { execute: login } = useAsyncState(
     async (username: string, password: string) => {
       const response = await $fetch<LoginResponse>(
-        "https://engagement-roommate-martha-brunette.trycloudflare.com/api/auth/login",
+        "https://three-assured-ian-impressive.trycloudflare.com/api/auth/login",
         {
           method: "POST",
           body: { username, password },

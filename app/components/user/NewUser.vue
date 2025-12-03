@@ -22,15 +22,12 @@ const emit = defineEmits<{ (e: "creado"): void }>();
 watch(open, async (isOpen) => {
   if (isOpen && roles.value.length === 0) {
     try {
-      const rolesRes = await $fetch<Role[]>(
-        "https://engagement-roommate-martha-brunette.trycloudflare.com/api/roles",
-        {
-          headers: { Authorization: `Bearer ${auth.token}` },
-        },
-      );
+      const rolesRes = await $fetch<Role[]>("https://three-assured-ian-impressive.trycloudflare.com/api/roles", {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
       roles.value = rolesRes || [];
       const centrosCostoRes = await $fetch<CentrosCosto[]>(
-        "https://engagement-roommate-martha-brunette.trycloudflare.com/api/v1/centros-costo",
+        "https://three-assured-ian-impressive.trycloudflare.com/api/v1/centros-costo",
         {
           headers: { Authorization: `Bearer ${auth.token}` },
         },
@@ -76,16 +73,13 @@ async function onSubmit(event: FormSubmitEvent<typeof UserSchemaInitialState>) {
   };
 
   try {
-    await $fetch(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/users",
-      {
-        method: "POST",
-        body: payload,
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
+    await $fetch("https://three-assured-ian-impressive.trycloudflare.com/api/users", {
+      method: "POST",
+      body: payload,
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
       },
-    );
+    });
     emit("creado");
     toast.add({
       title: "Usuario creado",

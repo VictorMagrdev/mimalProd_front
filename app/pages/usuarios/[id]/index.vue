@@ -18,7 +18,7 @@ const {
   error,
 } = useAsyncData("user", () =>
   $fetch<User>(
-    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/users/${userId}`,
+    `https://three-assured-ian-impressive.trycloudflare.com/api/users/${userId}`,
     {
       headers: { Authorization: `Bearer ${auth.token}` },
     },

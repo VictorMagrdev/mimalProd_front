@@ -147,8 +147,7 @@ const ordenesAtrasadas = ref(0);
 const produccionHoy = ref(0);
 const cumplimientoHoy = ref(0);
 
-const backend: string =
-  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard";
+const backend: string = "https://three-assured-ian-impressive.trycloudflare.com/api/dashboard";
 const auth = useAuthStore();
 onMounted(async () => {
   produccion7Dias.value = await $fetch(`${backend}/produccion/7-dias`, {

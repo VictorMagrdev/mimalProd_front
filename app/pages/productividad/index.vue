@@ -100,7 +100,7 @@ const { data: productividadData, pending } = useAsyncData<
   IndicadorProductividadDTO[]
 >("productividad", async () => {
   const { data } = await useFetch<IndicadorProductividadDTO[]>(
-    "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/productividad",
+    "https://three-assured-ian-impressive.trycloudflare.com/api/reportes/productividad",
     {
       method: "GET",
       headers: {
@@ -170,7 +170,7 @@ watch(
 const handleExportPDF = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/productividad/pdf",
+      "https://three-assured-ian-impressive.trycloudflare.com/api/reportes/productividad/pdf",
       "indicadores_productividad.pdf",
     );
   } catch (error) {
@@ -186,7 +186,7 @@ const handleExportPDF = async (): Promise<void> => {
 const handleExportCSV = async (): Promise<void> => {
   try {
     await exportState.descargarArchivo(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/productividad/csv",
+      "https://three-assured-ian-impressive.trycloudflare.com/api/reportes/productividad/csv",
       "indicadores_productividad.csv",
       "CSV",
     );

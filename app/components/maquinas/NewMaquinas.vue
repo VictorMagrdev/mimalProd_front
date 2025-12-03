@@ -19,7 +19,7 @@ const centrosCosto = ref<SelectOption[]>([]);
 const cargarCentrosCosto = async () => {
   try {
     const { data, error } = await useFetch<CentroCosto[]>(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/v1/centros-costo",
+      "https://three-assured-ian-impressive.trycloudflare.com/api/v1/centros-costo",
       {
         headers: { Authorization: `Bearer ${auth.token}` },
       },

@@ -111,7 +111,7 @@ const { data: costosData, pending } = useAsyncData<ReporteCostoOrdenDTO[]>(
   "costos-orden",
   async () => {
     const { data } = await useFetch<ReporteCostoOrdenDTO[]>(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/reportes/costos/orden",
+      "https://three-assured-ian-impressive.trycloudflare.com/api/reportes/costos/orden",
       {
         method: "GET",
         headers: {

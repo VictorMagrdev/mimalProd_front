@@ -1,6 +1,5 @@
 export default defineNuxtPlugin((nuxtApp) => {
-  const BASE_URL =
-    "https://engagement-roommate-martha-brunette.trycloudflare.com";
+  const BASE_URL = "https://three-assured-ian-impressive.trycloudflare.com";
 
   const auth = useAuthStore();
 

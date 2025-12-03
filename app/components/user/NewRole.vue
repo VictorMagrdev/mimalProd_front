@@ -24,7 +24,7 @@ async function onSubmit(event: FormSubmitEvent<typeof RoleSchemaInitialState>) {
   error.value = null;
 
   const { data, error: fetchError } = await useFetch(
-    "https://engagement-roommate-martha-brunette.trycloudflare.com/api/roles",
+    "https://three-assured-ian-impressive.trycloudflare.com/api/roles",
     {
       method: "POST",
       body: event.data,

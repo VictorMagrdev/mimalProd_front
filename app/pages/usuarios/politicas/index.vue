@@ -18,7 +18,7 @@ const {
   pending,
   error,
 } = await useFetch<PolicyUI[]>(
-  "https://engagement-roommate-martha-brunette.trycloudflare.com/api/policies",
+  "https://three-assured-ian-impressive.trycloudflare.com/api/policies",
   {
     method: "GET",
     headers: {
@@ -38,7 +38,7 @@ async function deletePolicy(policy: PolicyUI) {
     return;
 
   const { error: fetchError } = await useFetch(
-    `https://engagement-roommate-martha-brunette.trycloudflare.com/api/policies/${policy.id}`,
+    `https://three-assured-ian-impressive.trycloudflare.com/api/policies/${policy.id}`,
     {
       method: "DELETE",
       headers: {

@@ -82,7 +82,7 @@ const { data: raw, pending } = useAsyncData<SerieTemporalDTO[]>(
   "serie-produccion",
   async () => {
     const { data } = await useFetch<SerieTemporalDTO[]>(
-      "https://engagement-roommate-martha-brunette.trycloudflare.com/api/dashboard/produccion/serie",
+      "https://three-assured-ian-impressive.trycloudflare.com/api/dashboard/produccion/serie",
       {
         method: "GET",
         headers: { Authorization: `Bearer ${auth.token}` },
